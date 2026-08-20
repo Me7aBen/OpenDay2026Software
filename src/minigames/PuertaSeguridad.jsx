@@ -12,6 +12,13 @@ export default function PuertaSeguridad({ decision, onElegir }) {
   const [estado, setEstado] = useState('lista'); // lista | error | correcto
   const [fallos, setFallos] = useState(0);
   const notificado = useRef(false);
+  const mensajeEstado = estado === 'error'
+    ? '✕ LA CUENTA ENTRÓ. Cierra la compuerta y vuelve a probar.'
+    : estado === 'correcto'
+      ? '✔ ACCESO RECHAZADO. La cuenta bloqueada quedó fuera.'
+      : cerrada
+        ? 'La compuerta está cerrada. Ahora simula el acceso.'
+        : 'La compuerta está abierta. Primero debes cerrarla.';
 
   function alternarPuerta() {
     if (estado === 'correcto') return;
@@ -44,7 +51,7 @@ export default function PuertaSeguridad({ decision, onElegir }) {
   }
 
   return (
-    <div className="puerta">
+    <div className="puerta notranslate" translate="no">
       <div className="label-pixel">PRUEBA DE ACCESO · FIREWALL</div>
       {decision.contexto && (
         <div className="puerta-contexto">
@@ -76,13 +83,13 @@ export default function PuertaSeguridad({ decision, onElegir }) {
           className="puerta-control"
           onClick={alternarPuerta}
           aria-pressed={cerrada}
-          aria-label={`Puerta del firewall ${cerrada ? 'cerrada' : 'abierta'}. Activar para cambiarla.`}
+          aria-label={`Compuerta del firewall ${cerrada ? 'cerrada' : 'abierta'}. Activar para cambiarla.`}
         >
           <span className="puerta-marco">
             <span className="puerta-hoja" />
           </span>
           <strong>{cerrada ? 'CERRADA' : 'ABIERTA'}</strong>
-          <small>TOCA PARA CAMBIAR</small>
+          <small>{cerrada ? 'TOCA PARA ABRIR' : 'TOCA PARA CERRAR'}</small>
         </button>
 
         <div className="puerta-red">
@@ -102,11 +109,7 @@ export default function PuertaSeguridad({ decision, onElegir }) {
           SIMULAR ACCESO
         </button>
         <span className={`puerta-estado estado-${estado}`} role="status" aria-live="polite">
-          {estado === 'lista' && (cerrada
-            ? 'La puerta está cerrada. Ahora comprueba qué sucede.'
-            : 'La puerta está abierta. Decide si es seguro probar así.')}
-          {estado === 'error' && '✕ LA CUENTA ENTRÓ. Cierra la puerta y vuelve a probar.'}
-          {estado === 'correcto' && '✔ ACCESO RECHAZADO. La cuenta bloqueada quedó fuera.'}
+          {mensajeEstado}
         </span>
       </div>
     </div>

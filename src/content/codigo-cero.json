@@ -577,8 +577,8 @@
           "id": "probar-codigo-bloqueo",
           "tipoInteraccion": "puerta-seguridad",
           "contexto": "Una cuenta marcada como bloqueada está intentando entrar a la red.",
-          "pregunta": "Cierra la puerta del firewall y prueba el acceso",
-          "pista": "Antes de simular, la puerta del firewall debe quedar CERRADA.",
+          "pregunta": "Cierra la compuerta del firewall y luego simula el acceso",
+          "pista": "Toca la compuerta hasta que diga CERRADA. Después pulsa SIMULAR ACCESO.",
           "mensajeClienteDecision": "Cierra el paso y comprueba que la cuenta quede afuera.",
           "hitoIndicador": 72,
           "metaMinijuego": {
