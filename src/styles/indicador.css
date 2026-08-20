@@ -1,0 +1,62 @@
+/* Medidor global del escenario ("CIUDAD RECUPERADA: 65 %").
+
+   El tramo (bajo/medio/alto) se comunica por color Y por la palabra que va
+   debajo ("crítico" / "parcial" / "estable"), para que no dependa del color. */
+
+.indicador {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.indicador-cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.indicador-valor {
+  font-family: var(--pixel);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--color-tramo, var(--cyan));
+  line-height: 1;
+}
+
+.indicador-pista {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.indicador-relleno {
+  height: 100%;
+  background: var(--color-tramo, var(--cyan));
+  transition: width 0.6s ease-out;
+}
+
+.indicador-estado {
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.indicador-bajo {
+  --color-tramo: var(--red);
+}
+.indicador-medio {
+  --color-tramo: var(--gold);
+}
+.indicador-alto {
+  --color-tramo: var(--green);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicador-relleno {
+    transition: none;
+  }
+}

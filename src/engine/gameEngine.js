@@ -29,6 +29,22 @@ export function calcularPuntajeDecision(decision, opcionIds, puntajeDirecto = nu
     return { puntaje, bono: bonus };
   }
 
+  // Camino genérico para minijuegos que calculan su propio puntaje. Un
+  // componente que sabe cuánto vale lo que hizo el jugador (giros del circuito,
+  // intentos del intruso, reintentos del código) lo pasa como `puntajeDirecto`
+  // y el motor lo toma tal cual, sin tener que aprender las reglas de cada
+  // mecánica. Es la extensión que evita ir sumando ramas por tipo acá dentro.
+  //
+  // Va DESPUÉS de arquitectura-nodos porque esa mecánica ya usaba el parámetro
+  // con su propia regla de bonus, y esa regla no cambia.
+  //
+  // El bonus sigue saliendo de la opción elegida, igual que en el resto: así un
+  // minijuego nuevo puede otorgar bonos sin lógica especial.
+  if (puntajeDirecto !== null && puntajeDirecto !== undefined) {
+    const opcion = decision.opciones?.find((o) => o.id === opcionIds[0]);
+    return { puntaje: puntajeDirecto, bono: opcion?.bonus?.puntos ?? 0 };
+  }
+
   // Mapa de calor: el componente manda los ids de las zonas marcadas (únicas,
   // no se cuentan re-clics). El motor:
   //   1. Cuenta cuántas zonas son críticas (= aciertos).

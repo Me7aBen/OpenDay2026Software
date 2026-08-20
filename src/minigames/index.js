@@ -6,6 +6,9 @@ import Deploy from './Deploy';
 import ArquitecturaNodos from './ArquitecturaNodos';
 import MapaCalor from './MapaCalor';
 import SeleccionCards from './SeleccionCards';
+import CircuitoConexiones from './CircuitoConexiones';
+import DetectarIntruso from './DetectarIntruso';
+import CodigoMecanografia from './CodigoMecanografia';
 
 // Mapeo de tipoInteraccion (declarado por cada Decision en el JSON del
 // escenario) -> componente de minijuego. Esto reemplaza el antiguo mapeo
@@ -18,6 +21,9 @@ export const minijuegoPorTipo = {
   'arquitectura-nodos': ArquitecturaNodos,
   'mapa-calor': MapaCalor,
   'seleccion-cards': SeleccionCards,
+  'circuito-conexiones': CircuitoConexiones,
+  'detectar-intruso': DetectarIntruso,
+  'mecanografia-codigo': CodigoMecanografia,
 };
 
 // Compatibilidad hacia atrás: mapa por estilo de fase, para los lugares que

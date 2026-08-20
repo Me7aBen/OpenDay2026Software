@@ -1,5 +1,6 @@
 import { useGame } from '../engine/useGame';
 import BotonMusica from './BotonMusica';
+import Avatar from './Avatar';
 import '../styles/topbar.css';
 
 // Barra superior, presente en todas las pantallas.
@@ -66,7 +67,12 @@ export default function TopBar({ mostrarPerfil = true }) {
 
         {verPerfil && (
           <div className="topbar-profile">
-            <div className="avatar">🧑</div>
+            {/* Si el escenario pidió personalizar personaje, el perfil muestra
+                el avatar del jugador. Quien viene de un escenario sin
+                personalización (Ccorca) sigue viendo el mismo icono de antes. */}
+            <div className={`avatar${jugador.avatar ? ' con-pixel' : ''}`}>
+              {jugador.avatar ? <Avatar avatar={jugador.avatar} tam={26} /> : '🧑'}
+            </div>
             <div className="meta">
               <div className="nombre" title={jugador.nombre}>{jugador.nombre}</div>
               <div className="colegio" title={jugador.colegio}>{jugador.colegio}</div>

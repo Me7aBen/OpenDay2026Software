@@ -19,6 +19,8 @@ export function GameProvider({ children }) {
     state,
     registrarJugador: (jugador) => dispatch({ type: 'REGISTRAR_JUGADOR', jugador }),
     iniciarPartida: (escenario) => dispatch({ type: 'INICIAR_PARTIDA', escenario }),
+    confirmarAvatar: (avatar) => dispatch({ type: 'CONFIRMAR_AVATAR', avatar }),
+    comenzarPartida: () => dispatch({ type: 'COMENZAR_PARTIDA' }),
     responderDecision: (decisionId, opcionIds, puntajeDirecto) =>
       dispatch({ type: 'RESPONDER_DECISION', decisionId, opcionIds, puntajeDirecto }),
     pedirPista: (decisionId) => dispatch({ type: 'PEDIR_PISTA', decisionId }),

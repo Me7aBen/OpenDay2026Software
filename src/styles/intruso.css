@@ -1,0 +1,341 @@
+/* Puzzle de detección y aislamiento del nodo intruso.
+
+   La regla de fondo: el intruso se distingue por CUATRO señales a la vez
+   (ritmo, desfase, contorno y glifo). Acá abajo viven tres de ellas; la cuarta
+   (el glifo distinto) la pone el componente eligiendo otro icono.
+
+   Con prefers-reduced-motion se apagan las dos señales de movimiento y quedan
+   las dos estáticas, que alcanzan para resolverlo. */
+
+.intruso {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
+  min-height: 0;
+}
+
+.intruso-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.intruso-intentos {
+  font-size: var(--fs-xs);
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.intruso-pregunta {
+  font-size: var(--fs-md);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+/* --- Acto 1: los seis nodos ---------------------------------------------- */
+
+.intruso-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(8px, 1vw, 16px);
+}
+
+.intruso-nodo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: clamp(10px, 1.4vh, 18px) 8px;
+  background: var(--panel-alt);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--cyan);
+  font: inherit;
+  cursor: pointer;
+}
+.intruso-nodo:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+.intruso-nodo:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+.intruso-nodo:disabled {
+  cursor: default;
+}
+
+.intruso-nodo-label {
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+/* Señal 1 y 2: el pulso. El sano late cada 1.6s; el intruso cada 0.62s y
+   además arranca desfasado (--retardo lo pone el componente). */
+.intruso-pulso {
+  width: 60%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--cyan);
+  opacity: 0.35;
+  animation: intruso-latido 1.6s ease-in-out infinite;
+}
+.intruso-nodo[data-irregular='si'] .intruso-pulso {
+  background: var(--pink);
+  animation-duration: 0.62s;
+  animation-delay: var(--retardo, 0s);
+}
+
+/* Señal 3: el contorno. El intruso lo tiene dentado (dashed), no continuo.
+   Esta señal sobrevive a prefers-reduced-motion. */
+.intruso-nodo[data-irregular='si'] {
+  border-style: dashed;
+  color: var(--pink);
+}
+
+.intruso-nodo.fallo {
+  border-color: var(--gold);
+  animation: intruso-negar 0.3s ease-in-out 1;
+}
+
+.intruso-pie {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-dim);
+  line-height: 1.4;
+  min-height: 2.6em;
+}
+
+.intruso-saltar {
+  align-self: flex-start;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--body);
+  font-size: var(--fs-xs);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+/* --- Acto 2: aislar ------------------------------------------------------ */
+
+.intruso-aislamiento {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
+}
+
+.intruso-titulo-aislar {
+  font-size: var(--fs-md);
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1.35;
+}
+.intruso-titulo-aislar:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+.intruso-escena {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(10px, 1.6vw, 26px);
+  padding: clamp(12px, 1.6vh, 22px);
+  background: #0a1020;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+}
+.intruso-escena.cerrada {
+  border-color: var(--green);
+}
+
+.intruso-ranura {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px;
+  background: transparent;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font: inherit;
+  cursor: pointer;
+}
+.intruso-ranura:hover:not(:disabled) {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.intruso-ranura:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+.intruso-ranura-barra {
+  width: 100%;
+  height: 10px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--border) 0 6px,
+    transparent 6px 12px
+  );
+}
+.intruso-ranura-texto {
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.intruso-ranura.cerrada {
+  border-style: solid;
+  border-color: var(--green);
+  color: var(--green);
+  cursor: default;
+}
+.intruso-ranura.cerrada .intruso-ranura-barra {
+  background: var(--green);
+  animation: intruso-cerrar 0.28s ease-out 1;
+}
+
+.intruso-nodo-aislado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--red);
+  padding: 10px 16px;
+  border: 2px dashed var(--red);
+  border-radius: 8px;
+}
+.intruso-nodo-aislado .nombre {
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+}
+.intruso-nodo-aislado[data-cerrado='si'] {
+  color: var(--text-dim);
+  border-color: var(--border);
+  border-style: solid;
+  opacity: 0.7;
+}
+
+.intruso-barreras {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.intruso-barreras-lista {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.intruso-barrera {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 14px;
+  background: var(--panel-alt);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  cursor: grab;
+}
+.intruso-barrera:hover {
+  border-color: var(--cyan);
+}
+.intruso-barrera:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+.intruso-barrera.elegida {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.12);
+}
+.intruso-barrera .lado {
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.intruso-ayuda {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.intruso-final {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.intruso-final .valor {
+  font-size: var(--fs-cifra);
+  font-weight: 800;
+  color: var(--green);
+}
+.intruso-final .etiqueta {
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+}
+
+@keyframes intruso-latido {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scaleX(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes intruso-negar {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes intruso-cerrar {
+  from {
+    transform: scaleX(0.1);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (max-width: 720px) {
+  .intruso-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Se apagan ritmo y desfase. Quedan el contorno dentado y el glifo distinto,
+     que son señales estáticas y suficientes para encontrarlo. */
+  .intruso-pulso,
+  .intruso-nodo.fallo,
+  .intruso-ranura.cerrada .intruso-ranura-barra {
+    animation: none;
+  }
+  .intruso-nodo[data-irregular='si'] .intruso-pulso {
+    opacity: 1;
+  }
+}

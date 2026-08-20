@@ -43,3 +43,165 @@
 .decision-feedback .feedback-box {
   margin-top: 0;
 }
+
+/* --- Modo ilustrado ------------------------------------------------------
+   Solo se activa cuando la decisión declara `ilustracion`. Ccorca v1 y v2 no
+   lo hacen, así que nada de esto les llega.
+
+   Reparto a 1366x768: la escena se queda con ~62% del ancho del panel y el
+   bloque de pregunta/opciones con el resto. La imagen manda, el texto apoya. */
+
+/* La escena manda, pero no aplasta al panel: la columna de texto tiene un piso
+   en px, así que la pregunta y las opciones siempre tienen dónde caber. */
+.decision-ilustrada {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr);
+  gap: var(--gap-col);
+  height: 100%;
+  min-height: 0;
+}
+
+.di-escena {
+  position: relative;
+  min-height: 0;
+  border: 3px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Rótulo de consecuencia: aparece sobre la escena al elegir, y dice en dos
+   palabras qué pasó. Verde o ámbar, y siempre con texto. */
+.di-rotulo {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  background: rgba(11, 16, 32, 0.88);
+}
+.di-rotulo.bueno {
+  color: var(--green);
+  border: 1px solid var(--green);
+}
+.di-rotulo.malo {
+  color: var(--gold);
+  border: 1px solid var(--gold);
+}
+
+.di-panel {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 0.9vh, 12px);
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+}
+
+/* Tarjetas de opción: cada una con su propio dibujo. Es lo que convierte
+   "elige entre cuatro frases" en "elige entre cuatro cosas que ves". */
+.di-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(6px, 0.7vw, 12px);
+}
+
+.di-tarjeta {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px;
+  background: var(--panel-alt);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--body);
+  cursor: pointer;
+  text-align: left;
+}
+.di-tarjeta:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+.di-tarjeta:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+.di-tarjeta:disabled {
+  cursor: default;
+}
+.di-tarjeta:disabled:not(.on) {
+  opacity: 0.45;
+}
+.di-tarjeta.on {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.12);
+}
+
+.di-tarjeta-img {
+  display: block;
+  aspect-ratio: 4 / 3;
+  border-radius: 5px;
+  overflow: hidden;
+  line-height: 0;
+}
+.di-tarjeta-texto {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.25;
+}
+.di-tarjeta-marca {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--green);
+  color: #08281f;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .decision-ilustrada {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(140px, 0.9fr) auto;
+  }
+}
+
+/* Al elegir, las tarjetas descartadas sueltan su dibujo y quedan como filas de
+   texto. Sin esto, cuatro imágenes más el feedback no entran en la columna a
+   1366x768 y el "por qué" de la respuesta quedaba fuera de la pantalla.
+
+   La elegida conserva su imagen: es la que hay que seguir viendo. Y la escena
+   grande ya cambió a la consecuencia, así que no se pierde información. */
+
+.di-tarjetas.resuelta {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+}
+.di-tarjetas.resuelta .di-tarjeta {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+}
+.di-tarjetas.resuelta .di-tarjeta:not(.on) .di-tarjeta-img {
+  display: none;
+}
+.di-tarjetas.resuelta .di-tarjeta.on .di-tarjeta-img {
+  flex: 0 0 auto;
+  width: 76px;
+  aspect-ratio: 4 / 3;
+}
+.di-tarjetas.resuelta .di-tarjeta-marca {
+  position: static;
+  margin-left: auto;
+  flex: 0 0 auto;
+}

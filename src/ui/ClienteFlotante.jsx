@@ -1,4 +1,4 @@
-import EstadoCliente from './EstadoCliente';
+import RetratoCliente from './RetratoCliente';
 import '../styles/cliente-flotante.css';
 
 // Panel del cliente. Antes era un overlay `position: fixed` en la esquina
@@ -18,16 +18,17 @@ import '../styles/cliente-flotante.css';
 //   rol     string  - su rol ('Profesora')
 //   texto   string  - el mensaje activo (intro de fase o mensajeClienteDecision)
 //   estado  string  - 'idle' | 'feliz' | 'confundido' | 'molesto' | 'sorprendido'
+//   retrato string  - cómo dibujarlo: 'emoji' (default, lo de Ccorca) o 'nia'
 //
 // Si el texto está vacío, se muestra igual el retrato: el cliente nunca
 // desaparece de la pantalla, solo se queda callado.
 
-export default function ClienteFlotante({ nombre, rol, texto, estado = 'idle' }) {
+export default function ClienteFlotante({ nombre, rol, texto, estado = 'idle', retrato }) {
   return (
     <aside className="cliente-flotante" aria-live="polite">
       <div className="cabecera">
         <div className="avatar">
-          <EstadoCliente estado={estado} />
+          <RetratoCliente tipo={retrato} estado={estado} />
         </div>
         <div className="identidad">
           <div className="nombre">{nombre}</div>

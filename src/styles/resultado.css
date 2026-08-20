@@ -147,3 +147,130 @@
   font-size: 11px;
   color: var(--text-dim);
 }
+
+/* --- Bloques opcionales de escenario -------------------------------------
+   Todo lo que sigue solo se renderiza si el escenario lo declara en su
+   `presentacion` (escena, avatar, perfil, mensaje final). "Luz para Ccorca"
+   v1 y v2 no declaran ninguno, así que su pantalla de resultado no cambia.
+
+   La columna gana `overflow: auto` como red de seguridad, igual que hace
+   `.hud-panel`: con el contenido de Ccorca no hay nada que desbordar y la
+   barra no aparece; con los bloques extra de Código Cero, el scroll ocurre
+   DENTRO de la columna y nunca empuja el footer fuera de pantalla. */
+
+.resultado-columna {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.resultado-escena {
+  padding: 0;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+.resultado-epilogo-mensaje {
+  margin-top: 10px;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--green);
+}
+
+.resultado-extra {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  flex: 0 0 auto;
+}
+/* Si falta una de las dos mitades, la que queda ocupa todo el ancho. */
+.resultado-extra > :only-child {
+  grid-column: 1 / -1;
+}
+
+.resultado-duo {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 18px;
+}
+.resultado-duo-figura {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.resultado-duo-figura .retrato {
+  width: 56px;
+  height: 56px;
+}
+.resultado-duo-figura .nombre {
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.resultado-perfil {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 18px;
+  border-color: var(--cyan);
+  min-width: 0;
+}
+.resultado-perfil .nombre {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  color: var(--cyan);
+}
+.resultado-perfil .descripcion {
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.resultado-mensaje-final {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--text);
+  border-left: 3px solid var(--cyan);
+  padding-left: 12px;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 900px) {
+  .resultado-extra {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Historieta de epílogo. Ocupa el lugar que tendría la franja de ciudad, pero
+   con más alto: son dos viñetas y tienen que verse. */
+.resultado-historieta {
+  padding: 10px;
+  flex: 0 0 auto;
+  /* Acotada por arriba: es el cierre de la historia, pero el dato que el
+     estudiante vino a ver es su puntaje, y ese no puede quedar bajo el borde. */
+  max-height: clamp(150px, 24vh, 210px);
+  overflow: hidden;
+}
+
+/* El perfil comparte fila con el desglose de puntaje en vez de apilarse: a
+   1366x768 esa fila de menos es lo que hace que el puntaje y el botón queden
+   a la vista sin desplazar la columna. */
+.resultado-cierre {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  flex: 0 0 auto;
+}
+.resultado-cierre > :only-child {
+  grid-column: 1 / -1;
+}
+.resultado-cierre .resultado-desglose,
+.resultado-cierre .resultado-perfil {
+  margin: 0;
+}
