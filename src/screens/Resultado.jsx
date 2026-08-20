@@ -31,7 +31,7 @@ export default function Resultado() {
 
   return (
     <div className="resultado">
-      <TopBar colegio={jugador.colegio} />
+      <TopBar />
 
       <div className="resultado-cuerpo">
         <div className="resultado-columna">

@@ -1,0 +1,192 @@
+/* Mini-juego de mapa de calor. El usuario hace clic sobre un SVG para marcar
+   zonas críticas. El SVG del mapa va abajo, y un overlay transparente con
+   círculos cliqueables se monta encima. */
+
+.mapa-calor {
+  /* Columna flex donde el único elemento elástico es el plano: se queda con
+     el alto que sobre después del enunciado y el pie, así que el minijuego
+     entra completo sin scroll tanto en 1366x768 como en 1920x1080. Es flex y
+     no grid a propósito: el pie cambia (hint o feedback según el estado) y
+     así el layout no depende de cuántos hijos haya ni en qué orden. */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.mapa-calor > * {
+  flex: 0 0 auto;
+}
+
+.mapa-calor-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mapa-calor-pregunta {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.mapa-calor-contadores {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.mapa-calor-contadores .contador {
+  padding: 5px 9px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.mapa-calor-contadores .contador strong {
+  color: var(--cyan);
+  font-size: var(--fs-sm);
+  margin-left: 4px;
+}
+
+.mapa-calor-svg-wrap {
+  flex: 1 1 auto;
+  background: linear-gradient(180deg, #0b1220, #131d3a);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  /* Una sola celda de grid donde se apilan el plano y la capa de zonas. Es
+     grid y no `position: absolute` porque así las dos capas miden exactamente
+     lo mismo (la celda) en los dos ejes: con inset absoluto, el SVG del
+     overlay recuperaba su alto por relación de aspecto y se desalineaba. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+/* Plano y capa de zonas comparten celda, viewBox y preserveAspectRatio: por
+   eso los círculos clicables caen siempre sobre el edificio correcto, sea cual
+   sea el tamaño de la ventana.
+   (Antes esto se resolvía con `:global(svg)`, sintaxis de CSS Modules que en un
+   .css común el parser descarta: el plano crecía sin tope y el panel terminaba
+   con scroll.) */
+.mapa-calor-svg,
+.mapa-calor-overlay {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.mapa-calor-svg > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.mapa-calor-overlay {
+  pointer-events: none;
+}
+
+.mapa-calor-overlay .zona-hitbox {
+  fill: rgba(255, 255, 255, 0.001);
+  stroke: transparent;
+  stroke-width: 2;
+  pointer-events: all;
+  cursor: pointer;
+  transition: stroke 0.2s ease, fill 0.2s ease;
+}
+
+.mapa-calor-overlay .zona-hitbox:hover {
+  fill: rgba(74, 217, 255, 0.08);
+  stroke: var(--cyan);
+}
+
+.mapa-calor-overlay .zona-fill-critica {
+  fill: rgba(47, 230, 166, 0.30);
+  stroke: var(--green);
+  stroke-width: 3;
+  pointer-events: none;
+  animation: pop-in 0.3s ease-out;
+}
+
+.mapa-calor-overlay .zona-fill-trampa {
+  fill: rgba(255, 92, 106, 0.30);
+  stroke: var(--red);
+  stroke-width: 3;
+  pointer-events: none;
+  animation: pop-in 0.3s ease-out;
+}
+
+.mapa-calor-overlay .zona-label {
+  font-family: var(--pixel);
+  font-size: 24px;
+  font-weight: 700;
+  user-select: none;
+  pointer-events: none;
+}
+
+.mapa-calor-overlay .zona-marcada-critica {
+  fill: rgba(47, 230, 166, 0.10);
+  stroke: var(--green);
+  stroke-width: 2;
+}
+
+.mapa-calor-overlay .zona-marcada-trampa {
+  fill: rgba(255, 92, 106, 0.10);
+  stroke: var(--red);
+  stroke-width: 2;
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.mapa-calor-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mapa-calor-footer .hint {
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+  font-weight: 600;
+  flex: 1;
+  min-width: 200px;
+}
+
+.mapa-calor-feedback {
+  padding: clamp(9px, 1vh, 14px) 16px;
+  border-radius: 8px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.mapa-calor-feedback.ok {
+  background: rgba(47, 230, 166, 0.12);
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+
+.mapa-calor-feedback.info {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  color: var(--text);
+}

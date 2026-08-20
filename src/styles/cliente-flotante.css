@@ -1,0 +1,136 @@
+/* Panel del cliente, anclado a la fila elástica del sidebar.
+   Es la fila que absorbe el alto sobrante: en 1920x1080 la burbuja respira,
+   en 1366x768 se ajusta, y si el mensaje es largo scrollea solo la burbuja.
+   Nunca se superpone al resto del HUD. */
+
+.cliente-flotante {
+  display: grid;
+  /* La burbuja se ajusta a su texto (max-content) en vez de estirarse a la
+     fila entera: en 1920 no queda una caja rosa medio vacía. El minmax con
+     piso 0 es lo que le permite encogerse y scrollear cuando el mensaje es
+     largo y el alto escaso. */
+  grid-template-rows: auto minmax(0, max-content);
+  gap: 10px;
+  min-height: 0;
+  align-content: start;
+}
+
+/* Retrato + identidad */
+
+.cliente-flotante .cabecera {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cliente-flotante .avatar {
+  width: clamp(46px, 3.6vw, 64px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--panel-alt);
+  border: 2px solid var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex: 0 0 auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  /* Se mantiene el aire de "flotante": el retrato levita en loop. */
+  animation: cliente-levita 4.5s ease-in-out infinite;
+}
+
+.cliente-flotante .avatar .estado-cliente {
+  width: 100%;
+  height: 100%;
+}
+
+.cliente-flotante .avatar .emoji {
+  font-size: clamp(26px, 2.1vw, 38px);
+  line-height: 1;
+}
+
+.cliente-flotante .identidad {
+  min-width: 0;
+  line-height: 1.2;
+}
+.cliente-flotante .identidad .nombre {
+  font-size: var(--fs-md);
+  font-weight: 800;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cliente-flotante .identidad .rol {
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  color: var(--pink);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Burbuja del mensaje. El pico apunta al retrato (arriba a la izquierda),
+   que es donde está el que habla. */
+
+.cliente-flotante .burbuja {
+  position: relative;
+  background: var(--panel);
+  border: 2px solid var(--pink);
+  border-radius: var(--radio-panel);
+  padding: clamp(9px, 0.9vh, 14px) clamp(11px, 0.9vw, 16px);
+  color: var(--text);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  line-height: 1.45;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  min-height: 0;
+  overflow: auto;
+  /* Entra animada cada vez que el cliente dice algo nuevo. */
+  animation: burbuja-entra 0.32s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+
+.cliente-flotante .burbuja .texto {
+  margin: 0;
+}
+
+.cliente-flotante .burbuja .pico {
+  position: absolute;
+  top: -9px;
+  left: clamp(16px, 1.4vw, 24px);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 9px solid var(--pink);
+}
+
+@keyframes cliente-levita {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes burbuja-entra {
+  0% { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* En pantallas bajas el retrato no levita (el movimiento pierde gracia
+   cuando el espacio es mínimo) y la burbuja se compacta. */
+@media (max-height: 700px) {
+  .cliente-flotante .avatar {
+    animation: none;
+  }
+  .cliente-flotante .burbuja {
+    font-size: var(--fs-sm);
+    line-height: 1.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cliente-flotante .avatar,
+  .cliente-flotante .burbuja {
+    animation: none;
+  }
+}

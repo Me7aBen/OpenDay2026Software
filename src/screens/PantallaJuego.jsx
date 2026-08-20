@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useGame } from '../engine/useGame';
-import { minijuegoPorEstilo } from '../minigames';
+import { minijuegoPorTipo } from '../minigames';
 import TopBar from '../ui/TopBar';
-import EscenaCliente from '../ui/EscenaCliente';
+import ClienteFlotante from '../ui/ClienteFlotante';
+import { calcularEstadoActualDecision } from '../ui/estadosCliente';
 import '../styles/hud.css';
 
 const ORDEN_FASES = ['descubrir', 'disenar', 'construir', 'probar', 'desplegar'];
@@ -49,14 +50,13 @@ function formatearTiempo(seg) {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisionesFase, tiempoGlobalRestante, puntajeAcumulado, onAbandonar }) {
+function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisionesFase, tiempoGlobalRestante, puntajeAcumulado, cliente, onAbandonar }) {
   return (
     <div className="hud-sidebar">
-      <div className="marca">
-        <div className="word"><span style={{ color: 'var(--cyan)' }}>MISIÓN</span><br />DEPLOY</div>
-        <div className="subtitulo">Tu primer proyecto como desarrollador</div>
-      </div>
-
+      {/* Acá había un bloque de marca ("MISIÓN DEPLOY" + subtítulo) que repetía
+          el wordmark que la TopBar ya muestra permanentemente unos centímetros
+          más arriba. Costaba 79px del sidebar, que a 1366x768 son justo los que
+          necesita el mensaje del cliente para no quedar cortado. */}
       <div className="panel hud-fase-card">
         <div className="rotulo label-pixel">FASE ACTUAL <span style={{ color: 'var(--cyan)' }}>{faseIndex + 1}/{totalFases}</span></div>
         <div className="encabezado">
@@ -74,19 +74,21 @@ function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisi
         </div>
       </div>
 
-      <div className="panel hud-stat">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3.5 2" /></svg>
-        <div>
-          <div className="label-pixel">TIEMPO</div>
-          <div className="valor">{formatearTiempo(tiempoGlobalRestante)}</div>
+      <div className="hud-stats-row">
+        <div className="panel hud-stat">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3.5 2" /></svg>
+          <div>
+            <div className="label-pixel" style={{ fontSize: "10px" }}>TIEMPO</div>
+            <div className="valor">{formatearTiempo(tiempoGlobalRestante)}</div>
+          </div>
         </div>
-      </div>
 
-      <div className="panel hud-stat">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.4" strokeLinecap="round"><path d="m4 12 5 5L20 6" /></svg>
-        <div>
-          <div className="label-pixel">DECISIONES</div>
-          <div className="valor">{decisionesResueltas} / {totalDecisionesFase}</div>
+        <div className="panel hud-stat">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.4" strokeLinecap="round"><path d="m4 12 5 5L20 6" /></svg>
+          <div>
+            <div className="label-pixel" style={{ fontSize: "10px" }}>DECISIONES</div>
+            <div className="valor">{decisionesResueltas} / {totalDecisionesFase}</div>
+          </div>
         </div>
       </div>
 
@@ -107,7 +109,7 @@ function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisi
         </div>
       </div>
 
-      <div style={{ flex: 1 }} />
+      {cliente}
 
       <button type="button" className="btn-outline-danger" onClick={onAbandonar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></svg>
@@ -123,6 +125,27 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
   const [explicacionVista, setExplicacionVista] = useState(false);
   const decisionesResueltas = fase.decisiones.filter((d) => respuestas[d.id]).length;
 
+  // El cliente reacciona a la decisión en curso: si ya la respondió muestra la
+  // reacción, si no queda en idle. Habla con el mensaje de la decisión actual y,
+  // mientras no hay decisión en pantalla (intro de fase), con el intro.
+  const decisionActual = fase.decisiones[decisionIndex];
+  const estadoCliente = calcularEstadoActualDecision(
+    decisionActual,
+    decisionActual ? respuestas[decisionActual.id] : null,
+  );
+  const textoCliente = explicacionVista
+    ? decisionActual?.mensajeClienteDecision ?? fase.intro ?? ''
+    : fase.intro ?? '';
+
+  const cliente = (
+    <ClienteFlotante
+      nombre={escenario.cliente.nombre}
+      rol={escenario.cliente.rol}
+      texto={textoCliente}
+      estado={estadoCliente}
+    />
+  );
+
   const sidebar = (
     <Sidebar
       fase={fase}
@@ -132,6 +155,7 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
       totalDecisionesFase={fase.decisiones.length}
       tiempoGlobalRestante={tiempoGlobalRestante}
       puntajeAcumulado={puntajeAcumulado}
+      cliente={cliente}
       onAbandonar={onAbandonar}
     />
   );
@@ -151,10 +175,7 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
         {sidebar}
         <div className="hud-principal">
           {badge}
-          <div className="hud-escena">
-            <EscenaCliente nombre={escenario.cliente.nombre} rol={escenario.cliente.rol} dialogo={fase.intro} />
-          </div>
-          <div className="panel hud-panel hud-explicacion">
+          <div className="panel hud-panel hud-explicacion hud-explicacion-intro">
             <div className="titulo">{fase.titulo} · {fase.rol}</div>
             <div className="texto">{fase.explicacion}</div>
             <button type="button" className="btn-primary" onClick={() => setExplicacionVista(true)}>Entiendo, comenzar</button>
@@ -164,13 +185,13 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
     );
   }
 
-  const decision = fase.decisiones[decisionIndex];
-  const Minijuego = minijuegoPorEstilo[fase.estilo];
+  const decision = decisionActual;
+  const Minijuego = minijuegoPorTipo[decision.tipoInteraccion];
   const yaResuelta = !!respuestas[decision.id];
 
-  function manejarElegir(opcionIds) {
+  function manejarElegir(opcionIds, puntajeDirecto) {
     if (yaResuelta) return;
-    responderDecision(decision.id, opcionIds);
+    responderDecision(decision.id, opcionIds, puntajeDirecto);
   }
 
   return (
@@ -178,11 +199,12 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
       {sidebar}
       <div className="hud-principal">
         {badge}
-        <div className="hud-escena">
-          <EscenaCliente nombre={escenario.cliente.nombre} rol={escenario.cliente.rol} dialogo={fase.intro} />
-        </div>
-        <div className="panel hud-panel">
-          <Minijuego key={decision.id} decision={decision} onElegir={manejarElegir} />
+        <div className="panel hud-panel hud-panel-decision">
+          <Minijuego
+            key={decision.id}
+            decision={decision}
+            onElegir={manejarElegir}
+          />
           {yaResuelta && (
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
               <button type="button" className="btn-primary" onClick={siguienteDecision}>Continuar →</button>
@@ -201,7 +223,7 @@ export default function PantallaJuego() {
 
   return (
     <div className="hud">
-      <TopBar colegio="Colegio San José" />
+      <TopBar />
       <CuerpoFase
         key={fase.id}
         escenario={escenario}

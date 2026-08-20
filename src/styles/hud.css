@@ -1,45 +1,45 @@
+/* Shell del HUD de partida.
+   Contrato de layout: la pantalla es una columna rígida de 3 filas
+   (topbar / cuerpo / footer). Solo el cuerpo es elástico; topbar y footer
+   nunca se comprimen. Dentro del cuerpo hay 2 columnas (sidebar / principal).
+   Toda la cadena lleva `min-height: 0` para que el scroll, cuando hace falta,
+   ocurra DENTRO del panel del minijuego y nunca empuje el footer fuera de
+   pantalla. Referencia: 1366x768 sin scroll (docs/CLAUDE.md, regla 6). */
+
 .hud {
   width: 100%;
   height: 100vh;
-  min-height: 768px;
-  display: flex;
-  flex-direction: column;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
 }
 
 .hud-cuerpo {
-  flex: 1;
-  display: flex;
-  gap: 20px;
-  padding: 18px 24px 10px;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  gap: var(--gap-col);
+  padding: var(--shell-pad-y) var(--shell-pad-x);
   min-height: 0;
+  min-width: 0;
 }
 
-/* Sidebar */
+/* Sidebar
+   Filas: fase, puntaje, tiempo+decisiones, progreso, cliente, salir.
+   La única fila elástica es la del cliente: absorbe el alto sobrante en
+   pantallas altas y se comprime primero en pantallas bajas. */
 
 .hud-sidebar {
-  width: 290px;
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.hud-sidebar .marca .word {
-  font-family: var(--pixel);
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1.5;
-}
-.hud-sidebar .marca .subtitulo {
-  font-size: 12px;
-  color: var(--text-dim);
-  font-weight: 600;
-  margin-top: 4px;
+  display: grid;
+  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+  gap: var(--gap-row);
+  min-height: 0;
+  min-width: 0;
 }
 
 .hud-fase-card {
-  padding: 14px;
+  padding: var(--pad-panel);
+  min-width: 0;
 }
 .hud-fase-card .rotulo {
   margin-bottom: 8px;
@@ -50,8 +50,8 @@
   gap: 10px;
 }
 .hud-fase-card .icono {
-  width: 34px;
-  height: 34px;
+  width: clamp(30px, 2.2vw, 40px);
+  aspect-ratio: 1;
   border-radius: 8px;
   background: var(--panel-alt);
   display: flex;
@@ -61,25 +61,52 @@
   flex: 0 0 auto;
 }
 .hud-fase-card .titulo {
-  font-size: 17px;
+  font-size: var(--fs-lg);
   font-weight: 800;
 }
+/* La descripción de fase es contexto, no instrucción: se recorta a 3 líneas
+   para que nunca desplace las stats en pantallas bajas. */
 .hud-fase-card .descripcion {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-dim);
   margin-top: 8px;
   line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
 
 .hud-stat {
-  padding: 12px 14px;
+  padding: clamp(8px, 0.9vh, 14px) var(--pad-panel);
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+}
+.hud-stat svg {
+  flex: 0 0 auto;
 }
 .hud-stat .valor {
-  font-size: 20px;
+  font-size: var(--fs-cifra);
   font-weight: 800;
+  line-height: 1.1;
+}
+
+/* Fila que agrupa TIEMPO y DECISIONES en una misma línea. */
+.hud-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-col);
+  min-width: 0;
+}
+.hud-stats-row .panel.hud-stat {
+  min-width: 0;
+  gap: 8px;
+}
+.hud-stats-row .hud-stat .valor {
+  font-size: var(--fs-lg);
 }
 
 .hud-progreso .puntos {
@@ -93,63 +120,151 @@
 /* Columna principal */
 
 .hud-principal {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--gap-row);
   min-width: 0;
+  min-height: 0;
 }
 
 .hud-badge {
-  padding: 10px 18px;
+  padding: clamp(7px, 0.8vh, 12px) var(--pad-panel);
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: clamp(8px, 0.8vw, 16px);
+  min-width: 0;
 }
 .hud-badge .titulo {
-  font-size: 14px;
+  font-size: var(--fs-md);
   font-weight: 800;
+  flex: 0 0 auto;
 }
 .hud-badge .separador {
   color: var(--border);
 }
+/* El dolor del cliente cede espacio antes que el título del escenario. */
 .hud-badge .detalle {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-dim);
   font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.hud-escena {
-  flex: 1;
+.hud-intro {
+  display: flex;
+  gap: var(--gap-col);
   min-height: 0;
 }
 
+.hud-escena {
+  flex: 0 0 clamp(260px, 22vw, 360px);
+  min-height: 0;
+  display: flex;
+}
+
+.hud-escena .escena {
+  flex: 1;
+}
+
+/* El panel del minijuego es el único contenedor con scroll propio, y solo
+   como red de seguridad: cada minijuego debe caber sin activarlo. */
 .hud-panel {
-  padding: 16px 20px;
-  max-height: 300px;
-  overflow-y: auto;
+  padding: var(--pad-panel) clamp(14px, 1.3vw, 26px);
+  min-height: 0;
+  overflow: auto;
+}
+
+.hud-panel-decision {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .hud-explicacion .titulo {
-  font-size: 15px;
+  font-size: var(--fs-lg);
   font-weight: 800;
   margin-bottom: 8px;
 }
 .hud-explicacion .texto {
-  font-size: 14px;
+  font-size: var(--fs-md);
   color: var(--text-dim);
   line-height: 1.5;
   margin-bottom: 14px;
 }
 
+/* Intro de fase. Es la pantalla más "vacía" del juego: un párrafo solo en un
+   panel enorme. Se ataca por tres lados a la vez, porque agrandar la letra sin
+   más solo produce líneas larguísimas:
+     - el cuerpo usa --fs-lectura, bastante mayor que la UI;
+     - la medida se acota a 62ch (antes 90ch): con texto más grande, líneas más
+       cortas ocupan MÁS alto y se leen mejor;
+     - el texto se aclara a --text (era --text-dim), que a este tamaño ya no
+       necesita atenuarse y es lo que hay que leer. */
+.hud-explicacion-intro {
+  display: grid;
+  /* La medida de 62ch limita la COLUMNA de texto, no el panel: el panel sigue
+     ocupando todo el ancho (su borde enmarca el área) y el párrafo queda
+     centrado adentro. Puesto como max-width del panel, lo encogía a 578px y
+     lo dejaba flotando en medio de la columna. */
+  grid-template-columns: minmax(0, 62ch);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  justify-content: center;
+  justify-items: start;
+  align-content: center;
+  gap: clamp(10px, 1.4vh, 22px);
+}
+.hud-explicacion-intro .titulo {
+  font-size: var(--fs-xl);
+  margin-bottom: 0;
+  color: var(--cyan);
+}
+.hud-explicacion-intro .texto {
+  font-size: var(--fs-lectura);
+  color: var(--text);
+  line-height: 1.55;
+  margin-bottom: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
 .hud-footer {
-  height: 34px;
-  flex: 0 0 auto;
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  font-size: 11px;
+  gap: 16px;
+  padding: clamp(6px, 0.8vh, 10px) var(--shell-pad-x);
+  font-size: var(--fs-xs);
   color: var(--text-dim);
+}
+
+/* Pantallas bajas (1366x720, o 1366x768 con barra de tareas y chrome del
+   navegador comiendo alto): se recorta lo decorativo, nunca lo jugable. */
+@media (max-height: 760px) {
+  .hud-fase-card .descripcion {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+  .hud-footer span:last-child {
+    display: none;
+  }
+}
+
+@media (max-height: 760px) {
+  .hud-explicacion-intro .texto {
+    font-size: clamp(17px, 1.25vw, 21px);
+  }
+}
+
+@media (max-height: 660px) {
+  .hud-fase-card .descripcion {
+    display: none;
+  }
+  .hud-explicacion-intro .texto {
+    font-size: clamp(16px, 1.15vw, 19px);
+    line-height: 1.45;
+  }
 }

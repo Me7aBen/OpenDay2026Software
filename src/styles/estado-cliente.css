@@ -1,0 +1,77 @@
+/* Reacción del personaje: emoji grande con animaciones simples.
+   Las animaciones se disparan al cambiar el estado (key={estado} en el
+   <span> hace que el elemento se remonte y la animación arranque). */
+
+.estado-cliente {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  position: relative;
+}
+
+.estado-cliente .emoji {
+  font-size: 72px;
+  line-height: 1;
+  display: inline-block;
+  transform-origin: center;
+}
+
+/* Idle: ninguna animación, leve respiración. */
+.estado-cliente .estado-idle {
+  animation: idle-respiracion 3s ease-in-out infinite;
+}
+
+/* Feliz: bounce suave. */
+.estado-cliente .estado-feliz {
+  animation: feliz-bounce 0.6s ease-in-out 2;
+}
+
+/* Confundido: headshake (giro leve a los costados). */
+.estado-cliente .estado-confundido {
+  animation: confundido-shake 0.7s ease-in-out 2;
+}
+
+/* Molesto: recoil (tirón hacia atrás). */
+.estado-cliente .estado-molesto {
+  animation: molesto-recoil 0.5s ease-in-out 2;
+}
+
+/* Sorprendido: pop (escala de 0 a 1.2 a 1). */
+.estado-cliente .estado-sorprendido {
+  animation: sorprendido-pop 0.7s ease-out 1;
+}
+
+@keyframes idle-respiracion {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes feliz-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  25% { transform: translateY(-12px) scale(1.1); }
+  50% { transform: translateY(0) scale(1); }
+  75% { transform: translateY(-6px) scale(1.05); }
+}
+
+@keyframes confundido-shake {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-12deg); }
+  40% { transform: rotate(10deg); }
+  60% { transform: rotate(-8deg); }
+  80% { transform: rotate(6deg); }
+}
+
+@keyframes molesto-recoil {
+  0% { transform: translateX(0) scale(1); }
+  30% { transform: translateX(-8px) scale(0.95); }
+  60% { transform: translateX(3px) scale(1.05); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+@keyframes sorprendido-pop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}

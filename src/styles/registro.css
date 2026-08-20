@@ -1,7 +1,10 @@
 .registro {
   width: 100%;
   height: 100vh;
-  min-height: 768px;
+  height: 100dvh;
+  /* Sin `min-height: 768px`: en 1366x720 (o en 768 con el chrome del navegador
+     comiendo alto) ese piso forzaba scroll de página. El alto lo manda la
+     ventana y el contenido se acomoda dentro. */
   display: flex;
   flex-direction: column;
   overflow: hidden;

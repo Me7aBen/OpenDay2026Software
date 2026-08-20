@@ -1,0 +1,509 @@
+/* Minijuego de arquitectura de nodos.
+   Layout: encabezado fijo + tablero elástico. El tablero son dos columnas
+   (lienzo | panel del paso), y el panel es el que aloja la mecanografía, así
+   que escribir código nunca empuja el mapa fuera de la pantalla.
+   Las piezas son botones HTML en columnas; las líneas van en un SVG que se
+   superpone y usa las posiciones reales medidas en el DOM. */
+
+.arq {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--gap-row);
+  min-height: 0;
+  flex: 1;
+}
+
+.arq-vacia {
+  text-align: center;
+  color: var(--text-dim);
+  padding: 40px;
+}
+
+/* Encabezado con medidores. */
+
+.arq-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.arq-medidores {
+  display: flex;
+  gap: clamp(10px, 1vw, 20px);
+  flex: 0 0 auto;
+}
+
+.arq-medidores .medidor {
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  font-weight: 700;
+}
+.arq-medidores .medidor strong {
+  color: var(--text);
+  font-size: var(--fs-sm);
+}
+.arq-medidores .medidor strong.pts {
+  color: var(--gold);
+}
+
+/* Tablero. */
+
+.arq-tablero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(280px, 24%, 400px);
+  gap: var(--gap-col);
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Lienzo: contiene las columnas de piezas y el SVG de las conexiones. */
+
+.arq-lienzo {
+  position: relative;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(143, 160, 194, 0.18) 1px, transparent 0) 0 0 / 22px 22px,
+    linear-gradient(180deg, #0b1220, #131d3a);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: clamp(10px, 1.2vh, 20px) clamp(10px, 1vw, 20px);
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  /* Centra el diagrama cuando sobra alto (los márgenes automáticos no
+     centran en flujo de bloque, por eso el lienzo es flex). */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.arq-lienzo.conectando {
+  cursor: crosshair;
+  border-color: rgba(255, 209, 102, 0.5);
+}
+
+.arq-lineas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.arq-conexion {
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 3;
+  stroke-linecap: round;
+  /* El <path> lleva pathLength="1" (atributo, no propiedad CSS), así que un
+     dasharray de 1 cubre toda la línea y el trazado dura lo mismo sea corta o
+     larga la conexión. */
+  stroke-dasharray: 1;
+  animation: arq-trazar 0.45s ease-out both;
+  filter: drop-shadow(0 0 6px rgba(47, 230, 166, 0.45));
+}
+
+.arq-punta {
+  fill: var(--green);
+  stroke: none;
+}
+
+.arq-linea-cursor {
+  stroke: var(--gold);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 8 6;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+@keyframes arq-trazar {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Columnas de piezas. Las piezas se reparten el alto disponible, así que el
+   mapa se estira o se comprime con la ventana sin tocar nada más. */
+
+.arq-columnas {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--columnas, 3), minmax(0, 1fr));
+  /* El hueco entre columnas es donde se ven las conexiones: si es muy
+     angosto, la línea queda un stub de 20px y no se lee el flujo. */
+  gap: clamp(30px, 3.2vw, 64px);
+  align-items: stretch;
+  /* En 1366 el diagrama usa todo el alto del lienzo; en 1920 se topa en 560 y
+     queda centrado, para que no se estire hasta parecer vacío. */
+  width: 100%;
+  height: 100%;
+  max-height: min(100%, 560px);
+  flex: 0 1 auto;
+}
+
+.arq-columna {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.arq-columna-titulo {
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.arq-columna-piezas {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(10px, 1.6vh, 24px);
+  min-height: 0;
+}
+
+/* Pieza. Es un <button> de verdad: hover, foco y teclado gratis. */
+
+.arq-nodo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 0.6vw, 12px);
+  width: 100%;
+  min-height: clamp(54px, 7.5vh, 92px);
+  padding: clamp(9px, 1.1vh, 16px) clamp(8px, 0.7vw, 14px);
+  background: #1a2440;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  text-align: left;
+  font-family: var(--body);
+  color: var(--text-dim);
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease,
+    transform 0.15s ease, box-shadow 0.25s ease;
+}
+
+.arq-nodo-icono {
+  font-size: clamp(18px, 1.5vw, 26px);
+  line-height: 1;
+  flex: 0 0 auto;
+  filter: grayscale(1) opacity(0.55);
+  transition: filter 0.25s ease;
+}
+
+.arq-nodo-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.arq-nodo-label {
+  font-family: var(--pixel);
+  font-size: var(--fs-sm);
+  letter-spacing: 1px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.arq-nodo-subtitulo {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-dim);
+  line-height: 1.25;
+}
+
+/* Estados. Un solo atributo `data-estado` decide todo el aspecto: se lee de
+   un vistazo y no hay combinaciones de clases que se pisen entre sí. */
+
+.arq-nodo[data-estado='apagada'] {
+  opacity: 0.75;
+}
+
+.arq-nodo[data-estado='encendida'] {
+  background: rgba(47, 230, 166, 0.12);
+  border-color: var(--green);
+  color: var(--green);
+}
+.arq-nodo[data-estado='encendida'] .arq-nodo-icono {
+  filter: none;
+}
+.arq-nodo[data-estado='encendida'] .arq-nodo-subtitulo {
+  color: rgba(47, 230, 166, 0.75);
+}
+
+/* Objetivo: la pieza que hay que tocar ahora. Late para que no haya dudas. */
+.arq-nodo[data-estado='objetivo'] {
+  background: rgba(74, 217, 255, 0.14);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  animation: arq-late 1.6s ease-in-out infinite;
+}
+.arq-nodo[data-estado='objetivo'] .arq-nodo-icono {
+  filter: none;
+}
+.arq-nodo[data-estado='objetivo'] .arq-nodo-subtitulo {
+  color: rgba(74, 217, 255, 0.8);
+}
+
+/* Una pieza ya encendida que además es la que hay que tocar ahora conserva
+   el verde de "esto ya está construido" y suma el anillo cian de "actúa acá".
+   Son dos informaciones distintas y el jugador necesita las dos. */
+.arq-nodo[data-estado='objetivo'][data-encendida='si'],
+.arq-nodo[data-estado='destino'][data-encendida='si'] {
+  background: rgba(47, 230, 166, 0.14);
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 0 0 0 3px rgba(74, 217, 255, 0.28);
+}
+.arq-nodo[data-estado='objetivo'][data-encendida='si'] .arq-nodo-subtitulo,
+.arq-nodo[data-estado='destino'][data-encendida='si'] .arq-nodo-subtitulo {
+  color: rgba(47, 230, 166, 0.75);
+}
+
+/* Origen ya tomado: de acá sale la línea que sigue al cursor. */
+.arq-nodo[data-estado='origen'] {
+  background: rgba(255, 209, 102, 0.24);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.18);
+}
+.arq-nodo[data-estado='origen'] .arq-nodo-icono {
+  filter: none;
+}
+
+/* Destino esperado: dónde tiene que terminar la conexión. */
+.arq-nodo[data-estado='destino'] {
+  background: rgba(74, 217, 255, 0.14);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  border-style: dashed;
+  animation: arq-late 1.2s ease-in-out infinite;
+}
+.arq-nodo[data-estado='destino'] .arq-nodo-icono {
+  filter: none;
+}
+
+.arq-nodo[data-estado='objetivo']:hover,
+.arq-nodo[data-estado='destino']:hover,
+.arq-nodo[data-estado='origen']:hover {
+  transform: translateY(-2px);
+}
+
+.arq-nodo:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+/* Señal del paso actual: punto que orbita el borde de la pieza a tocar. */
+.arq-nodo-senal {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 0 0 rgba(74, 217, 255, 0.6);
+  animation: arq-senal 1.6s ease-out infinite;
+}
+
+.arq-nodo[data-estado='origen'] .arq-nodo-senal {
+  background: var(--gold);
+}
+
+@keyframes arq-late {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 217, 255, 0); }
+  50% { box-shadow: 0 0 0 5px rgba(74, 217, 255, 0.16); }
+}
+
+@keyframes arq-senal {
+  0% { box-shadow: 0 0 0 0 rgba(74, 217, 255, 0.55); }
+  100% { box-shadow: 0 0 0 12px rgba(74, 217, 255, 0); }
+}
+
+/* Panel del paso: narración, instrucción, mecanografía y progreso. */
+
+.arq-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--gap-row);
+  min-height: 0;
+  min-width: 0;
+}
+
+.arq-narracion {
+  background: var(--panel-alt);
+  border-left: 4px solid var(--cyan);
+  border-radius: 6px;
+  padding: clamp(9px, 1vh, 14px) clamp(11px, 0.9vw, 16px);
+  font-size: var(--fs-md);
+  color: var(--text);
+  line-height: 1.45;
+  min-height: 0;
+  overflow: auto;
+}
+
+.arq-narracion .etiqueta {
+  display: block;
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  color: var(--cyan);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+/* La fila del medio cambia de contenido según la fase del paso, pero siempre
+   ocupa el mismo hueco: el panel no salta al pasar de instrucción a teclado. */
+.arq-instruccion,
+.arq-mecanografia,
+.arq-avanzar {
+  grid-row: 2;
+  align-self: start;
+  min-height: 0;
+}
+
+.arq-instruccion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: clamp(9px, 1vh, 14px) clamp(11px, 0.9vw, 16px);
+  background: var(--panel-alt);
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+}
+.arq-instruccion .verbo {
+  font-family: var(--pixel);
+  font-size: var(--fs-sm);
+  letter-spacing: 1px;
+  color: var(--gold);
+  font-weight: 700;
+}
+.arq-instruccion .detalle {
+  font-size: var(--fs-sm);
+  color: var(--text);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.arq-instruccion .hint-cancelar {
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.arq-mecanografia {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+}
+.arq-mecanografia .label-pixel {
+  color: var(--cyan);
+  font-size: var(--fs-xs);
+}
+
+.arq-avanzar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.arq-avanzar .feedback-box {
+  margin-top: 0;
+  width: 100%;
+  font-size: var(--fs-sm);
+}
+
+/* Progreso de pasos: una barra por paso. Reemplaza al "Pasos: 3/6" como
+   referencia visual de cuánto falta. */
+.arq-progreso {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.arq-progreso-paso {
+  flex: 1 1 0;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  transition: background 0.3s ease;
+}
+.arq-progreso-paso[data-estado='hecho'] {
+  background: var(--green);
+}
+.arq-progreso-paso[data-estado='actual'] {
+  background: var(--cyan);
+}
+
+/* Vista de finalizado. */
+
+.arq-final {
+  background: rgba(47, 230, 166, 0.08);
+  border: 2px solid var(--green);
+  border-radius: 10px;
+  padding: clamp(16px, 2vh, 28px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.arq-final .puntos-finales {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.arq-final .puntos-finales .valor {
+  font-family: var(--pixel);
+  font-size: clamp(36px, 3.4vw, 60px);
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+
+.arq-final .puntos-finales .etiqueta {
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.arq-final .feedback-final {
+  color: var(--text);
+  font-size: var(--fs-md);
+  max-width: 46ch;
+  line-height: 1.45;
+}
+
+/* Pantallas angostas (no es el objetivo del taller, pero que no se rompa):
+   el panel del paso pasa debajo del lienzo. */
+@media (max-width: 1100px) {
+  .arq-tablero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(220px, 1fr) auto;
+  }
+  .arq-panel {
+    grid-template-rows: auto auto auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arq-nodo,
+  .arq-nodo-senal,
+  .arq-conexion {
+    animation: none;
+  }
+}

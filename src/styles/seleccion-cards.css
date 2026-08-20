@@ -1,0 +1,194 @@
+/* Mini-juego de cards cliqueables. El usuario elige una de N cards, cada una
+   con un mockup/imagen y descripción. */
+
+.seleccion-cards {
+  /* Igual que el mapa de calor: el único elemento elástico es la grilla de
+     cards, así el minijuego entra sin scroll en 1366x768 y aprovecha el alto
+     extra en 1920x1080. */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.seleccion-cards > * {
+  flex: 0 0 auto;
+}
+
+.seleccion-cards-pregunta {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.seleccion-cards-grid {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* La fila se declara elástica a propósito. Con la fila implícita `auto`, el
+     mockup (un SVG con viewBox) la estiraba a su relación de aspecto y la
+     grilla desbordaba el panel. Con `minmax(0, 1fr)` la altura la manda el
+     espacio disponible y el mockup se ajusta dentro. */
+  grid-template-rows: minmax(0, 1fr);
+  gap: var(--gap-col);
+  width: 100%;
+  min-height: 0;
+}
+
+.card {
+  position: relative;
+  background: var(--panel);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+  outline: none;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-2px);
+}
+
+.card:focus-visible {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(74, 217, 255, 0.3);
+}
+
+.card-elegida {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.08);
+  box-shadow: 0 0 0 3px rgba(47, 230, 166, 0.2);
+}
+
+/* La card reparte su alto: el mockup se queda con lo que sobre después del
+   texto, y nunca lo desborda. */
+.card-imagen {
+  flex: 1 1 auto;
+  background: linear-gradient(180deg, #0b1220, #182543);
+  border-radius: 8px;
+  padding: 12px;
+  min-height: clamp(90px, 12vh, 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Antes esta regla usaba `:global(svg)`, sintaxis de CSS Modules que en un
+   .css común el parser descarta: el mockup crecía por relación de aspecto y
+   estiraba la card. El SVG trae viewBox, así que con la caja definida se
+   ajusta solo. */
+.card-imagen > svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+.card-info {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-label {
+  font-family: var(--pixel);
+  font-size: var(--fs-md);
+  letter-spacing: 1px;
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+.card-descripcion {
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.card-marca {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: var(--green);
+  color: #08281f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(47, 230, 166, 0.4);
+}
+
+.seleccion-cards-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.seleccion-cards-footer .hint {
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+  font-weight: 600;
+  flex: 1;
+  min-width: 200px;
+}
+
+.seleccion-cards-feedback {
+  padding: clamp(9px, 1vh, 14px) 16px;
+  border-radius: 8px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seleccion-cards-feedback.ok {
+  background: rgba(47, 230, 166, 0.12);
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+
+.seleccion-cards-feedback.info {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.seleccion-cards-puntaje {
+  font-family: var(--pixel);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+
+@media (max-width: 720px) {
+  .seleccion-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 721px) and (max-width: 1100px) {
+  .seleccion-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

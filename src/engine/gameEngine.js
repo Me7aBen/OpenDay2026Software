@@ -9,7 +9,59 @@ export function contarDecisionesTotales(escenario) {
   return escenario.fases.reduce((total, fase) => total + fase.decisiones.length, 0);
 }
 
-export function calcularPuntajeDecision(decision, opcionIds) {
+export function calcularPuntajeDecision(decision, opcionIds, puntajeDirecto = null) {
+  // Caso especial: decisiones compuestas (arquitectura-nodos) que ya
+  // calcularon su puntaje internamente paso a paso. El componente nos pasa
+  // el total acumulado. No leemos `opciones`.
+  if (decision.tipoInteraccion === 'arquitectura-nodos') {
+    // Si completa la arquitectura a pleno (todos los pasos a 30), suma
+    // `bonusArquitecturaCompleta` del metaMinijuego del JSON.
+    const pasos = decision.metaMinijuego?.pasos ?? [];
+    const maximoPosible = pasos.reduce(
+      (acc, p) => acc + (p.puntosMax ?? 0),
+      0,
+    );
+    const puntaje = puntajeDirecto ?? 0;
+    const bonus =
+      maximoPosible > 0 && puntaje >= maximoPosible
+        ? (decision.metaMinijuego?.bonusArquitecturaCompleta ?? 0)
+        : 0;
+    return { puntaje, bono: bonus };
+  }
+
+  // Mapa de calor: el componente manda los ids de las zonas marcadas (únicas,
+  // no se cuentan re-clics). El motor:
+  //   1. Cuenta cuántas zonas son críticas (= aciertos).
+  //   2. Mira la tablaPuntaje por ese número de aciertos.
+  //   3. Descuenta `penalizacionPorIntentoExtra` por cada clic en una zona
+  //      NO crítica (= int_util = intentos - aciertos).
+  //   4. El puntaje no baja de 0.
+  if (decision.tipoInteraccion === 'mapa-calor') {
+    const meta = decision.metaMinijuego ?? {};
+    const zonas = meta.zonasClicables ?? [];
+    const penalizacionPorIntentoExtra = meta.penalizacionPorIntentoExtra ?? 0;
+    const aciertos = opcionIds.filter((id) => {
+      const zona = zonas.find((z) => z.id === id);
+      return zona?.esCritica;
+    }).length;
+    const puntajeBase = decision.tablaPuntaje?.[String(aciertos)] ?? 0;
+    const errores = opcionIds.length - aciertos;
+    const penalizacion = errores * penalizacionPorIntentoExtra;
+    const puntaje = Math.max(0, puntajeBase - penalizacion);
+    return { puntaje, bono: 0 };
+  }
+
+  // Selección entre cards: el componente manda el id de la imagen elegida.
+  // El motor busca el puntaje en `metaMinijuego.imagenes[].puntaje`.
+  if (decision.tipoInteraccion === 'seleccion-cards') {
+    const imagenes = decision.metaMinijuego?.imagenes ?? [];
+    const imagen = imagenes.find((i) => i.id === opcionIds[0]);
+    return {
+      puntaje: imagen?.puntaje ?? 0,
+      bono: imagen?.bonus?.puntos ?? 0,
+    };
+  }
+
   if (decision.tipoInteraccion === 'seleccion-multiple') {
     const correctas = opcionIds.filter((id) => {
       const opcion = decision.opciones.find((o) => o.id === id);
