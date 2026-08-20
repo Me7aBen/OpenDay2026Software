@@ -59,12 +59,45 @@
   color: var(--text-dim);
 }
 
+/* Botón de silencio de la música. Discreto: es un control del facilitador,
+   no una acción del juego. */
+.topbar-musica {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  padding: 0;
+  background: transparent;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.topbar-musica:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+}
+.topbar-musica:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+/* Silenciada: se marca en rojo tenue para que se vea de lejos que el audio
+   está cortado a propósito. */
+.topbar-musica[aria-pressed='true'] {
+  color: var(--red);
+  border-color: rgba(255, 92, 106, 0.5);
+}
+
 .topbar-profile {
   display: flex;
   align-items: center;
   gap: 10px;
   padding-left: 18px;
   border-left: 1px solid var(--border);
+  min-width: 0;
 }
 .topbar-profile .avatar {
   width: 34px;
@@ -76,16 +109,27 @@
   justify-content: center;
   font-size: 16px;
 }
+/* Nombre arriba y colegio abajo: la identidad es lo prominente y la
+   institución el dato secundario. Los dos recortan con elipsis, porque un
+   nombre de colegio largo no puede empujar los links de la barra. */
 .topbar-profile .meta {
   line-height: 1.15;
+  min-width: 0;
+  max-width: clamp(120px, 12vw, 220px);
 }
-.topbar-profile .meta .invitado {
-  font-size: 11px;
-  color: var(--text-dim);
-  font-weight: 600;
-}
+.topbar-profile .meta .nombre,
 .topbar-profile .meta .colegio {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.topbar-profile .meta .nombre {
   font-size: 13px;
   color: var(--text);
   font-weight: 700;
+}
+.topbar-profile .meta .colegio {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
 }

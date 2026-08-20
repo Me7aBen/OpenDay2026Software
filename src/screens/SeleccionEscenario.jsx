@@ -1,10 +1,24 @@
 import { useGame } from '../engine/useGame';
 import ccorca from '../content/ccorca.json';
+import ccorcaV2 from '../content/ccorca-v2.json';
 import TopBar from '../ui/TopBar';
 import '../styles/seleccion.css';
 
 // Escenarios B y C se agregan aquí como solo-contenido, sin tocar el motor.
-const ESCENARIOS_DISPONIBLES = [ccorca];
+// ccorca-v2 es la versión paralela con la mecánica de arquitectura-nodos en
+// la fase Construir. Convive con ccorca (v1) para poder comparar.
+const ESCENARIOS_DISPONIBLES = [
+  {
+    ...ccorca,
+    titulo: 'Luz para Ccorca (v1)',
+    etiqueta: 'ENERGÍA LIMPIA',
+  },
+  {
+    ...ccorcaV2,
+    titulo: 'Luz para Ccorca (v2)',
+    etiqueta: 'ENERGÍA LIMPIA · ARQUITECTURA',
+  },
+];
 
 const PROXIMAMENTE = [
   {
@@ -30,7 +44,7 @@ export default function SeleccionEscenario() {
 
   return (
     <div className="seleccion">
-      <TopBar colegio="Colegio San José" />
+      <TopBar />
 
       <div className="seleccion-cuerpo">
         <div className="seleccion-encabezado">
@@ -40,7 +54,7 @@ export default function SeleccionEscenario() {
           </div>
         </div>
 
-        <div className="seleccion-cards">
+        <div className="seleccion-escenarios">
           {ESCENARIOS_DISPONIBLES.map((escenario) => (
             <div className="seleccion-card disponible" key={escenario.id}>
               <div className="portada" style={{ background: 'linear-gradient(160deg,#1c2b57,#2c3f74)' }}>
@@ -50,7 +64,7 @@ export default function SeleccionEscenario() {
                 </svg>
               </div>
               <div>
-                <div className="etiqueta" style={{ color: 'var(--gold)' }}>ENERGÍA LIMPIA</div>
+                <div className="etiqueta" style={{ color: 'var(--gold)' }}>{escenario.etiqueta}</div>
                 <div className="titulo">{escenario.titulo}</div>
                 <div className="dolor">{escenario.cliente.dolorFrase}</div>
               </div>

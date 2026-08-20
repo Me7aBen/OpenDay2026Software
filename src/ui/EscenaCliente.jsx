@@ -1,9 +1,21 @@
 import '../styles/escena-cliente.css';
+import EstadoCliente from './EstadoCliente';
 
 // Ilustración placeholder del cliente del escenario (paisaje + colegio +
-// personaje + diálogo). El arte de personaje real (retrato ilustrado) es un
-// encargo aparte, ver docs/propuesta-taller-simulador-software.md §9.
-export default function EscenaCliente({ nombre, rol, dialogo }) {
+// personaje + burbuja + emoji). El arte de personaje real (retrato
+// ilustrado) es un encargo aparte, ver docs/propuesta-taller-simulador-software.md §9.
+//
+// La burbuja de diálogo recepciona todos los mensajes del cliente: el
+// `intro` de la fase al arrancar y el `mensajeClienteDecision` de cada
+// decisión cuando cambia. El componente padre (PantallaJuego) decide qué
+// texto pasar en cada momento.
+//
+// Props:
+//   nombre   string
+//   rol      string
+//   dialogo  string  - el texto activo (intro o mensaje de la decisión)
+//   estado   'idle' | 'feliz' | 'confundido' | 'molesto' | 'sorprendido'
+export default function EscenaCliente({ nombre, rol, dialogo, estado = 'idle' }) {
   return (
     <div className="escena">
       <svg className="fondo" viewBox="0 0 640 400" preserveAspectRatio="xMidYMax slice">
@@ -70,30 +82,33 @@ export default function EscenaCliente({ nombre, rol, dialogo }) {
         </g>
       </svg>
 
-      <div className="escena-personaje">
-        <div style={{ width: 16, height: 16, background: '#241a33', marginBottom: -2 }} />
-        <div style={{ display: 'flex' }}>
-          <div style={{ width: 6, height: 22, background: '#241a33' }} />
-          <div style={{ width: 38, height: 22, background: '#f0c8a0' }} />
-          <div style={{ width: 6, height: 22, background: '#241a33' }} />
+      <div className="escena-personaje-wrap">
+        <div className="escena-personaje">
+          <div style={{ width: 16, height: 16, background: '#241a33', marginBottom: -2 }} />
+          <div style={{ display: 'flex' }}>
+            <div style={{ width: 6, height: 22, background: '#241a33' }} />
+            <div style={{ width: 38, height: 22, background: '#f0c8a0' }} />
+            <div style={{ width: 6, height: 22, background: '#241a33' }} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 50, height: 8, background: '#f0c8a0', position: 'relative', top: -1 }}>
+            <div style={{ width: 10, height: 4, border: '2px solid #241a33', margin: '0 2px' }} />
+            <div style={{ width: 10, height: 4, border: '2px solid #241a33', margin: '0 2px' }} />
+          </div>
+          <div style={{ width: 70, height: 58, background: '#6a3f8f', borderTop: '6px solid #56327a' }} />
+          <div style={{ display: 'flex', width: 74, justifyContent: 'space-between', marginTop: -4 }}>
+            <div style={{ width: 16, height: 34, background: '#f0c8a0' }} />
+            <div style={{ width: 16, height: 34, background: '#f0c8a0' }} />
+          </div>
+          <div style={{ display: 'flex', width: 70, justifyContent: 'space-between' }}>
+            <div style={{ width: 22, height: 30, background: '#2b2440' }} />
+            <div style={{ width: 22, height: 30, background: '#2b2440' }} />
+          </div>
+          <div style={{ display: 'flex', width: 70, justifyContent: 'space-between' }}>
+            <div style={{ width: 24, height: 10, background: '#1c1830' }} />
+            <div style={{ width: 24, height: 10, background: '#1c1830' }} />
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 50, height: 8, background: '#f0c8a0', position: 'relative', top: -1 }}>
-          <div style={{ width: 10, height: 4, border: '2px solid #241a33', margin: '0 2px' }} />
-          <div style={{ width: 10, height: 4, border: '2px solid #241a33', margin: '0 2px' }} />
-        </div>
-        <div style={{ width: 70, height: 58, background: '#6a3f8f', borderTop: '6px solid #56327a' }} />
-        <div style={{ display: 'flex', width: 74, justifyContent: 'space-between', marginTop: -4 }}>
-          <div style={{ width: 16, height: 34, background: '#f0c8a0' }} />
-          <div style={{ width: 16, height: 34, background: '#f0c8a0' }} />
-        </div>
-        <div style={{ display: 'flex', width: 70, justifyContent: 'space-between' }}>
-          <div style={{ width: 22, height: 30, background: '#2b2440' }} />
-          <div style={{ width: 22, height: 30, background: '#2b2440' }} />
-        </div>
-        <div style={{ display: 'flex', width: 70, justifyContent: 'space-between' }}>
-          <div style={{ width: 24, height: 10, background: '#1c1830' }} />
-          <div style={{ width: 24, height: 10, background: '#1c1830' }} />
-        </div>
+        <EstadoCliente estado={estado} />
       </div>
 
       <div className="escena-dialogo">

@@ -101,6 +101,59 @@ en vez del `feedback` de una opción concreta. Se usa en la fase "construir"
 (`src/minigames/Logica.jsx`), donde el estudiante literalmente escribe el
 valor del umbral o la hora, tal como en la propuesta original (§5, Fase 3).
 
+### `tipoInteraccion: 'arquitectura-nodos'`
+
+El minijuego de la fase "construir" (`src/minigames/ArquitecturaNodos.jsx`).
+Toda su configuración va en `metaMinijuego` y devuelve **un solo puntaje** al
+motor: la suma de lo que el jugador saca en cada paso de mecanografía.
+
+```json
+"metaMinijuego": {
+  "nodos": [
+    { "id": "back", "label": "BACKEND", "icono": "⚙️", "subtitulo": "el cerebro que decide" }
+  ],
+  "columnas": [
+    { "titulo": "LO QUE VE DON TOMÁS", "nodos": ["app"] },
+    { "titulo": "EL CEREBRO",          "nodos": ["back"] },
+    { "titulo": "LO QUE HACE EL TRABAJO", "nodos": ["db", "api-sms"] }
+  ],
+  "pasos": [
+    { "id": "p1", "tipo": "activar",  "nodoObjetivo": "back",
+      "codigo": "recibir_alerta(bateria)", "puntosMax": 30, "puntosMin": 10,
+      "segundosParaSalto": 30 },
+    { "id": "p2", "tipo": "conectar", "nodoOrigen": "back", "nodoDestino": "app",
+      "codigo": "fetch('/alerta')", "puntosMax": 30, "puntosMin": 10 }
+  ],
+  "narraciones": [
+    { "antesDePaso": "p1", "texto": "Primero enciende la pieza que recibe los datos." }
+  ]
+}
+```
+
+**Las piezas no llevan coordenadas.** Se declaran en `columnas`, de izquierda a
+derecha, que es como se lee un flujo. Mover una pieza es sacar su id de una
+lista y ponerlo en otra; agregarla es sumar el id. El componente mide las
+posiciones reales en el DOM para dibujar las conexiones, así que el diagrama se
+acomoda solo a cualquier resolución y no hay `viewBox` que recalcular.
+
+- `nodos[]`: `id` (referenciado por pasos y columnas), `label`, `icono` (un
+  emoji) y `subtitulo` (3–5 palabras en lenguaje llano, sin jerga: es lo que
+  hace entendible la pieza para alguien que nunca programó).
+- `columnas[]`: `titulo` (opcional, se muestra arriba de la columna) y `nodos`
+  con los ids en el orden vertical que quieras. Una pieza con un id que no
+  figure en ninguna columna aparece igual, en una columna extra al final, para
+  que un typo se vea en pantalla en vez de desaparecer.
+- `pasos[]`: se juegan en orden. `tipo: 'activar'` pide un clic en
+  `nodoObjetivo`; `tipo: 'conectar'` pide clic en `nodoOrigen` y después en
+  `nodoDestino`. En los dos casos, después se tipea `codigo` y el puntaje sale
+  entre `puntosMin` y `puntosMax` según la velocidad.
+- `narraciones[]`: el texto del cliente que se muestra antes de cada paso,
+  emparejado por `antesDePaso`.
+
+Si un escenario viejo trae `x`/`y` en los nodos y no trae `columnas`, el
+componente deriva las columnas agrupando por `x`. Es solo compatibilidad: el
+formato a usar es `columnas`.
+
 ### Cómo puntúa el motor una decisión
 
 - `seleccion-unica`: puntaje de la opción elegida.

@@ -37,6 +37,39 @@
   --body: 'Baloo 2', system-ui, sans-serif;
 
   color-scheme: dark;
+
+  /* --- Escala responsiva ---------------------------------------------------
+     Los colores y las fuentes vienen del diseño y no se tocan. Esto es solo
+     la escala de layout: interpola entre el piso (1366x768, la resolución del
+     laboratorio) y 1920x1080. Cada valor arranca en lo que ya medía el diseño
+     a 1366 y crece desde ahí, así 1366 se ve igual que antes y 1920 respira.
+     Regla: ningún componente vuelve a hardcodear px de layout; usa estos. */
+
+  --sidebar-w: clamp(250px, 19vw, 330px);
+  --shell-pad-x: clamp(14px, 1.3vw, 30px);
+  --shell-pad-y: clamp(10px, 1.1vh, 20px);
+  --gap-col: clamp(14px, 1.2vw, 26px);
+  --gap-row: clamp(8px, 1vh, 16px);
+  --pad-panel: clamp(12px, 1.1vw, 22px);
+  --radio-panel: 10px;
+
+  /* Tipografía.
+     Los coeficientes en vw están calculados para que el PISO se alcance justo
+     en 1366px y el techo en 1920px. La versión anterior usaba coeficientes más
+     chicos (0.85vw para el cuerpo), así que a 1366 todos los tamaños caían en
+     su mínimo y el texto se veía apretado en la resolución del laboratorio,
+     que es justamente la que importa. */
+  --fs-xs: clamp(12px, 0.88vw, 14px);
+  --fs-sm: clamp(14px, 1.02vw, 16px);
+  --fs-md: clamp(16px, 1.17vw, 19px);
+  --fs-lg: clamp(19px, 1.39vw, 23px);
+  --fs-xl: clamp(22px, 1.61vw, 28px);
+  --fs-cifra: clamp(22px, 1.61vw, 32px);
+
+  /* Texto de lectura larga: la explicación que abre cada fase. Se lee una vez,
+     de corrido y a veces desde lejos, así que va bastante más grande que la UI
+     y no comparte escala con ella. */
+  --fs-lectura: clamp(19px, 1.45vw, 26px);
 }
 
 * {
@@ -82,10 +115,11 @@ a:hover {
   background: var(--panel-alt);
   border: 2px solid var(--border);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: clamp(12px, 1.2vh, 18px) clamp(14px, 1.1vw, 20px);
   font-family: var(--body);
-  font-size: 14px;
+  font-size: var(--fs-md);
   font-weight: 600;
+  line-height: 1.35;
   color: var(--text);
   cursor: pointer;
   text-align: left;
@@ -107,10 +141,10 @@ a:hover {
   color: #08281f;
   font-family: var(--body);
   font-weight: 800;
-  font-size: 15px;
+  font-size: var(--fs-md);
   border: none;
   border-radius: 8px;
-  padding: 14px 26px;
+  padding: clamp(13px, 1.3vh, 18px) clamp(24px, 2vw, 34px);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -124,7 +158,7 @@ a:hover {
 .btn-pixel {
   font-family: var(--pixel);
   font-weight: 700;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   letter-spacing: 1px;
 }
 
@@ -134,25 +168,26 @@ a:hover {
   color: var(--red);
   font-family: var(--body);
   font-weight: 700;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   border-radius: 8px;
-  padding: 10px;
+  padding: clamp(9px, 1vh, 13px);
   cursor: pointer;
 }
 
 .label-pixel {
   font-family: var(--pixel);
   font-weight: 700;
-  font-size: 10px;
+  font-size: var(--fs-xs);
   letter-spacing: 1px;
   color: var(--text-dim);
 }
 
 .feedback-box {
   border-radius: 6px;
-  padding: 10px 14px;
-  font-size: 14px;
+  padding: clamp(10px, 1.1vh, 15px) clamp(14px, 1.1vw, 20px);
+  font-size: var(--fs-md);
   font-weight: 600;
+  line-height: 1.4;
   margin-top: 10px;
 }
 .feedback-box.ok {

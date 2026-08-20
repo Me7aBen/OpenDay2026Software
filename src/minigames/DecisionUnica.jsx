@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import '../styles/decision-unica.css';
 
 // Render compartido para tipoInteraccion: 'seleccion-unica'.
 // Los 5 minijuegos lo usan (salvo Wireframe, que es seleccion-multiple).
@@ -13,10 +14,10 @@ export default function DecisionUnica({ decision, onElegir, encabezado }) {
   }
 
   return (
-    <div>
+    <div className="decision">
       {encabezado}
-      <div style={{ fontSize: 15, fontWeight: 800, margin: '10px 0' }}>{decision.pregunta}</div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
+      <div className="decision-pregunta">{decision.pregunta}</div>
+      <div className="decision-opciones">
         {decision.opciones.map((opcion) => (
           <button
             key={opcion.id}
@@ -30,7 +31,7 @@ export default function DecisionUnica({ decision, onElegir, encabezado }) {
         ))}
       </div>
       {opcionElegida && (
-        <div>
+        <div className="decision-feedback">
           {opcionElegida.descubrimiento && <div className="feedback-box info">💬 {opcionElegida.descubrimiento}</div>}
           {opcionElegida.feedback && <div className="feedback-box ok">{opcionElegida.feedback}</div>}
         </div>

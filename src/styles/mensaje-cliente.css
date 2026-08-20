@@ -1,0 +1,44 @@
+/* Mensaje del cliente dentro de un minijuego. Caja con borde cyan, emoji
+   a la izquierda y nombre+texto a la derecha. Es un encabezado contextual,
+   no una burbuja de chat. */
+
+.mensaje-cliente {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--panel-alt);
+  border-left: 3px solid var(--cyan);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.mensaje-cliente .emoji {
+  font-size: 18px;
+  line-height: 1.2;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.mensaje-cliente .contenido {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mensaje-cliente .quien {
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--cyan);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.mensaje-cliente .texto {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text);
+  font-weight: 600;
+}

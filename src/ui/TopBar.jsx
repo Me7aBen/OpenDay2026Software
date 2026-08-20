@@ -1,6 +1,24 @@
+import { useGame } from '../engine/useGame';
+import BotonMusica from './BotonMusica';
 import '../styles/topbar.css';
 
-export default function TopBar({ mostrarPerfil = true, colegio = 'Colegio San José' }) {
+// Barra superior, presente en todas las pantallas.
+//
+// El perfil de la derecha sale del estado del juego (`state.jugador`), no de
+// props: así se actualiza solo en cuanto el jugador se registra y no hay que
+// ir pantalla por pantalla pasándole el nombre. Antes cada pantalla mandaba el
+// colegio a mano — dos de ellas con un string fijo — y el nombre no se mostraba
+// en ninguna, así que el perfil recién parecía correcto en el resultado.
+//
+// Si todavía no hay jugador (pantalla de registro), el bloque no se muestra.
+//
+// Props:
+//   mostrarPerfil  boolean - para ocultarlo aunque haya jugador
+export default function TopBar({ mostrarPerfil = true }) {
+  const { state } = useGame();
+  const jugador = state.jugador;
+  const verPerfil = mostrarPerfil && !!jugador;
+
   return (
     <div className="topbar">
       <div className="topbar-logo">
@@ -44,12 +62,14 @@ export default function TopBar({ mostrarPerfil = true, colegio = 'Colegio San Jo
           Sobre la carrera
         </a>
 
-        {mostrarPerfil && (
+        <BotonMusica />
+
+        {verPerfil && (
           <div className="topbar-profile">
             <div className="avatar">🧑</div>
             <div className="meta">
-              <div className="invitado">Invitado</div>
-              <div className="colegio">{colegio}</div>
+              <div className="nombre" title={jugador.nombre}>{jugador.nombre}</div>
+              <div className="colegio" title={jugador.colegio}>{jugador.colegio}</div>
             </div>
           </div>
         )}

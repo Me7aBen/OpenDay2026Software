@@ -1,0 +1,45 @@
+/* Render compartido de las decisiones de opción única (8 de las 12 del
+   escenario). Antes eran estilos inline con tamaños fijos, y el bloque quedaba
+   apoyado arriba del panel dejando medio panel vacío. Ahora usa la escala
+   tipográfica y reparte el alto: la pregunta arriba, las opciones ocupando el
+   espacio disponible y el feedback abajo. */
+
+.decision {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
+  flex: 1;
+  min-height: 0;
+}
+
+.decision > * {
+  flex: 0 0 auto;
+}
+
+.decision-pregunta {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+/* Las opciones se quedan con el alto sobrante y quedan centradas, así el
+   bloque no flota arriba en pantallas altas. `auto-fit` mantiene una sola
+   columna cuando hay 2-3 opciones largas y pasa a dos cuando entran. */
+.decision-opciones {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  align-content: center;
+  gap: clamp(10px, 1.2vh, 18px);
+  overflow: auto;
+}
+
+.decision-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.decision-feedback .feedback-box {
+  margin-top: 0;
+}

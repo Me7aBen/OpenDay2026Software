@@ -89,7 +89,10 @@ export function gameReducer(state, action) {
     case 'RESPONDER_DECISION': {
       const decision = decisionActual(state);
       if (!decision || decision.id !== action.decisionId) return state;
-      const { puntaje, bono } = calcularPuntajeDecision(decision, action.opcionIds);
+      // Aceptamos un segundo parámetro opcional: puntajeDirecto. Lo usan
+      // las decisiones compuestas (arquitectura-nodos) que ya acumularon
+      // su puntaje internamente.
+      const { puntaje, bono } = calcularPuntajeDecision(decision, action.opcionIds, action.puntajeDirecto);
       const pistaUsada = state.pistasUsadasIds.includes(decision.id);
       const respuesta = { opcionIds: action.opcionIds, puntaje, bono, pistaUsada };
       return {
