@@ -1,7 +1,12 @@
+import { useState } from 'react';
 import { useGame } from '../engine/useGame';
 import BotonMusica from './BotonMusica';
 import Avatar from './Avatar';
+import ComoSeJuega from './ComoSeJuega';
+import logoTecsup from '../assets/tecsup-logo.png';
 import '../styles/topbar.css';
+
+const URL_CARRERA = 'https://www.tecsup.edu.pe/carrera/diseno-y-desarrollo-de-software-2/';
 
 // Barra superior, presente en todas las pantallas.
 //
@@ -19,16 +24,12 @@ export default function TopBar({ mostrarPerfil = true }) {
   const { state } = useGame();
   const jugador = state.jugador;
   const verPerfil = mostrarPerfil && !!jugador;
+  const [ayudaAbierta, setAyudaAbierta] = useState(false);
 
   return (
     <div className="topbar">
       <div className="topbar-logo">
-        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-          <circle cx="15" cy="15" r="13" fill="var(--tecsup)" />
-          <circle cx="15" cy="9" r="2.6" fill="#0b1220" />
-          <circle cx="9.5" cy="17" r="2.6" fill="#0b1220" />
-          <circle cx="20.5" cy="17" r="2.6" fill="#0b1220" />
-        </svg>
+        <img src={logoTecsup} alt="Tecsup" width="30" height="30" />
         <span>TECSUP</span>
       </div>
 
@@ -40,22 +41,26 @@ export default function TopBar({ mostrarPerfil = true }) {
       </div>
 
       <div className="topbar-right">
-        <a className="topbar-link" href="#como-se-juega">
+        {/* Botón, no enlace: abre el modal de ayuda. Antes era un href a un
+            ancla que no existía en ninguna pantalla y por lo tanto no hacía
+            nada al clickearlo. */}
+        <button type="button" className="topbar-link" onClick={() => setAyudaAbierta(true)}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <circle cx="12" cy="12" r="9" />
             <path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.7-2.5 2-2.5 3.7" />
             <circle cx="12" cy="17" r="0.3" fill="currentColor" />
           </svg>
           ¿Cómo se juega?
-        </a>
-        <a className="topbar-link" href="#ranking">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M8 21h8M12 17v4M6 4h12v5a6 6 0 0 1-12 0V4Z" />
-            <path d="M6 6H3a3 3 0 0 0 3 5M18 6h3a3 3 0 0 1-3 5" />
-          </svg>
-          Ranking
-        </a>
-        <a className="topbar-link" href="#sobre-la-carrera">
+        </button>
+        {/* El "Ranking" queda fuera hasta que exista el leaderboard por sesión
+            (Supabase). Hoy el ranking solo vive en el localStorage de la PC y
+            se muestra al final de la partida. */}
+        <a
+          className="topbar-link"
+          href={URL_CARRERA}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M22 10 12 5 2 10l10 5 10-5Z" />
             <path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5" />
@@ -80,6 +85,8 @@ export default function TopBar({ mostrarPerfil = true }) {
           </div>
         )}
       </div>
+
+      <ComoSeJuega abierto={ayudaAbierta} onCerrar={() => setAyudaAbierta(false)} />
     </div>
   );
 }

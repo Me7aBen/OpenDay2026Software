@@ -50,13 +50,24 @@
   flex: 0 0 auto;
 }
 
+/* Lo usan tanto un <a> (Sobre la carrera) como un <button> (¿Cómo se juega?),
+   así que resetea el chrome que el navegador le pone al botón para que los dos
+   se vean igual. */
 .topbar-link {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 14px;
   font-weight: 600;
+  font-family: var(--body);
   color: var(--text-dim);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.topbar-link:hover {
+  color: var(--cyan);
 }
 
 /* Botón de silencio de la música. Discreto: es un control del facilitador,

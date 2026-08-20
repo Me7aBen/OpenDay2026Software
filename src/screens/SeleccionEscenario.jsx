@@ -1,5 +1,4 @@
 import { useGame } from '../engine/useGame';
-import ccorca from '../content/ccorca.json';
 import ccorcaV2 from '../content/ccorca-v2.json';
 import codigoCero from '../content/codigo-cero.json';
 import TopBar from '../ui/TopBar';
@@ -19,21 +18,18 @@ const PORTADA_DEFECTO = {
   ),
 };
 
-// Escenarios B y C se agregan aquí como solo-contenido, sin tocar el motor.
-// ccorca-v2 es la versión paralela con la mecánica de arquitectura-nodos en
-// la fase Construir. Convive con ccorca (v1) para poder comparar.
+// Escenarios nuevos se agregan aquí como solo-contenido, sin tocar el motor.
+//
+// Ccorca v1 (`content/ccorca.json`) queda fuera de la lista: v2 lo reemplaza
+// con la mecánica de arquitectura-nodos. El JSON sigue en el repo, así que para
+// volver a mostrarlo basta importarlo y agregar su entrada acá.
+//
 // codigo-cero es el escenario de ciberseguridad; trae su propia portada y su
 // bloque `presentacion` (avatar, escena, medidor, música), pero corre en el
-// mismo motor que los otros dos.
+// mismo motor que el otro.
 const ESCENARIOS_DISPONIBLES = [
   {
-    ...ccorca,
-    titulo: 'Luz para Ccorca (v1)',
-    etiqueta: 'ENERGÍA LIMPIA',
-  },
-  {
     ...ccorcaV2,
-    titulo: 'Luz para Ccorca (v2)',
     etiqueta: 'ENERGÍA LIMPIA · ARQUITECTURA',
   },
   {
@@ -56,25 +52,6 @@ const ESCENARIOS_DISPONIBLES = [
         </>
       ),
     },
-  },
-];
-
-const PROXIMAMENTE = [
-  {
-    id: 'turno-seguro',
-    categoria: 'SEGURIDAD LABORAL',
-    titulo: 'Turno Seguro',
-    dolorFrase: 'El checklist en papel de una mina se pierde. Ya hubo un incidente evitable.',
-    color: 'var(--pink)',
-    fondo: 'linear-gradient(160deg,#3a2a2c,#5a3a3a)',
-  },
-  {
-    id: 'campo-mercado',
-    categoria: 'PRODUCCIÓN RESPONSABLE',
-    titulo: 'Del Campo al Mercado',
-    dolorFrase: 'Productoras de quinua venden a mitad de precio por no poder demostrar su origen.',
-    color: 'var(--green)',
-    fondo: 'linear-gradient(160deg,#213a2c,#2f5a3a)',
   },
 ];
 
@@ -114,22 +91,6 @@ export default function SeleccionEscenario() {
               </div>
             );
           })}
-
-          {PROXIMAMENTE.map((escenario) => (
-            <div className="seleccion-card bloqueada" key={escenario.id}>
-              <div className="portada" style={{ background: escenario.fondo }}>
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke={escenario.color} strokeWidth="1.6">
-                  <path d="M12 3c-4 3-6 6-6 9a6 6 0 0 0 12 0c0-3-2-6-6-9Z" />
-                </svg>
-              </div>
-              <div>
-                <div className="etiqueta" style={{ color: escenario.color }}>{escenario.categoria}</div>
-                <div className="titulo">{escenario.titulo}</div>
-                <div className="dolor">{escenario.dolorFrase}</div>
-              </div>
-              <button type="button" className="btn-proximamente" disabled>PRÓXIMAMENTE</button>
-            </div>
-          ))}
         </div>
       </div>
 
