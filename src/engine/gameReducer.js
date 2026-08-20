@@ -62,6 +62,28 @@ function decisionActual(state) {
   return faseActual(state)?.decisiones[state.decisionIndex];
 }
 
+function respuestaCumpleObjetivo(decision, opcionIds) {
+  if (decision.tipoInteraccion === 'seleccion-unica') {
+    const elegida = decision.opciones?.find((opcion) => opcion.id === opcionIds[0]);
+    if (!elegida) return false;
+    if (elegida.esCorrecta === true) return true;
+    if (decision.opciones?.some((opcion) => opcion.esCorrecta === true)) return false;
+    const maximo = Math.max(...decision.opciones.map((opcion) => opcion.puntaje ?? 0));
+    return maximo > 0 && (elegida.puntaje ?? 0) === maximo;
+  }
+
+  if (decision.tipoInteraccion === 'seleccion-multiple') {
+    const objetivo = decision.seleccionExacta ?? opcionIds.length;
+    return opcionIds.length === objetivo && opcionIds.every((id) => (
+      decision.opciones?.find((opcion) => opcion.id === id)?.esCorrecta === true
+    ));
+  }
+
+  // Los minijuegos de código, circuito e intruso solo llaman onElegir cuando
+  // se completó su objetivo; sus errores ya se descuentan en el puntaje.
+  return true;
+}
+
 function avanzarPosicion(state) {
   const fase = faseActual(state);
   if (state.decisionIndex + 1 < fase.decisiones.length) {
@@ -143,9 +165,12 @@ export function gameReducer(state, action) {
       const { puntaje, bono } = calcularPuntajeDecision(decision, action.opcionIds, action.puntajeDirecto);
       const pistaUsada = state.pistasUsadasIds.includes(decision.id);
       const respuesta = { opcionIds: action.opcionIds, puntaje, bono, pistaUsada };
-      // El medidor narrativo avanza por hitos declarados en el JSON, no por una
-      // simulación: responder la decisión ES el hito. Nunca retrocede.
-      const hito = decision.hitoIndicador;
+      // Una respuesta incorrecta deja continuar la historia, pero no puede
+      // pintar el medidor como si hubiera recuperado la ciudad. El hito solo
+      // se alcanza cuando la decisión cumple su objetivo.
+      const hito = respuestaCumpleObjetivo(decision, action.opcionIds)
+        ? decision.hitoIndicador
+        : null;
       return {
         ...state,
         respuestas: { ...state.respuestas, [decision.id]: respuesta },

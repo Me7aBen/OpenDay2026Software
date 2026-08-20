@@ -8,7 +8,7 @@
     "retrato": "nia",
     "imagen": null
   },
-  "tiempoTotalSeg": 420,
+  "tiempoTotalSeg": 480,
   "presentacion": {
     "escena": "ciudad-nexo",
     "personalizacionAvatar": {
@@ -115,6 +115,7 @@
         {
           "id": "descubrir-1",
           "tipoInteraccion": "seleccion-unica",
+          "contexto": "La terminal quedó abierta y el atacante dejó un rastro.",
           "pregunta": "¿Qué revisas primero?",
           "mensajeClienteDecision": "Poco tiempo. Busca dónde quedó el rastro.",
           "hitoIndicador": 8,
@@ -168,10 +169,14 @@
         {
           "id": "descubrir-2",
           "tipoInteraccion": "seleccion-multiple",
+          "contexto": "Hay muchos datos, pero solo dos explican cómo entraron.",
           "pregunta": "Elige las 2 pistas que van juntas",
           "mensajeClienteDecision": "Solo dos se conectan entre sí.",
           "hitoIndicador": 12,
           "seleccionExacta": 2,
+          "etiquetaDestino": "Pistas relacionadas",
+          "feedbackAcierto": "La cuenta vieja se usó desde la computadora pública.",
+          "feedbackError": "Los datos elegidos no demuestran cómo entraron.",
           "tablaPuntaje": {
             "2": 50,
             "1": 25,
@@ -213,6 +218,7 @@
         {
           "id": "descubrir-3",
           "tipoInteraccion": "seleccion-unica",
+          "contexto": "El registro es la única evidencia que explica el ataque.",
           "pregunta": "¿Qué hacemos con el registro?",
           "mensajeClienteDecision": "Ojo: lo que borres no vuelve.",
           "hitoIndicador": 15,
@@ -273,10 +279,14 @@
         {
           "id": "disenar-1",
           "tipoInteraccion": "seleccion-multiple",
+          "contexto": "Los operadores pierden tiempo buscando lo urgente entre datos inútiles.",
           "pregunta": "Elige los 4 datos que salvan vidas",
           "mensajeClienteDecision": "Solo caben cuatro. Elige lo urgente.",
           "hitoIndicador": 20,
           "seleccionExacta": 4,
+          "etiquetaDestino": "Pantalla de emergencia",
+          "feedbackAcierto": "La pantalla muestra estado, ubicación, alerta y acción.",
+          "feedbackError": "Incluiste adornos y dejaste fuera información para actuar.",
           "tablaPuntaje": {
             "4": 55,
             "3": 35,
@@ -330,6 +340,7 @@
         {
           "id": "disenar-2",
           "tipoInteraccion": "seleccion-unica",
+          "contexto": "Una alerta solo por color excluye a operadores con daltonismo.",
           "pregunta": "¿Cuál se entiende más rápido?",
           "mensajeClienteDecision": "Un operador no distingue rojo de verde.",
           "hitoIndicador": 25,
@@ -375,7 +386,7 @@
       "musica": "tension",
       "intro": "El hospital está por quedarse sin señal.",
       "imagen": null,
-      "tiempoSegFase": 170,
+      "tiempoSegFase": 200,
       "estilo": "logica",
       "textoBotonHistorieta": "ABRIR LA CONSOLA",
       "historieta": [
@@ -390,6 +401,52 @@
         }
       ],
       "decisiones": [
+        {
+          "id": "construir-regla-alerta",
+          "tipoInteraccion": "seleccion-unica",
+          "contexto": "La señal está en 12 y el hospital se desconecta al llegar a 0.",
+          "pregunta": "¿Qué regla activa la alerta a tiempo?",
+          "mensajeClienteDecision": "Necesitamos avisar antes de perder toda la señal.",
+          "hitoIndicador": 30,
+          "ilustracion": "hospital-sin-senal",
+          "opciones": [
+            {
+              "id": "senal-menor-20",
+              "texto": "Avisar cuando señal sea menor que 20",
+              "escenaConsecuencia": "jugador-terminal",
+              "rotuloConsecuencia": "REGLA CORRECTA",
+              "puntaje": 55,
+              "esCorrecta": true,
+              "feedback": "Da tiempo para actuar antes de perder la conexión."
+            },
+            {
+              "id": "senal-mayor-20",
+              "texto": "Avisar cuando señal sea mayor que 20",
+              "escenaConsecuencia": "hospital-sin-senal",
+              "rotuloConsecuencia": "ALERTA TODO EL DÍA",
+              "puntaje": 0,
+              "esTrampa": true,
+              "feedback": "La alerta sonaría incluso cuando la señal está bien."
+            },
+            {
+              "id": "senal-igual-0",
+              "texto": "Esperar hasta que señal llegue a 0",
+              "escenaConsecuencia": "hospital-sin-senal",
+              "rotuloConsecuencia": "DEMASIADO TARDE",
+              "puntaje": 15,
+              "feedback": "Al llegar a cero el hospital ya está desconectado."
+            },
+            {
+              "id": "sin-medicion",
+              "texto": "No medir la señal",
+              "escenaConsecuencia": "servicios-caen",
+              "rotuloConsecuencia": "SIN ADVERTENCIA",
+              "puntaje": 0,
+              "esTrampa": true,
+              "feedback": "Sin medir, nadie sabe que la conexión está cayendo."
+            }
+          ]
+        },
         {
           "id": "construir-1",
           "tipoInteraccion": "mecanografia-codigo",
@@ -591,6 +648,7 @@
         {
           "id": "probar-1",
           "tipoInteraccion": "seleccion-unica",
+          "contexto": "La red funciona, pero una entrada prohibida sigue abierta.",
           "pregunta": "¿Qué prueba haces?",
           "mensajeClienteDecision": "Una sola prueba. Elige bien.",
           "hitoIndicador": 68,
@@ -699,6 +757,7 @@
         {
           "id": "probar-3",
           "tipoInteraccion": "seleccion-unica",
+          "contexto": "El intruso es un programa viejo que contiene evidencia útil.",
           "pregunta": "No es una persona: es un programa viejo",
           "mensajeClienteDecision": "No lo borres. Podemos aprender de él.",
           "hitoIndicador": 85,
@@ -763,6 +822,7 @@
         {
           "id": "desplegar-1",
           "tipoInteraccion": "seleccion-unica",
+          "contexto": "La red solo soporta recuperar un servicio por vez.",
           "pregunta": "¿Qué encendemos primero?",
           "mensajeClienteDecision": "La red aguanta un servicio por vez.",
           "hitoIndicador": 92,
@@ -811,6 +871,7 @@
         {
           "id": "desplegar-2",
           "tipoInteraccion": "seleccion-unica",
+          "contexto": "El programa está aislado; ahora debes evitar otro ataque.",
           "pregunta": "Última decisión: ¿qué haces?",
           "mensajeClienteDecision": "Última decisión. La ciudad te mira.",
           "hitoIndicador": 100,

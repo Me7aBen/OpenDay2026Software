@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGame } from '../engine/useGame';
 import { minijuegoPorTipo } from '../minigames';
 import TopBar from '../ui/TopBar';
@@ -126,6 +126,7 @@ function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisi
 // así que su estado de "¿ya vio la explicación?" siempre arranca en false.
 function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tiempoGlobalRestante, puntajeAcumulado, indicadorValor, avatarJugador, responderDecision, siguienteDecision, onAbandonar }) {
   const [explicacionVista, setExplicacionVista] = useState(false);
+  const panelDecisionRef = useRef(null);
   const decisionesResueltas = fase.decisiones.filter((d) => respuestas[d.id]).length;
   // Bloque opcional del JSON. Vacío para los escenarios que no lo declaran, y
   // entonces nada de lo que sigue se renderiza.
@@ -135,6 +136,13 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
   // reacción, si no queda en idle. Habla con el mensaje de la decisión actual y,
   // mientras no hay decisión en pantalla (intro de fase), con el intro.
   const decisionActual = fase.decisiones[decisionIndex];
+
+  // El panel principal tiene scroll interno. Al cambiar de reto el navegador
+  // conservaba la posición del anterior y podía ocultar la primera opción
+  // (justo la correcta en algunos puzzles). Cada reto debe empezar arriba.
+  useEffect(() => {
+    if (panelDecisionRef.current) panelDecisionRef.current.scrollTop = 0;
+  }, [decisionIndex, explicacionVista]);
   const estadoCliente = calcularEstadoActualDecision(
     decisionActual,
     decisionActual ? respuestas[decisionActual.id] : null,
@@ -255,7 +263,7 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
       {sidebar}
       <div className="hud-principal">
         {cabecera}
-        <div className="panel hud-panel hud-panel-decision">
+        <div ref={panelDecisionRef} className="panel hud-panel hud-panel-decision">
           <Minijuego
             key={decision.id}
             decision={decision}
