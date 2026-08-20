@@ -7,7 +7,15 @@ import PersonalizacionAvatar from './screens/PersonalizacionAvatar';
 import IntroHistorieta from './screens/IntroHistorieta';
 import PantallaJuego from './screens/PantallaJuego';
 import Resultado from './screens/Resultado';
+import PanelLeaderboard from './screens/PanelLeaderboard';
 import { activarMusica, desactivarMusica } from './lib/musica';
+
+// El panel del facilitador no es una pantalla del juego: no tiene jugador, no
+// tiene música y no se llega a él jugando. Se entra por `?vista=leaderboard`,
+// así que se resuelve antes de montar el motor del juego.
+function esVistaLeaderboard() {
+  return new URLSearchParams(window.location.search).get('vista') === 'leaderboard';
+}
 
 const PANTALLAS = {
   registro: Registro,
@@ -60,6 +68,8 @@ function Juego() {
 }
 
 export default function App() {
+  if (esVistaLeaderboard()) return <PanelLeaderboard />;
+
   return (
     <GameProvider>
       <Juego />

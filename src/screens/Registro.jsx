@@ -1,17 +1,31 @@
 import { useState } from 'react';
 import { useGame } from '../engine/useGame';
+import { nuevoParticipante } from '../lib/leaderboard';
 import TopBar from '../ui/TopBar';
 import '../styles/registro.css';
+
+// El número de colegio agrupa a todos los alumnos de una misma ronda, así el
+// facilitador filtra el ranking por el grupo que tiene en el aula.
+const NUMEROS_COLEGIO = Array.from({ length: 20 }, (_, i) => i + 1);
 
 export default function Registro() {
   const { registrarJugador } = useGame();
   const [nombre, setNombre] = useState('');
   const [colegio, setColegio] = useState('');
+  const [numeroColegio, setNumeroColegio] = useState('');
 
   function enviar(e) {
     e.preventDefault();
-    if (!nombre.trim() || !colegio.trim()) return;
-    registrarJugador({ nombre: nombre.trim(), colegio: colegio.trim() });
+    if (!nombre.trim() || !colegio.trim() || !numeroColegio) return;
+    // Id nuevo por alumno: la PC del lab se reusa toda la jornada y si no lo
+    // rotamos acá, el segundo alumno sobrescribiría la fila del primero en el
+    // ranking.
+    nuevoParticipante();
+    registrarJugador({
+      nombre: nombre.trim(),
+      colegio: colegio.trim(),
+      numeroColegio: Number(numeroColegio),
+    });
   }
 
   return (
@@ -92,6 +106,19 @@ export default function Registro() {
                 onChange={(e) => setColegio(e.target.value)}
                 required
               />
+
+              <label htmlFor="numero-colegio">Número de Colegio</label>
+              <select
+                id="numero-colegio"
+                value={numeroColegio}
+                onChange={(e) => setNumeroColegio(e.target.value)}
+                required
+              >
+                <option value="" disabled>Elige tu número</option>
+                {NUMEROS_COLEGIO.map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
 
               <button type="submit" className="btn-primary btn-pixel" style={{ width: '100%', justifyContent: 'center' }}>
                 ACEPTAR MISIÓN

@@ -114,7 +114,8 @@
   color: var(--text-dim);
   margin-bottom: 6px;
 }
-.registro-tarjeta input {
+.registro-tarjeta input,
+.registro-tarjeta select {
   width: 100%;
   background: var(--panel-alt);
   border: 2px solid var(--border);
@@ -123,6 +124,31 @@
   font-size: 15px;
   color: var(--text);
   margin-bottom: 18px;
+  font-family: var(--body);
+}
+/* El select nativo en macOS ignora el color de fondo salvo que se le quite la
+   apariencia por defecto; sin esto queda una caja blanca en un formulario
+   oscuro. La flecha se dibuja acá porque appearance:none también se la lleva. */
+.registro-tarjeta select {
+  appearance: none;
+  cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%),
+    linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+  background-position: calc(100% - 19px) center, calc(100% - 13px) center;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
+}
+.registro-tarjeta select:focus-visible,
+.registro-tarjeta input:focus-visible {
+  outline: none;
+  border-color: var(--cyan);
+}
+/* El desplegable abierto lo pinta el sistema: sin esto las opciones salen
+   blancas sobre blanco en algunos navegadores. */
+.registro-tarjeta select option {
+  background: var(--panel);
+  color: var(--text);
 }
 .registro-tarjeta .aviso {
   font-size: 11px;

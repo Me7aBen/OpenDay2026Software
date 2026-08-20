@@ -274,3 +274,53 @@
 .resultado-cierre .resultado-perfil {
   margin: 0;
 }
+
+/* Cierre de la jornada: o anuncia la misión que sigue, o muestra el total
+   acumulado cuando ya hizo todas. Es el bloque que reemplaza al viejo botón
+   suelto de "JUGAR DE NUEVO". */
+.resultado-siguiente {
+  background: var(--panel);
+  border: 2px solid var(--cyan);
+  border-radius: 12px;
+  padding: clamp(14px, 1.6vh, 22px) clamp(16px, 1.4vw, 26px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  /* Pegado al pie de la columna, que scrollea: en 1366x768 el resultado de
+     Código Cero (historieta + epílogo + puntaje + perfil + mensaje) es más
+     alto que la pantalla, y sin esto el botón para pasar a la misión 2 quedaba
+     abajo del pliegue. El alumno no tiene por qué adivinar que hay que
+     scrollear para continuar. */
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  flex: 0 0 auto;
+  box-shadow: 0 -12px 24px rgba(11, 18, 32, 0.85);
+}
+.resultado-siguiente.completa {
+  border-color: var(--gold);
+}
+.resultado-siguiente .rotulo {
+  color: var(--cyan);
+}
+.resultado-siguiente.completa .rotulo {
+  color: var(--gold);
+}
+.resultado-siguiente .titulo {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.25;
+}
+.resultado-siguiente .detalle {
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.resultado-siguiente .btn-primary {
+  margin-top: 8px;
+  align-self: stretch;
+  justify-content: center;
+}

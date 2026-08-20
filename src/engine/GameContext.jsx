@@ -25,6 +25,7 @@ export function GameProvider({ children }) {
       dispatch({ type: 'RESPONDER_DECISION', decisionId, opcionIds, puntajeDirecto }),
     pedirPista: (decisionId) => dispatch({ type: 'PEDIR_PISTA', decisionId }),
     siguienteDecision: () => dispatch({ type: 'SIGUIENTE_DECISION' }),
+    volverAMisiones: () => dispatch({ type: 'VOLVER_A_MISIONES' }),
     reiniciar: () => dispatch({ type: 'REINICIAR' }),
   };
 

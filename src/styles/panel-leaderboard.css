@@ -1,0 +1,186 @@
+/* Panel del facilitador. Pensado para proyector: tipografía grande y contraste
+   alto, legible desde el fondo del aula. No comparte layout con el juego. */
+
+.panel-lb {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.panel-lb-cabecera {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(14px, 1.8vh, 26px) clamp(18px, 2vw, 40px);
+  border-bottom: 2px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.panel-lb-cabecera .titulo {
+  font-family: var(--pixel);
+  font-weight: 700;
+  font-size: clamp(20px, 2vw, 34px);
+  letter-spacing: 1px;
+}
+.panel-lb-cabecera .subtitulo {
+  font-size: clamp(13px, 1vw, 18px);
+  color: var(--text-dim);
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.panel-lb-controles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.panel-lb-controles select {
+  background: var(--panel-alt);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: clamp(15px, 1.1vw, 20px);
+  font-weight: 700;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+.panel-lb-controles select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.panel-lb-aviso {
+  flex: 0 0 auto;
+  margin: clamp(10px, 1.4vh, 18px) clamp(18px, 2vw, 40px) 0;
+  padding: 12px 18px;
+  border-radius: 8px;
+  background: rgba(255, 209, 102, 0.12);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: clamp(13px, 0.95vw, 17px);
+  font-weight: 700;
+}
+
+.panel-lb-tabla-wrap {
+  flex: 1;
+  overflow: auto;
+  padding: clamp(12px, 1.6vh, 22px) clamp(18px, 2vw, 40px);
+}
+
+.panel-lb-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(15px, 1.15vw, 22px);
+}
+.panel-lb-tabla thead th {
+  text-align: left;
+  font-family: var(--pixel);
+  font-weight: 700;
+  font-size: clamp(11px, 0.8vw, 15px);
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  padding: 0 14px 12px;
+  border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+}
+.panel-lb-tabla tbody td {
+  padding: clamp(10px, 1.2vh, 16px) 14px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+
+.panel-lb-tabla .col-puesto {
+  width: 64px;
+  font-family: var(--pixel);
+  font-weight: 700;
+  color: var(--text-dim);
+}
+.panel-lb-tabla .col-mision,
+.panel-lb-tabla .col-total,
+.panel-lb-tabla .col-tiempo {
+  text-align: right;
+  white-space: nowrap;
+}
+.panel-lb-tabla .col-total {
+  font-weight: 800;
+  color: var(--text);
+}
+.panel-lb-tabla .col-tiempo {
+  color: var(--text-dim);
+}
+
+.panel-lb-tabla .celda-nombre {
+  font-weight: 800;
+  color: var(--text);
+}
+.panel-lb-tabla .celda-colegio {
+  color: var(--text-dim);
+}
+.panel-lb-tabla .celda-colegio .numero {
+  display: inline-block;
+  min-width: 26px;
+  text-align: center;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-weight: 800;
+  margin-right: 8px;
+  padding: 1px 5px;
+}
+
+/* Podio: el top 3 se lee de un golpe desde lejos. */
+.panel-lb-tabla tr.podio td {
+  background: rgba(74, 217, 255, 0.06);
+}
+.panel-lb-tabla tr.podio.p1 td {
+  background: rgba(255, 209, 102, 0.14);
+}
+.panel-lb-tabla tr.podio.p1 .col-puesto,
+.panel-lb-tabla tr.podio.p1 .col-total {
+  color: var(--gold);
+}
+.panel-lb-tabla tr.podio.p2 .col-puesto,
+.panel-lb-tabla tr.podio.p2 .col-total,
+.panel-lb-tabla tr.podio.p3 .col-puesto,
+.panel-lb-tabla tr.podio.p3 .col-total {
+  color: var(--cyan);
+}
+
+.panel-lb-vacio {
+  padding: clamp(24px, 4vh, 60px) 14px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: clamp(14px, 1.05vw, 19px);
+  font-weight: 600;
+  max-width: 640px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.panel-lb-pie {
+  flex: 0 0 auto;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px clamp(18px, 2vw, 40px);
+  font-size: clamp(11px, 0.8vw, 14px);
+  color: var(--text-dim);
+}
+
+/* Estado de carga: neutro, no de alarma. */
+.panel-lb-aviso.cargando {
+  background: var(--panel-alt);
+  border-color: var(--border);
+  color: var(--text-dim);
+}

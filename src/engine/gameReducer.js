@@ -9,7 +9,13 @@ import { calcularPerfil } from '../lib/perfilVocacional';
 export const estadoInicial = {
   // registro | seleccion-escenario | personalizacion | intro | jugando | resultado
   pantalla: 'registro',
-  jugador: null, // { nombre, colegio, avatar? }
+  jugador: null, // { nombre, colegio, numeroColegio, avatar? }
+  // Misiones que este alumno ya terminó en la jornada:
+  //   { [escenarioId]: { puntaje, tiempoSeg } }
+  // Sobrevive al fin de cada misión (no lo limpia INICIAR_PARTIDA) porque el
+  // ranking es la suma de todas. Solo REINICIAR lo borra, que es "siguiente
+  // alumno en esta PC".
+  completadas: {},
   escenario: null,
   faseIndex: 0,
   decisionIndex: 0,
@@ -35,6 +41,9 @@ export function crearEstadoConEscenario(state, escenario) {
   return {
     ...estadoInicial,
     jugador: state.jugador,
+    // El progreso de la jornada se arrastra entre misiones: arrancar la misión 2
+    // no borra lo que sumó la 1.
+    completadas: state.completadas,
     pantalla: pideAvatar ? 'personalizacion' : hayIntro ? 'intro' : 'jugando',
     escenario,
     faseIndex: 0,
@@ -79,13 +88,21 @@ function terminarPartida(state) {
   const resultado = calcularPuntajeFinal(state.escenario, state.respuestas, state.tiempoGlobalRestante);
   const tiempoTotalSeg = state.escenario.tiempoTotalSeg ?? TIEMPO_TOTAL_DEFAULT_SEG;
   const epilogo = encontrarEpilogo(state.escenario, resultado.total);
+  const tiempoUsadoSeg = tiempoTotalSeg - state.tiempoGlobalRestante;
   return {
     ...state,
     pantalla: 'resultado',
+    // La misión queda anotada acá, y de acá sale el total del ranking. Se
+    // registra al terminar, no al guardar en el leaderboard, así que el total en
+    // pantalla es correcto incluso sin red.
+    completadas: {
+      ...state.completadas,
+      [state.escenario.id]: { puntaje: resultado.total, tiempoSeg: tiempoUsadoSeg },
+    },
     resultado: {
       ...resultado,
       epilogo,
-      tiempoUsadoSeg: tiempoTotalSeg - state.tiempoGlobalRestante,
+      tiempoUsadoSeg,
       // null salvo que el escenario declare `presentacion.perfiles`.
       perfil: calcularPerfil(state.escenario, state.respuestas),
     },
@@ -162,6 +179,18 @@ export function gameReducer(state, action) {
       return { ...state, tiempoGlobalRestante, tiempoFaseRestante };
     }
 
+    // Vuelve al tablero de misiones manteniendo al alumno y su progreso. Es lo
+    // que dispara "SIGUIENTE MISIÓN" al terminar una: la jornada continúa, no
+    // se empieza de cero.
+    case 'VOLVER_A_MISIONES':
+      return {
+        ...estadoInicial,
+        jugador: state.jugador,
+        completadas: state.completadas,
+        pantalla: 'seleccion-escenario',
+      };
+
+    // Siguiente alumno en esta PC: borra todo, incluido el progreso.
     case 'REINICIAR':
       return { ...estadoInicial };
 
