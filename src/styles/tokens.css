@@ -200,3 +200,13 @@ a:hover {
   border: 1px solid var(--border);
   color: var(--text);
 }
+.feedback-box.parcial {
+  background: rgba(255, 209, 102, 0.12);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+.feedback-box.error {
+  background: rgba(255, 92, 106, 0.12);
+  border: 1px solid var(--red);
+  color: #ff9aa3;
+}

@@ -22,6 +22,51 @@
   line-height: 1.35;
 }
 
+.decision-contexto {
+  padding: clamp(9px, 1vh, 13px) clamp(12px, 1vw, 18px);
+  border-left: 4px solid var(--cyan);
+  border-radius: 6px;
+  background: rgba(74, 217, 255, 0.08);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+}
+.decision-contexto span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--cyan);
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+}
+
+.decision-opciones .chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.decision-opciones .chip.on.acierto {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.12);
+}
+.decision-opciones .chip.on.parcial {
+  border-color: var(--gold);
+  background: rgba(255, 209, 102, 0.12);
+}
+.decision-opciones .chip.on.error {
+  border-color: var(--red);
+  background: rgba(255, 92, 106, 0.12);
+}
+.decision-opcion-marca {
+  flex: 0 0 auto;
+  font-family: var(--pixel);
+  font-weight: 800;
+}
+.chip.acierto .decision-opcion-marca { color: var(--green); }
+.chip.parcial .decision-opcion-marca { color: var(--gold); }
+.chip.error .decision-opcion-marca { color: var(--red); }
+
 /* Las opciones se quedan con el alto sobrante y quedan centradas, así el
    bloque no flota arriba en pantallas altas. `auto-fit` mantiene una sola
    columna cuando hay 2-3 opciones largas y pasa a dos cuando entran. */
@@ -30,7 +75,9 @@
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  align-content: center;
+  /* `safe` evita que, cuando las opciones son más altas que el espacio, el
+     centrado mande la primera por encima del inicio del scroll. */
+  align-content: safe center;
   gap: clamp(10px, 1.2vh, 18px);
   overflow: auto;
 }
@@ -42,6 +89,21 @@
 }
 .decision-feedback .feedback-box {
   margin-top: 0;
+}
+.decision-feedback-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+}
+.decision-solucion {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid currentColor;
+  color: var(--text);
 }
 
 /* --- Modo ilustrado ------------------------------------------------------
@@ -82,13 +144,17 @@
   letter-spacing: 1px;
   background: rgba(11, 16, 32, 0.88);
 }
-.di-rotulo.bueno {
+.di-rotulo.acierto {
   color: var(--green);
   border: 1px solid var(--green);
 }
-.di-rotulo.malo {
+.di-rotulo.parcial {
   color: var(--gold);
   border: 1px solid var(--gold);
+}
+.di-rotulo.error {
+  color: #ff9aa3;
+  border: 1px solid var(--red);
 }
 
 .di-panel {
@@ -139,6 +205,14 @@
   border-color: var(--green);
   background: rgba(47, 230, 166, 0.12);
 }
+.di-tarjeta.on.parcial {
+  border-color: var(--gold);
+  background: rgba(255, 209, 102, 0.12);
+}
+.di-tarjeta.on.error {
+  border-color: var(--red);
+  background: rgba(255, 92, 106, 0.12);
+}
 
 .di-tarjeta-img {
   display: block;
@@ -166,6 +240,14 @@
   color: #08281f;
   font-weight: 800;
   font-size: 13px;
+}
+.di-tarjeta.parcial .di-tarjeta-marca {
+  background: var(--gold);
+  color: #302307;
+}
+.di-tarjeta.error .di-tarjeta-marca {
+  background: var(--red);
+  color: #30070b;
 }
 
 @media (max-width: 900px) {

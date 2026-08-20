@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import DecisionUnica from './DecisionUnica';
+import '../styles/wireframe.css';
 
 function SeleccionMultiple({ decision, onElegir }) {
   const [seleccionados, setSeleccionados] = useState([]);
@@ -9,6 +10,9 @@ function SeleccionMultiple({ decision, onElegir }) {
 
   const disponibles = decision.opciones.filter((o) => !seleccionados.includes(o.id));
   const puestos = seleccionados.map((id) => decision.opciones.find((o) => o.id === id));
+  const correctas = decision.opciones.filter((opcion) => opcion.esCorrecta);
+  const aciertos = puestos.filter((opcion) => opcion?.esCorrecta).length;
+  const resultadoPerfecto = confirmado && aciertos === max;
 
   function agregar(opcionId) {
     if (confirmado || seleccionados.includes(opcionId) || seleccionados.length >= max) return;
@@ -27,47 +31,76 @@ function SeleccionMultiple({ decision, onElegir }) {
   }
 
   return (
-    <div>
+    <div className="wireframe-seleccion">
+      {decision.contexto && (
+        <div className="decision-contexto">
+          <span>PROBLEMA</span>
+          {decision.contexto}
+        </div>
+      )}
       <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 10 }}>
         {decision.pregunta} <span style={{ color: 'var(--text-dim)', fontWeight: 600, fontSize: 13 }}>({seleccionados.length}/{max})</span>
       </div>
-      <div style={{ display: 'flex', gap: 16 }}>
+      <div className="wireframe-columnas">
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ fontSize: 12, color: 'var(--text-dim)', fontWeight: 700, marginBottom: 2 }}>Elementos disponibles (arrástralos →)</div>
-          {disponibles.map((opcion) => (
+          <div className="wireframe-etiqueta">{decision.etiquetaDisponibles ?? 'Opciones disponibles (arrastra o toca →)'}</div>
+          {disponibles.filter((opcion) => !confirmado || opcion.esCorrecta).map((opcion) => (
             <div
               key={opcion.id}
-              className="chip"
+              className={`chip${confirmado && opcion.esCorrecta ? ' solucion' : ''}`}
               draggable={!confirmado}
               onDragStart={() => setArrastrando(opcion.id)}
               onDragEnd={() => setArrastrando(null)}
               onClick={() => agregar(opcion.id)}
               style={{ cursor: 'grab', padding: '8px 12px', fontSize: 13 }}
             >
-              {opcion.texto}
+              {opcion.texto}{confirmado && opcion.esCorrecta ? ' ← solución' : ''}
             </div>
           ))}
         </div>
         <div
           data-testid="zona-destino-wireframe"
-          style={{ flex: 1, border: '2px dashed var(--border)', borderRadius: 8, minHeight: 120, padding: 8, display: 'flex', flexDirection: 'column', gap: 6 }}
+          className="wireframe-destino"
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
             if (arrastrando) agregar(arrastrando);
           }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-dim)', fontWeight: 700, marginBottom: 2 }}>Pantalla del celular del portero</div>
+          <div className="wireframe-etiqueta">{decision.etiquetaDestino ?? 'Tu selección'}</div>
           {puestos.map((opcion) => (
-            <div key={opcion.id} className="chip on" onClick={() => quitar(opcion.id)} style={{ padding: '8px 12px', fontSize: 13 }}>
-              {opcion.texto} ✕
+            <div
+              key={opcion.id}
+              className={`chip on${confirmado ? (opcion.esCorrecta ? ' acierto' : ' error') : ''}`}
+              onClick={() => quitar(opcion.id)}
+            >
+              {opcion.texto} {confirmado ? (opcion.esCorrecta ? '✔' : '✕') : '✕'}
             </div>
           ))}
         </div>
       </div>
-      <button type="button" className="btn-primary" style={{ marginTop: 12 }} disabled={confirmado || seleccionados.length !== max} onClick={confirmar}>
-        Confirmar pantalla
-      </button>
+      {!confirmado && (
+        <button type="button" className="btn-primary" style={{ marginTop: 12 }} disabled={seleccionados.length !== max} onClick={confirmar}>
+          {decision.etiquetaConfirmar ?? 'CONFIRMAR RESPUESTA'}
+        </button>
+      )}
+      {confirmado && (
+        <div className={`feedback-box ${resultadoPerfecto ? 'ok' : 'error'}`} role="status">
+          <div className="decision-feedback-titulo">
+            {resultadoPerfecto ? '✔ ACIERTO' : `✕ TE EQUIVOCASTE (${aciertos}/${max})`}
+          </div>
+          <div>
+            {resultadoPerfecto
+              ? (decision.feedbackAcierto ?? 'Elegiste únicamente los elementos necesarios.')
+              : (decision.feedbackError ?? 'Algunas opciones no resuelven el problema principal.')}
+          </div>
+          {!resultadoPerfecto && (
+            <div className="decision-solucion">
+              <strong>Solución:</strong> {correctas.map((opcion) => opcion.texto).join(' · ')}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

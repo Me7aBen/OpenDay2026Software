@@ -25,6 +25,37 @@ export function calcularEstadoPorRespuesta({ puntaje, esTrampa }) {
   return ESTADO_IDLE;
 }
 
+function calcularEstadoDeDecision(decision, respuesta) {
+  if (!decision || !respuesta) return ESTADO_IDLE;
+
+  if (decision.tipoInteraccion === 'seleccion-multiple') {
+    const elegidas = respuesta.opcionIds
+      .map((id) => decision.opciones?.find((opcion) => opcion.id === id))
+      .filter(Boolean);
+    const aciertos = elegidas.filter((opcion) => opcion.esCorrecta).length;
+    const objetivo = decision.seleccionExacta ?? elegidas.length;
+    if (aciertos === objetivo) return ESTADO_FELIZ;
+    if (aciertos === 0) return ESTADO_MOLESTO;
+    return ESTADO_CONFUNDIDO;
+  }
+
+  const opcion = decision.opciones?.find((o) => o.id === respuesta.opcionIds?.[0]);
+  if (decision.tipoInteraccion === 'seleccion-unica' && opcion) {
+    const maximo = Math.max(...decision.opciones.map((item) => item.puntaje ?? 0));
+    const esMejor = opcion.esCorrecta === true || ((opcion.puntaje ?? 0) === maximo && maximo > 0);
+    if (esMejor) return ESTADO_FELIZ;
+    if (opcion.esTrampa || opcion.esCorrecta === false || (opcion.puntaje ?? 0) === 0) {
+      return ESTADO_MOLESTO;
+    }
+    return ESTADO_CONFUNDIDO;
+  }
+
+  return calcularEstadoPorRespuesta({
+    puntaje: respuesta.puntaje,
+    esTrampa: opcion?.esTrampa ?? false,
+  });
+}
+
 // Mira el conjunto de respuestas del escenario y devuelve el estado "último"
 // del personaje. Prioridad: el de la decisión más reciente (orden de aparición).
 // Si no hay respuestas, idle. NO considera la decisión en curso: muestra el
@@ -37,11 +68,7 @@ export function calcularEstadoActual(respuestas, escenario) {
     for (const decision of fase.decisiones) {
       const r = respuestas[decision.id];
       if (!r) continue;
-      const opcion = decision.opciones?.find((o) => o.id === r.opcionIds?.[0]);
-      ultimoEstado = calcularEstadoPorRespuesta({
-        puntaje: r.puntaje,
-        esTrampa: opcion?.esTrampa ?? false,
-      });
+      ultimoEstado = calcularEstadoDeDecision(decision, r);
     }
   }
   return ultimoEstado;
@@ -54,10 +81,5 @@ export function calcularEstadoActual(respuestas, escenario) {
 // También resetea a idle entre decisiones: cuando el usuario avanzo a la
 // siguiente decisión sin haber respondido, la cara vuelve a estar neutra.
 export function calcularEstadoActualDecision(decision, respuesta) {
-  if (!decision || !respuesta) return ESTADO_IDLE;
-  const opcion = decision.opciones?.find((o) => o.id === respuesta.opcionIds?.[0]);
-  return calcularEstadoPorRespuesta({
-    puntaje: respuesta.puntaje,
-    esTrampa: opcion?.esTrampa ?? false,
-  });
+  return calcularEstadoDeDecision(decision, respuesta);
 }
