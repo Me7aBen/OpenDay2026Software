@@ -9,6 +9,7 @@ import SeleccionCards from './SeleccionCards';
 import CircuitoConexiones from './CircuitoConexiones';
 import DetectarIntruso from './DetectarIntruso';
 import CodigoMecanografia from './CodigoMecanografia';
+import OrdenarPasos from './OrdenarPasos';
 
 // Mapeo de tipoInteraccion (declarado por cada Decision en el JSON del
 // escenario) -> componente de minijuego. Esto reemplaza el antiguo mapeo
@@ -24,6 +25,7 @@ export const minijuegoPorTipo = {
   'circuito-conexiones': CircuitoConexiones,
   'detectar-intruso': DetectarIntruso,
   'mecanografia-codigo': CodigoMecanografia,
+  'ordenar-pasos': OrdenarPasos,
 };
 
 // Compatibilidad hacia atrás: mapa por estilo de fase, para los lugares que

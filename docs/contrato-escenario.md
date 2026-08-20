@@ -14,12 +14,13 @@ contrato, sin tocar el motor.
   presentarla como clic (botones), o como campo de texto que el jugador
   escribe (`escribir`, ver más abajo) — el motor puntúa igual en ambos casos:
   busca la opción cuyo `id` coincide con lo elegido/escrito.
-- Cada fase tiene 2-3 `decisiones`. Entre las 5 fases suman exactamente
-  **12 decisiones**, cada una puntúa 0/30/60 (hasta 720 en total).
+- Cada fase tiene entre 2 y 4 `decisiones`. El escenario define una escala
+  equilibrada; en Código Cero los retos suman 800 puntos.
 - Bonos especiales (`bugCritico`, `usuarioReal`, hasta 80 pts combinados) van
   colgados del campo `bonus` de la opción correcta, no como lógica aparte.
-- El bono de tiempo restante (hasta 200 pts) y el descuento de pista (-20 c/u)
-  los calcula el motor; no viven en el JSON salvo el `pistaTexto` opcional que
+- El bono de tiempo restante (hasta 200 pts) y el descuento de pista (-10 c/u)
+  los calcula el motor; no viven en el JSON salvo `pista` (o el legado
+  `pistaTexto`) que
   habilita el descuento si el jugador la pide.
 - Timer global: default 960s (16 min) en el motor, puede sobreescribirse con
   `tiempoTotalSeg` en el JSON. Timer por fase: `tiempoSegFase`, auto-avanza al
@@ -65,19 +66,22 @@ Fase
 ├─ historieta?: Panel[2-3]              // tira de viñetas que abre la fase, en lugar de
 │                                        // `explicacion`. Ver "Historietas".
 ├─ textoBotonHistorieta?: string        // texto del botón al final de la tira
+├─ historietaCierre?: PanelHistorieta[] // consecuencia mostrada al terminar la fase
+├─ textoBotonCierre?: string            // botón que lleva a la fase siguiente
+├─ mensajeCierre?: string               // frase del cliente durante ese cierre
 ├─ imagen?: string|null                 // placeholder de diagrama/foto de la fase, null por ahora
 ├─ musica?: string                      // opcional. Nombre de pista mientras dura la fase.
 │                                        // Solo tiene efecto si el escenario declara presentacion.musica.
 ├─ tiempoSegFase: number                // segundos antes del auto-avance (incluye lectura + decisión)
 ├─ estilo: 'entrevista'|'wireframe'|'logica'|'bugs'|'deploy'  // solo cosmético
-└─ decisiones: Decision[2-3]
+└─ decisiones: Decision[2-4]
 
 Decision
 ├─ id: string                           // único en el escenario, ej 'descubrir-1'
 ├─ tipoInteraccion: 'seleccion-unica' | 'seleccion-multiple' | 'escribir'
 │                   | 'arquitectura-nodos' | 'mapa-calor' | 'seleccion-cards'
 │                   | 'circuito-conexiones' | 'detectar-intruso'
-│                   | 'mecanografia-codigo'
+│                   | 'mecanografia-codigo' | 'ordenar-pasos'
 ├─ pregunta: string                     // máx 2 líneas
 ├─ mensajeClienteDecision?: string      // lo que dice el cliente en el panel lateral MIENTRAS
 │                                        // esta decisión está en pantalla. Si falta, se sigue
@@ -87,7 +91,8 @@ Decision
 │                                        // responder esta decisión. Ver "Bloque presentacion".
 ├─ ilustracion?: string                 // escena pixel art que acompaña a la decisión. Ver
 │                                        // "Decisiones ilustradas".
-├─ pistaTexto?: string                  // si existe, el jugador puede pedirla (-20 pts)
+├─ pista?: string                       // ayuda orientadora; pedirla cuesta 10 pts una sola vez
+├─ pistaTexto?: string                  // alias legado de `pista`
 ├─ metaMinijuego?: object               // datos de flavor para el render (ej. plantillaCodigo)
 ├─ seleccionExacta?: number             // solo seleccion-multiple: cuántas debe elegir/arrastrar
 ├─ tablaPuntaje?: { [conteoCorrectos: string]: number }  // solo seleccion-multiple
@@ -301,6 +306,31 @@ copiarla. El estudiante no necesita saber programar ni adivinar nada.
   vías (el código no se selecciona, el campo rechaza inserciones de más de un
   carácter, y `onPaste` se cancela).
 
+### `tipoInteraccion: 'ordenar-pasos'`
+
+Construir una secuencia tocando pasos y colocándolos en una ruta numerada
+(`src/minigames/OrdenarPasos.jsx`). Devuelve `puntajeDirecto`.
+
+```json
+"metaMinijuego": {
+  "idRespuesta": "orden-correcto",
+  "intentosPermitidos": 3,
+  "puntosMax": 50,
+  "puntosMin": 30,
+  "penalizacionPorIntento": 10,
+  "pasos": [
+    { "id": "respaldo", "texto": "Verificar el respaldo", "icono": "▣" },
+    { "id": "hospital", "texto": "Encender el hospital", "icono": "+" }
+  ],
+  "ordenCorrecto": ["respaldo", "hospital"]
+}
+```
+
+- Tocar un paso lo agrega; tocarlo dentro de la ruta lo devuelve.
+- Un intento incorrecto marca cada posición con ✔ o ✕ y permite reordenar.
+- Al agotar intentos se revela la secuencia correcta y la historia continúa.
+- No depende de arrastrar: es operable con teclado, mouse y pantalla táctil.
+
 ### Historietas
 
 Una historieta es una tira de 2-3 viñetas pixel art que cuenta lo que pasa, en
@@ -325,6 +355,7 @@ Se declaran en tres lugares, todos opcionales:
 |---|---|
 | `presentacion.historietaIntro` | entre el avatar y la primera fase (pantalla propia; el reloj todavía no corre) |
 | `fase.historieta` | al abrir cada fase, en lugar de `fase.explicacion` |
+| `fase.historietaCierre` | después de la última decisión y antes de la fase siguiente |
 | `presentacion.historietaEpilogo` | en el resultado, con la tira entera visible de una |
 
 ### Decisiones ilustradas
@@ -438,7 +469,7 @@ Lo que escribe el jugador **nunca se ejecuta**: se compara como texto contra las
 - Si la opción elegida trae `bonus`, esos puntos se suman aparte al total de
   bonos especiales (tope 80 en todo el escenario, pero el motor no lo capea
   explícitamente: el contenido debe cuidar no pasarse).
-- Si se pidió la pista de esa decisión, se restan 20 puntos (una sola vez por
+- Si se pidió la pista de esa decisión, se restan 10 puntos (una sola vez por
   decisión).
 
 ## Ejemplo comentado (extracto del escenario A · Ccorca)

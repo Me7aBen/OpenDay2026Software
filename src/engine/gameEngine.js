@@ -3,7 +3,9 @@
 
 export const TIEMPO_TOTAL_DEFAULT_SEG = 960; // 16 min
 export const BONO_TIEMPO_MAX = 200;
-export const PENALIZACION_PISTA = 20;
+// La pista ayuda a aprender y no debe destruir el puntaje. El costo es visible
+// antes de abrirla y se aplica una sola vez por reto.
+export const PENALIZACION_PISTA = 10;
 
 export function contarDecisionesTotales(escenario) {
   return escenario.fases.reduce((total, fase) => total + fase.decisiones.length, 0);

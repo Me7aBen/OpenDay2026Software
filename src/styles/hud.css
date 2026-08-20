@@ -357,3 +357,60 @@
   padding: clamp(10px, 1.1vh, 18px) clamp(12px, 1.1vw, 22px);
   overflow: hidden;
 }
+
+.hud-panel-cierre {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 8px;
+}
+.hud-cierre-rotulo {
+  color: var(--green);
+}
+.hud-pista {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.hud-pista-boton {
+  border: 1px solid color-mix(in srgb, var(--gold) 65%, transparent);
+  background: color-mix(in srgb, var(--gold) 10%, var(--panel));
+  color: var(--gold);
+  padding: 8px 12px;
+  font: 700 11px/1.2 var(--font-pixel);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.hud-pista-boton span {
+  color: var(--text-dim);
+  margin-left: 5px;
+}
+
+.hud-pista-boton:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--gold) 18%, var(--panel));
+  transform: translateY(-1px);
+}
+
+.hud-pista-boton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.hud-pista.abierta {
+  justify-content: stretch;
+}
+
+.hud-pista-texto {
+  width: 100%;
+  padding: 10px 12px;
+  border-left: 3px solid var(--gold);
+  background: color-mix(in srgb, var(--gold) 9%, var(--panel));
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.hud-pista-texto strong {
+  color: var(--gold);
+}

@@ -1,5 +1,6 @@
 import {
   TIEMPO_TOTAL_DEFAULT_SEG,
+  PENALIZACION_PISTA,
   calcularPuntajeDecision,
   calcularPuntajeFinal,
   encontrarEpilogo,
@@ -62,7 +63,7 @@ function decisionActual(state) {
   return faseActual(state)?.decisiones[state.decisionIndex];
 }
 
-function respuestaCumpleObjetivo(decision, opcionIds) {
+function respuestaCumpleObjetivo(decision, opcionIds, puntajeDirecto) {
   if (decision.tipoInteraccion === 'seleccion-unica') {
     const elegida = decision.opciones?.find((opcion) => opcion.id === opcionIds[0]);
     if (!elegida) return false;
@@ -77,6 +78,14 @@ function respuestaCumpleObjetivo(decision, opcionIds) {
     return opcionIds.length === objetivo && opcionIds.every((id) => (
       decision.opciones?.find((opcion) => opcion.id === id)?.esCorrecta === true
     ));
+  }
+
+  if (decision.tipoInteraccion === 'escribir') {
+    return decision.opciones?.find((opcion) => opcion.id === opcionIds[0])?.esCorrecta === true;
+  }
+
+  if (decision.tipoInteraccion === 'ordenar-pasos') {
+    return opcionIds[0] === decision.metaMinijuego?.idRespuesta && (puntajeDirecto ?? 0) > 0;
   }
 
   // Los minijuegos de código, circuito e intruso solo llaman onElegir cuando
@@ -168,13 +177,16 @@ export function gameReducer(state, action) {
       // Una respuesta incorrecta deja continuar la historia, pero no puede
       // pintar el medidor como si hubiera recuperado la ciudad. El hito solo
       // se alcanza cuando la decisión cumple su objetivo.
-      const hito = respuestaCumpleObjetivo(decision, action.opcionIds)
+      const hito = respuestaCumpleObjetivo(decision, action.opcionIds, action.puntajeDirecto)
         ? decision.hitoIndicador
         : null;
       return {
         ...state,
         respuestas: { ...state.respuestas, [decision.id]: respuesta },
-        puntajeAcumulado: state.puntajeAcumulado + puntaje + bono - (pistaUsada ? 20 : 0),
+        puntajeAcumulado: Math.max(
+          0,
+          state.puntajeAcumulado + puntaje + bono - (pistaUsada ? PENALIZACION_PISTA : 0),
+        ),
         indicadorValor:
           typeof hito === 'number' ? Math.max(state.indicadorValor, hito) : state.indicadorValor,
       };

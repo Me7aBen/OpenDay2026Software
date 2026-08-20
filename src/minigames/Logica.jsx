@@ -36,6 +36,7 @@ export default function Logica({ decision, onElegir }) {
   const plantilla = meta.plantillaCodigo ?? '';
   const intentosPermitidos = meta.intentosPermitidos ?? 1;
   const hayReintentos = intentosPermitidos > 1;
+  const opcionCorrecta = decision.opciones.find((opcion) => opcion.esCorrecta === true);
 
   const [valor, setValor] = useState('');
   const [resuelto, setResuelto] = useState(false);
@@ -62,9 +63,21 @@ export default function Logica({ decision, onElegir }) {
     reproducirEfecto(nombre);
   }
 
+  function normalizarEntrada(texto) {
+    return texto
+      .trim()
+      .toLowerCase()
+      .replace(/;+$/, '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
+
   function buscarOpcion(texto) {
-    const limpio = texto.trim().toLowerCase();
-    return decision.opciones.find((o) => o.texto.trim().toLowerCase() === limpio) ?? null;
+    const limpio = normalizarEntrada(texto);
+    return decision.opciones.find((opcion) => {
+      const respuestasAceptadas = [opcion.texto, ...(opcion.aliases ?? [])];
+      return respuestasAceptadas.some((respuesta) => normalizarEntrada(respuesta) === limpio);
+    }) ?? null;
   }
 
   // Cierra la decisión: calcula el puntaje (aplicando la penalización por
@@ -72,7 +85,9 @@ export default function Logica({ decision, onElegir }) {
   function finalizar(opcion, numeroIntento) {
     setOpcionEncontrada(opcion);
     setResuelto(true);
-    setValorMostrado(valor);
+    // En la línea final mostramos el valor real del lenguaje. Por ejemplo, si
+    // el jugador escribe "falso", se ejecuta y se ve `false`.
+    setValorMostrado(opcion?.texto ?? valor);
 
     if (!hayReintentos) {
       // Camino histórico: el motor puntúa leyendo la opción elegida.
@@ -108,7 +123,7 @@ export default function Logica({ decision, onElegir }) {
     // Queda intento: se muestra el porqué y se deja volver a probar.
     sonar('error');
     setOpcionEncontrada(opcion);
-    setValorMostrado(valor);
+    setValorMostrado(opcion?.texto ?? valor);
     if (inputRef.current) inputRef.current.focus();
   }
 
@@ -144,7 +159,18 @@ export default function Logica({ decision, onElegir }) {
 
   return (
     <div className="logica">
-      <div className="label-pixel">🧩 BLOQUES DE LÓGICA</div>
+      <div className="logica-cabecera">
+        <div className="label-pixel">🧩 CONSOLA DE LÓGICA</div>
+        <div className="logica-pasos" aria-hidden="true">
+          <span>ENTIENDE</span><b>→</b><span>COMPLETA</span><b>→</b><span>EJECUTA</span>
+        </div>
+      </div>
+      {decision.contexto && (
+        <div className="logica-contexto">
+          <span>PROBLEMA</span>
+          {decision.contexto}
+        </div>
+      )}
       <div className="logica-pregunta">{decision.pregunta}</div>
 
       <div className={`logica-codigo${ejecutando ? ' ejecutando' : ''}`}>
@@ -160,7 +186,7 @@ export default function Logica({ decision, onElegir }) {
           value={valor}
           disabled={resuelto || ejecutando}
           onChange={(e) => setValor(e.target.value)}
-          placeholder="Escribe aquí"
+          placeholder={meta.placeholder ?? 'Escribe aquí'}
           className="logica-input"
           inputMode={meta.modoEntrada === 'numeric' ? 'numeric' : undefined}
           autoComplete="off"
@@ -183,11 +209,16 @@ export default function Logica({ decision, onElegir }) {
       <div className="logica-salida" role="status" aria-live="polite">
         {resuelto && (
           <>
-            {opcionEncontrada?.esCorrecta && (
-              <div className="logica-ok">CÓDIGO EJECUTADO</div>
-            )}
-            <div className="logica-feedback">
+            <div className={`logica-resultado ${opcionEncontrada?.esCorrecta ? 'ok' : 'error'}`}>
+              {opcionEncontrada?.esCorrecta ? '✔ CÓDIGO CORRECTO' : '✕ TE EQUIVOCASTE'}
+            </div>
+            <div className={`logica-feedback ${opcionEncontrada?.esCorrecta ? 'ok' : 'error'}`}>
               {opcionEncontrada ? opcionEncontrada.feedback : decision.feedbackSinCoincidencia}
+              {!opcionEncontrada?.esCorrecta && opcionCorrecta && (
+                <div className="logica-solucion">
+                  <strong>Solución:</strong> escribe <code>{opcionCorrecta.texto}</code>. {opcionCorrecta.feedback}
+                </div>
+              )}
             </div>
             {opcionEncontrada?.esCorrecta &&
               (meta.salidaEjecucion ?? []).map((linea) => (
@@ -199,6 +230,7 @@ export default function Logica({ decision, onElegir }) {
         )}
         {enReintento && (
           <div className="logica-feedback reintento">
+            <strong>REVISA Y PRUEBA OTRA VEZ.</strong>{' '}
             {opcionEncontrada ? opcionEncontrada.feedback : decision.feedbackSinCoincidencia}
           </div>
         )}

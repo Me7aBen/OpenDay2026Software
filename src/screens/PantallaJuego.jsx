@@ -7,6 +7,7 @@ import EscenaFondo from '../ui/EscenaFondo';
 import IndicadorGlobal from '../ui/IndicadorGlobal';
 import HistorietaPixel from '../ui/HistorietaPixel';
 import { calcularEstadoActualDecision } from '../ui/estadosCliente';
+import { PENALIZACION_PISTA } from '../engine/gameEngine';
 import '../styles/hud.css';
 
 const ORDEN_FASES = ['descubrir', 'disenar', 'construir', 'probar', 'desplegar'];
@@ -72,8 +73,8 @@ function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisi
       <div className="panel hud-stat">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l2.9 6.1 6.6.7-4.9 4.5 1.4 6.5L12 16.8 6 19.8l1.4-6.5-4.9-4.5 6.6-.7L12 2z" /></svg>
         <div>
-          <div className="label-pixel">PUNTAJE</div>
-          <div className="valor" style={{ color: 'var(--gold)' }}>{puntajeAcumulado} pts</div>
+          <div className="label-pixel">PUNTAJE RETOS</div>
+          <div className="valor" style={{ color: 'var(--gold)' }}>{puntajeAcumulado} / 800</div>
         </div>
       </div>
 
@@ -124,8 +125,9 @@ function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisi
 
 // Se remonta (vía key={fase.id} en el padre) cada vez que cambia de fase,
 // así que su estado de "¿ya vio la explicación?" siempre arranca en false.
-function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tiempoGlobalRestante, puntajeAcumulado, indicadorValor, avatarJugador, responderDecision, siguienteDecision, onAbandonar }) {
+function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, pistasUsadasIds, tiempoGlobalRestante, puntajeAcumulado, indicadorValor, avatarJugador, responderDecision, pedirPista, siguienteDecision, onAbandonar }) {
   const [explicacionVista, setExplicacionVista] = useState(false);
+  const [mostrarCierre, setMostrarCierre] = useState(false);
   const panelDecisionRef = useRef(null);
   const decisionesResueltas = fase.decisiones.filter((d) => respuestas[d.id]).length;
   // Bloque opcional del JSON. Vacío para los escenarios que no lo declaran, y
@@ -142,14 +144,16 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
   // (justo la correcta en algunos puzzles). Cada reto debe empezar arriba.
   useEffect(() => {
     if (panelDecisionRef.current) panelDecisionRef.current.scrollTop = 0;
-  }, [decisionIndex, explicacionVista]);
+  }, [decisionIndex, explicacionVista, mostrarCierre]);
   const estadoCliente = calcularEstadoActualDecision(
     decisionActual,
     decisionActual ? respuestas[decisionActual.id] : null,
   );
-  const textoCliente = explicacionVista
-    ? decisionActual?.mensajeClienteDecision ?? fase.intro ?? ''
-    : fase.intro ?? '';
+  const textoCliente = mostrarCierre
+    ? fase.mensajeCierre ?? fase.intro ?? ''
+    : explicacionVista
+      ? decisionActual?.mensajeClienteDecision ?? fase.intro ?? ''
+      : fase.intro ?? '';
 
   const cliente = (
     <ClienteFlotante
@@ -252,10 +256,41 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
   const decision = decisionActual;
   const Minijuego = minijuegoPorTipo[decision.tipoInteraccion];
   const yaResuelta = !!respuestas[decision.id];
+  const textoPista = decision.pista ?? decision.pistaTexto;
+  const pistaVisible = pistasUsadasIds.includes(decision.id);
+  const esUltimaDecision = decisionIndex === fase.decisiones.length - 1;
 
   function manejarElegir(opcionIds, puntajeDirecto) {
     if (yaResuelta) return;
     responderDecision(decision.id, opcionIds, puntajeDirecto);
+  }
+
+  function continuar() {
+    if (esUltimaDecision && fase.historietaCierre?.length) {
+      setMostrarCierre(true);
+      return;
+    }
+    siguienteDecision();
+  }
+
+  if (mostrarCierre) {
+    return (
+      <div className="hud-cuerpo">
+        {sidebar}
+        <div className="hud-principal">
+          {cabecera}
+          <div className="panel hud-panel hud-panel-historieta hud-panel-cierre">
+            <div className="hud-cierre-rotulo label-pixel">RESULTADO DE LA FASE</div>
+            <HistorietaPixel
+              paneles={fase.historietaCierre}
+              avatar={avatarJugador}
+              textoBoton={fase.textoBotonCierre ?? 'SIGUIENTE FASE'}
+              onTerminar={siguienteDecision}
+            />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -264,6 +299,24 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
       <div className="hud-principal">
         {cabecera}
         <div ref={panelDecisionRef} className="panel hud-panel hud-panel-decision">
+          {textoPista && (
+            <div className={`hud-pista${pistaVisible ? ' abierta' : ''}`}>
+              {!pistaVisible ? (
+                <button
+                  type="button"
+                  className="hud-pista-boton"
+                  onClick={() => pedirPista(decision.id)}
+                  disabled={yaResuelta}
+                >
+                  💡 VER PISTA <span>−{PENALIZACION_PISTA} pts</span>
+                </button>
+              ) : (
+                <div className="hud-pista-texto" role="status">
+                  <strong>💡 PISTA:</strong> {textoPista}
+                </div>
+              )}
+            </div>
+          )}
           <Minijuego
             key={decision.id}
             decision={decision}
@@ -272,7 +325,9 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
           />
           {yaResuelta && (
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
-              <button type="button" className="btn-primary" onClick={siguienteDecision}>Continuar →</button>
+              <button type="button" className="btn-primary" onClick={continuar}>
+                {esUltimaDecision && fase.historietaCierre?.length ? 'VER RESULTADO →' : 'Continuar →'}
+              </button>
             </div>
           )}
         </div>
@@ -282,8 +337,8 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
 }
 
 export default function PantallaJuego() {
-  const { state, responderDecision, siguienteDecision, reiniciar } = useGame();
-  const { escenario, faseIndex, decisionIndex, tiempoGlobalRestante, puntajeAcumulado, respuestas, indicadorValor } = state;
+  const { state, responderDecision, pedirPista, siguienteDecision, reiniciar } = useGame();
+  const { escenario, faseIndex, decisionIndex, tiempoGlobalRestante, puntajeAcumulado, respuestas, pistasUsadasIds, indicadorValor } = state;
   const fase = escenario.fases[faseIndex];
 
   return (
@@ -296,11 +351,13 @@ export default function PantallaJuego() {
         faseIndex={faseIndex}
         decisionIndex={decisionIndex}
         respuestas={respuestas}
+        pistasUsadasIds={pistasUsadasIds}
         tiempoGlobalRestante={tiempoGlobalRestante}
         puntajeAcumulado={puntajeAcumulado}
         indicadorValor={indicadorValor}
         avatarJugador={state.jugador?.avatar}
         responderDecision={responderDecision}
+        pedirPista={pedirPista}
         siguienteDecision={siguienteDecision}
         onAbandonar={reiniciar}
       />

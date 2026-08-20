@@ -25,6 +25,7 @@ export function puntajeMaximoDecision(decision) {
     case 'circuito-conexiones':
     case 'detectar-intruso':
     case 'mecanografia-codigo':
+    case 'ordenar-pasos':
       return meta.puntosMax ?? 0;
     case 'seleccion-cards':
       return Math.max(0, ...(meta.imagenes ?? []).map((i) => i.puntaje ?? 0));

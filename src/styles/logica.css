@@ -10,9 +10,45 @@
    aparece cuando el escenario lo pide con `metaMinijuego.animarEjecucion`. */
 
 .logica-pregunta {
-  font-size: 15px;
+  font-size: var(--fs-lg);
   font-weight: 800;
   margin: 10px 0;
+}
+
+.logica-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.logica-pasos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.logica-pasos span:last-child { color: var(--green); }
+.logica-pasos b { color: var(--border); }
+
+.logica-contexto {
+  margin-top: 10px;
+  padding: 9px 14px;
+  border-left: 4px solid var(--cyan);
+  border-radius: 6px;
+  background: rgba(74, 217, 255, 0.08);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+}
+.logica-contexto span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--cyan);
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
 }
 
 .logica-codigo {
@@ -81,12 +117,29 @@
   color: var(--gold);
 }
 
-.logica-ok {
+.logica-resultado {
   font-family: var(--pixel);
   font-size: var(--fs-sm);
   letter-spacing: 2px;
-  color: var(--green);
   margin-top: 12px;
+}
+.logica-resultado.ok { color: var(--green); }
+.logica-resultado.error { color: var(--red); }
+
+.logica-feedback.error {
+  background: rgba(255, 92, 106, 0.1);
+  border-color: var(--red);
+  color: #ff9aa3;
+}
+.logica-solucion {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid currentColor;
+  color: var(--text);
+}
+.logica-solucion code {
+  color: var(--cyan);
+  font-weight: 800;
 }
 
 .logica-consola {
@@ -130,4 +183,8 @@
     transform: none;
     background: rgba(74, 217, 255, 0.12);
   }
+}
+
+@media (max-width: 700px) {
+  .logica-pasos { display: none; }
 }
