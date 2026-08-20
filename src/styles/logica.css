@@ -1,0 +1,133 @@
+/* Minijuego de bloques de lógica (tipoInteraccion: 'escribir').
+
+   Los valores de esta primera sección NO son elección de diseño nueva: son los
+   estilos inline que el componente tenía escritos a mano, movidos a CSS tal
+   cual (incluidos los px fijos de 15/14/13, que no usan la escala responsiva).
+   Se copiaron con los mismos números a propósito: "Luz para Ccorca" v1 y v2
+   usan este minijuego y tienen que verse exactamente igual que antes.
+
+   Lo que viene después de la línea de ESTADO EJECUTANDO sí es nuevo, y solo
+   aparece cuando el escenario lo pide con `metaMinijuego.animarEjecucion`. */
+
+.logica-pregunta {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 10px 0;
+}
+
+.logica-codigo {
+  position: relative;
+  overflow: hidden;
+  background: #0b1220;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: monospace;
+  font-size: 14px;
+  color: #9fd6ff;
+  margin-bottom: 12px;
+}
+.logica-codigo code {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+.logica-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.logica-input {
+  background: var(--panel-alt);
+  border: 2px solid var(--cyan);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: monospace;
+  color: var(--text);
+}
+
+.logica-run {
+  font-size: 13px;
+  padding: 8px 18px;
+}
+
+.logica-feedback {
+  background: #08281f;
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--green);
+  margin-top: 12px;
+}
+
+/* --- Desde acá, solo con `animarEjecucion` ------------------------------- */
+
+.logica-intentos {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+/* Feedback de un intento fallido que todavía deja reintentar: en ámbar, no en
+   rojo. Es una corrección, no un fracaso. */
+.logica-feedback.reintento {
+  background: rgba(255, 209, 102, 0.1);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.logica-ok {
+  font-family: var(--pixel);
+  font-size: var(--fs-sm);
+  letter-spacing: 2px;
+  color: var(--green);
+  margin-top: 12px;
+}
+
+.logica-consola {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--cyan);
+  opacity: 0.85;
+  margin-top: 4px;
+}
+
+/* Barrido de ejecución: recorre la línea de código de izquierda a derecha una
+   sola vez. Es un gradiente que se desplaza, no un parpadeo. */
+.logica-codigo.ejecutando {
+  border-color: var(--cyan);
+}
+
+.logica-barrido {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(74, 217, 255, 0.28) 45%,
+    rgba(74, 217, 255, 0.05) 60%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: logica-barrer 0.7s linear 1 forwards;
+}
+
+@keyframes logica-barrer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logica-barrido {
+    animation: none;
+    transform: none;
+    background: rgba(74, 217, 255, 0.12);
+  }
+}

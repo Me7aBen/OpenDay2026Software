@@ -3,6 +3,9 @@ import { useGame } from '../engine/useGame';
 import { minijuegoPorTipo } from '../minigames';
 import TopBar from '../ui/TopBar';
 import ClienteFlotante from '../ui/ClienteFlotante';
+import EscenaFondo from '../ui/EscenaFondo';
+import IndicadorGlobal from '../ui/IndicadorGlobal';
+import HistorietaPixel from '../ui/HistorietaPixel';
 import { calcularEstadoActualDecision } from '../ui/estadosCliente';
 import '../styles/hud.css';
 
@@ -121,9 +124,12 @@ function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisi
 
 // Se remonta (vía key={fase.id} en el padre) cada vez que cambia de fase,
 // así que su estado de "¿ya vio la explicación?" siempre arranca en false.
-function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tiempoGlobalRestante, puntajeAcumulado, responderDecision, siguienteDecision, onAbandonar }) {
+function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tiempoGlobalRestante, puntajeAcumulado, indicadorValor, avatarJugador, responderDecision, siguienteDecision, onAbandonar }) {
   const [explicacionVista, setExplicacionVista] = useState(false);
   const decisionesResueltas = fase.decisiones.filter((d) => respuestas[d.id]).length;
+  // Bloque opcional del JSON. Vacío para los escenarios que no lo declaran, y
+  // entonces nada de lo que sigue se renderiza.
+  const presentacion = escenario.presentacion ?? {};
 
   // El cliente reacciona a la decisión en curso: si ya la respondió muestra la
   // reacción, si no queda en idle. Habla con el mensaje de la decisión actual y,
@@ -143,6 +149,7 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
       rol={escenario.cliente.rol}
       texto={textoCliente}
       estado={estadoCliente}
+      retrato={escenario.cliente.retrato}
     />
   );
 
@@ -169,12 +176,61 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
     </div>
   );
 
+  // Cabecera de la columna principal. Por defecto es la franja de siempre con
+  // el título del escenario. Un escenario que declara escena y/o medidor global
+  // la reemplaza por su propia franja, sin que ninguno de los dos caminos sepa
+  // del otro.
+  const hayPresentacionPropia = !!presentacion.escena || !!presentacion.indicadorGlobal;
+  const cabecera = hayPresentacionPropia ? (
+    <div className="hud-escenario">
+      {presentacion.escena && (
+        <div className="hud-escenario-vista panel">
+          <EscenaFondo tipo={presentacion.escena} progreso={indicadorValor} />
+        </div>
+      )}
+      {presentacion.indicadorGlobal && (
+        <div className="hud-escenario-medidor panel">
+          <IndicadorGlobal
+            etiqueta={presentacion.indicadorGlobal.etiqueta}
+            unidad={presentacion.indicadorGlobal.unidad}
+            valor={indicadorValor}
+            maximo={presentacion.indicadorGlobal.maximo}
+          />
+        </div>
+      )}
+    </div>
+  ) : (
+    badge
+  );
+
   if (!explicacionVista) {
+    // Una fase que declara `historieta` abre con la tira de viñetas en vez del
+    // párrafo de explicación. La que no la declara (Ccorca) sigue abriendo con
+    // el texto de siempre, sin cambios.
+    if (fase.historieta?.length) {
+      return (
+        <div className="hud-cuerpo">
+          {sidebar}
+          <div className="hud-principal">
+            {cabecera}
+            <div className="panel hud-panel hud-panel-historieta">
+              <HistorietaPixel
+                paneles={fase.historieta}
+                avatar={avatarJugador}
+                textoBoton={fase.textoBotonHistorieta ?? 'EMPEZAR FASE'}
+                onTerminar={() => setExplicacionVista(true)}
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="hud-cuerpo">
         {sidebar}
         <div className="hud-principal">
-          {badge}
+          {cabecera}
           <div className="panel hud-panel hud-explicacion hud-explicacion-intro">
             <div className="titulo">{fase.titulo} · {fase.rol}</div>
             <div className="texto">{fase.explicacion}</div>
@@ -198,12 +254,13 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
     <div className="hud-cuerpo">
       {sidebar}
       <div className="hud-principal">
-        {badge}
+        {cabecera}
         <div className="panel hud-panel hud-panel-decision">
           <Minijuego
             key={decision.id}
             decision={decision}
             onElegir={manejarElegir}
+            avatar={avatarJugador}
           />
           {yaResuelta && (
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
@@ -218,7 +275,7 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, tie
 
 export default function PantallaJuego() {
   const { state, responderDecision, siguienteDecision, reiniciar } = useGame();
-  const { escenario, faseIndex, decisionIndex, tiempoGlobalRestante, puntajeAcumulado, respuestas } = state;
+  const { escenario, faseIndex, decisionIndex, tiempoGlobalRestante, puntajeAcumulado, respuestas, indicadorValor } = state;
   const fase = escenario.fases[faseIndex];
 
   return (
@@ -233,6 +290,8 @@ export default function PantallaJuego() {
         respuestas={respuestas}
         tiempoGlobalRestante={tiempoGlobalRestante}
         puntajeAcumulado={puntajeAcumulado}
+        indicadorValor={indicadorValor}
+        avatarJugador={state.jugador?.avatar}
         responderDecision={responderDecision}
         siguienteDecision={siguienteDecision}
         onAbandonar={reiniciar}

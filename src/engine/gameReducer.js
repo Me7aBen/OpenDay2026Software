@@ -4,10 +4,12 @@ import {
   calcularPuntajeFinal,
   encontrarEpilogo,
 } from './gameEngine';
+import { calcularPerfil } from '../lib/perfilVocacional';
 
 export const estadoInicial = {
-  pantalla: 'registro', // registro | seleccion-escenario | jugando | resultado
-  jugador: null, // { nombre, colegio }
+  // registro | seleccion-escenario | personalizacion | intro | jugando | resultado
+  pantalla: 'registro',
+  jugador: null, // { nombre, colegio, avatar? }
   escenario: null,
   faseIndex: 0,
   decisionIndex: 0,
@@ -16,20 +18,30 @@ export const estadoInicial = {
   pistasUsadasIds: [],
   tiempoGlobalRestante: TIEMPO_TOTAL_DEFAULT_SEG,
   tiempoFaseRestante: 0,
-  resultado: null, // { puntajeDecisiones, puntajeBonos, bonoTiempo, penalizaciones, total, epilogo, tiempoUsadoSeg }
+  // Medidor narrativo opcional (ej. "CIUDAD RECUPERADA"). Solo lo mueven los
+  // escenarios que declaran `presentacion.indicadorGlobal` y `hitoIndicador`
+  // en sus decisiones; para el resto queda en 0 y nadie lo mira.
+  indicadorValor: 0,
+  resultado: null, // { ...puntajes, epilogo, tiempoUsadoSeg, perfil }
 };
 
 export function crearEstadoConEscenario(state, escenario) {
   const primeraFase = escenario.fases[0];
+  // Si el escenario pide personalizar al personaje, esa pantalla va primero.
+  // El reloj no corre ahí (ver GameContext: solo tickea en 'jugando'), así que
+  // elegir avatar no le cuesta tiempo de partida a nadie.
+  const pideAvatar = !!escenario.presentacion?.personalizacionAvatar;
+  const hayIntro = !!escenario.presentacion?.historietaIntro?.length;
   return {
     ...estadoInicial,
     jugador: state.jugador,
-    pantalla: 'jugando',
+    pantalla: pideAvatar ? 'personalizacion' : hayIntro ? 'intro' : 'jugando',
     escenario,
     faseIndex: 0,
     decisionIndex: 0,
     tiempoGlobalRestante: escenario.tiempoTotalSeg ?? TIEMPO_TOTAL_DEFAULT_SEG,
     tiempoFaseRestante: primeraFase.tiempoSegFase,
+    indicadorValor: escenario.presentacion?.indicadorGlobal?.inicial ?? 0,
   };
 }
 
@@ -74,6 +86,8 @@ function terminarPartida(state) {
       ...resultado,
       epilogo,
       tiempoUsadoSeg: tiempoTotalSeg - state.tiempoGlobalRestante,
+      // null salvo que el escenario declare `presentacion.perfiles`.
+      perfil: calcularPerfil(state.escenario, state.respuestas),
     },
   };
 }
@@ -86,6 +100,23 @@ export function gameReducer(state, action) {
     case 'INICIAR_PARTIDA':
       return crearEstadoConEscenario(state, action.escenario);
 
+    // Cierra la pantalla de personalización y arranca la partida. Solo la
+    // disparan los escenarios que la pidieron; el avatar se guarda dentro de
+    // `jugador` como campo opcional, así que quien no lo tiene sigue siendo un
+    // jugador válido para todo el resto del motor.
+    case 'CONFIRMAR_AVATAR':
+      return {
+        ...state,
+        jugador: { ...state.jugador, avatar: action.avatar },
+        // Tras el avatar viene la historieta de apertura, si el escenario la
+        // declara. Si no, se entra directo a jugar.
+        pantalla: state.escenario?.presentacion?.historietaIntro?.length ? 'intro' : 'jugando',
+      };
+
+    // Cierra la historieta de apertura y arranca el reloj de la partida.
+    case 'COMENZAR_PARTIDA':
+      return { ...state, pantalla: 'jugando' };
+
     case 'RESPONDER_DECISION': {
       const decision = decisionActual(state);
       if (!decision || decision.id !== action.decisionId) return state;
@@ -95,10 +126,15 @@ export function gameReducer(state, action) {
       const { puntaje, bono } = calcularPuntajeDecision(decision, action.opcionIds, action.puntajeDirecto);
       const pistaUsada = state.pistasUsadasIds.includes(decision.id);
       const respuesta = { opcionIds: action.opcionIds, puntaje, bono, pistaUsada };
+      // El medidor narrativo avanza por hitos declarados en el JSON, no por una
+      // simulación: responder la decisión ES el hito. Nunca retrocede.
+      const hito = decision.hitoIndicador;
       return {
         ...state,
         respuestas: { ...state.respuestas, [decision.id]: respuesta },
         puntajeAcumulado: state.puntajeAcumulado + puntaje + bono - (pistaUsada ? 20 : 0),
+        indicadorValor:
+          typeof hito === 'number' ? Math.max(state.indicadorValor, hito) : state.indicadorValor,
       };
     }
 

@@ -1,0 +1,328 @@
+/* Puzzle de circuito de conexiones.
+
+   Layout: tablero cuadrado a la izquierda, panel de estado a la derecha. En
+   pantallas angostas pasa a una sola columna con el panel debajo.
+
+   El tablero usa aspect-ratio 1 y un ancho acotado por vh además de por px:
+   a 1366x768 tiene que caber entero dentro del panel del HUD sin scroll. */
+
+.circ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
+  min-height: 0;
+}
+
+.circ-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.circ-medidores {
+  display: flex;
+  gap: 10px;
+}
+.circ-medidores .medidor {
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+.circ-medidores strong {
+  color: var(--text);
+}
+.circ-medidores .pts {
+  color: var(--cyan);
+}
+
+.circ-pregunta {
+  font-size: var(--fs-md);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.circ-cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(220px, 1fr);
+  gap: var(--gap-col);
+  align-items: start;
+  min-height: 0;
+}
+
+/* --- Tablero -------------------------------------------------------------- */
+
+.circ-tablero {
+  display: grid;
+  grid-template-columns: repeat(var(--columnas, 4), 1fr);
+  gap: 4px;
+  width: min(52vh, 380px);
+  aspect-ratio: 1;
+  padding: 6px;
+  background: #070d18;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+}
+
+.circ-celda {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.circ-celda.vacia {
+  background: #0a1020;
+  border-style: dashed;
+  opacity: 0.5;
+}
+
+.circ-celda.girable {
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+.circ-celda.girable:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+/* Foco siempre visible: es la única pista de dónde estás al navegar con Tab. */
+.circ-celda.girable:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+  z-index: 2;
+}
+.circ-celda.girable:disabled {
+  cursor: default;
+}
+
+.circ-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(var(--rot, 0deg));
+  transition: transform 0.18s ease-out;
+}
+
+.circ-hub,
+.circ-brazo {
+  fill: #38496e;
+}
+
+/* Una celda "con energía" se pinta distinto Y además late: color y movimiento,
+   nunca color solo. */
+.circ-celda[data-ruta='si'] .circ-hub,
+.circ-celda[data-ruta='si'] .circ-brazo {
+  fill: var(--cyan);
+}
+.circ-celda[data-ruta='si'] {
+  border-color: var(--cyan);
+  box-shadow: inset 0 0 12px rgba(74, 217, 255, 0.25);
+}
+
+.circ-celda.fija {
+  background: var(--panel-alt);
+}
+.circ-celda.fija[data-rol='infectado'] {
+  border-color: var(--red);
+  background: #2a1220;
+}
+.circ-celda.fija[data-rol='infectado'] .circ-hub,
+.circ-celda.fija[data-rol='infectado'] .circ-brazo {
+  fill: var(--red);
+}
+.circ-celda.fija[data-rol='seguridad'] {
+  border-color: var(--gold);
+}
+.circ-celda.fija[data-rol='origen'] {
+  border-color: var(--green);
+}
+
+.circ-marca {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  color: var(--text);
+  line-height: 0;
+  pointer-events: none;
+}
+.circ-celda.fija[data-rol='infectado'] .circ-marca {
+  color: var(--red);
+  animation: circ-interferencia 1.4s steps(3, end) infinite;
+}
+
+.circ-etiqueta {
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--pixel);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+.circ-tablero.resuelto .circ-celda[data-ruta='si'] .circ-brazo {
+  animation: circ-energia 1s ease-in-out infinite alternate;
+}
+
+/* --- Panel lateral -------------------------------------------------------- */
+
+.circ-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.circ-leyenda {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+}
+.circ-leyenda-fila {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+}
+.circ-leyenda-fila.peligro {
+  color: var(--red);
+}
+
+.circ-destinos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.circ-destino {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-alt);
+  color: var(--text-dim);
+  font-size: var(--fs-xs);
+}
+.circ-destino .nombre {
+  flex: 1;
+  font-weight: 700;
+}
+.circ-destino .marca {
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+.circ-destino.on {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(47, 230, 166, 0.1);
+}
+
+.circ-estado {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-alt);
+  padding: 8px 12px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+}
+.circ-estado.ok {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(47, 230, 166, 0.12);
+}
+
+.circ-reset {
+  align-self: flex-start;
+}
+
+.circ-final {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.circ-final .valor {
+  font-size: var(--fs-cifra);
+  font-weight: 800;
+  color: var(--green);
+}
+.circ-final .etiqueta {
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+}
+
+@keyframes circ-energia {
+  from {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Interferencia del nodo infectado: pasos discretos y lentos, sin destellos. */
+@keyframes circ-interferencia {
+  0%,
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -60%);
+  }
+  70% {
+    opacity: 0.45;
+    transform: translate(-54%, -60%);
+  }
+  80% {
+    opacity: 0.9;
+    transform: translate(-47%, -58%);
+  }
+}
+
+@media (max-width: 1100px) {
+  .circ-cuerpo {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+  .circ-tablero {
+    width: min(88vw, 380px);
+  }
+  .circ-panel {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circ-svg,
+  .circ-marca,
+  .circ-tablero.resuelto .circ-celda[data-ruta='si'] .circ-brazo {
+    transition: none;
+    animation: none;
+  }
+}
+
+@media (max-width: 700px) {
+  /* El tablero usa el ancho disponible en vez del alto: en vertical sobra
+     ancho y falta alto, al revés que en el laboratorio. */
+  .circ-tablero {
+    width: min(92vw, 340px);
+  }
+}

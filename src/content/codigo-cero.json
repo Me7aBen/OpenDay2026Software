@@ -1,0 +1,870 @@
+{
+  "id": "codigo-cero",
+  "titulo": "Código Cero",
+  "cliente": {
+    "nombre": "NIA",
+    "rol": "Asistente de NEXO",
+    "dolorFrase": "Alguien entró a la red de la ciudad y los servicios fallan.",
+    "retrato": "nia",
+    "imagen": null
+  },
+  "tiempoTotalSeg": 420,
+  "presentacion": {
+    "escena": "ciudad-nexo",
+    "personalizacionAvatar": {
+      "titulo": "Elige tu identidad",
+      "subtitulo": "Elige cómo te ves. Toma 15 segundos.",
+      "rolJugador": "Equipo de respuesta",
+      "textoBoton": "ENTRAR A NEXO"
+    },
+    "textoBotonIntro": "ENTRAR A LA RED",
+    "historietaIntro": [
+      {
+        "escena": "feria-tranquila",
+        "texto": "Feria de tecnología. La ciudad funciona bien."
+      },
+      {
+        "escena": "protocolo-cero",
+        "texto": "De golpe, todas las pantallas se apagan."
+      },
+      {
+        "escena": "servicios-caen",
+        "quien": "NIA",
+        "texto": "El hospital y los semáforos fallan. Ayúdame."
+      }
+    ],
+    "historietaEpilogo": [
+      {
+        "escena": "ciudad-recuperada",
+        "texto": "La ciudad volvió a encenderse."
+      },
+      {
+        "escena": "nia-y-jugador",
+        "quien": "NIA",
+        "texto": "Lo lograste. Gracias por no rendirte."
+      }
+    ],
+    "indicadorGlobal": {
+      "etiqueta": "CIUDAD RECUPERADA",
+      "unidad": "%",
+      "inicial": 5,
+      "maximo": 100
+    },
+    "musica": {
+      "intro": "misterio",
+      "porDefecto": "misterio",
+      "final": "resolucion"
+    },
+    "perfiles": [
+      {
+        "id": "detective",
+        "fase": "descubrir",
+        "nombre": "Detective digital",
+        "descripcion": "Encuentras rastros y entiendes qué pasó antes de tocar nada."
+      },
+      {
+        "id": "disenador",
+        "fase": "disenar",
+        "nombre": "Diseñador de soluciones",
+        "descripcion": "Ordenas la información para que otros la entiendan rápido."
+      },
+      {
+        "id": "constructor",
+        "fase": "construir",
+        "nombre": "Constructor lógico",
+        "descripcion": "Te gusta armar las reglas y conexiones que hacen andar todo."
+      },
+      {
+        "id": "cazador",
+        "fase": "probar",
+        "nombre": "Cazador de errores",
+        "descripcion": "Ves lo que no encaja antes que los demás."
+      },
+      {
+        "id": "guardian",
+        "fase": "desplegar",
+        "nombre": "Guardián de sistemas",
+        "descripcion": "Piensas en las consecuencias y en qué va primero."
+      }
+    ],
+    "mensajeFinal": "Hoy arreglaste una ciudad en pocos minutos. Imagina lo que podrías construir estudiando Diseño y Desarrollo de Software."
+  },
+  "fases": [
+    {
+      "id": "descubrir",
+      "rol": "Analista",
+      "titulo": "Fase 1 · Descubrir",
+      "musica": "misterio",
+      "intro": "Alguien entró a la red. Averigua por dónde.",
+      "imagen": null,
+      "tiempoSegFase": 130,
+      "estilo": "entrevista",
+      "textoBotonHistorieta": "INVESTIGAR",
+      "historieta": [
+        {
+          "escena": "terminal-sola",
+          "texto": "Una computadora quedó prendida sin nadie usándola."
+        },
+        {
+          "escena": "pistas-nia",
+          "quien": "NIA",
+          "texto": "Por ahí entraron. Busquemos quién fue."
+        }
+      ],
+      "decisiones": [
+        {
+          "id": "descubrir-1",
+          "tipoInteraccion": "seleccion-unica",
+          "pregunta": "¿Qué revisas primero?",
+          "mensajeClienteDecision": "Poco tiempo. Busca dónde quedó el rastro.",
+          "hitoIndicador": 8,
+          "ilustracion": "opciones-pistas",
+          "opciones": [
+            {
+              "id": "registro-accesos",
+              "texto": "Registro de entradas",
+              "escena": "op-registro",
+              "escenaConsecuencia": "pistas-nia",
+              "rotuloConsecuencia": "PISTA ENCONTRADA",
+              "puntaje": 55,
+              "esCorrecta": true,
+              "descubrimiento": "Alguien usó una cuenta vieja hoy.",
+              "feedback": "El registro guarda quién entró y cuándo."
+            },
+            {
+              "id": "camara-terminal",
+              "texto": "Cámara del pasillo",
+              "escena": "op-camara",
+              "escenaConsecuencia": "terminal-sola",
+              "rotuloConsecuencia": "PISTA PARCIAL",
+              "puntaje": 35,
+              "descubrimiento": "Solo se ve gente pasando.",
+              "feedback": "Sirve, pero todavía no sabes qué buscar."
+            },
+            {
+              "id": "colores-app",
+              "texto": "Colores de la app",
+              "escena": "op-colores",
+              "escenaConsecuencia": "protocolo-cero",
+              "rotuloConsecuencia": "SIN AVANCE",
+              "puntaje": 0,
+              "esTrampa": true,
+              "descubrimiento": "Los colores están perfectos.",
+              "feedback": "Cambia cómo se ve, no arregla nada."
+            },
+            {
+              "id": "publicidad-feria",
+              "texto": "Cartel de la feria",
+              "escena": "op-publicidad",
+              "escenaConsecuencia": "protocolo-cero",
+              "rotuloConsecuencia": "SIN AVANCE",
+              "puntaje": 0,
+              "esTrampa": true,
+              "descubrimiento": "Afiches y horarios. Nada más.",
+              "feedback": "Ahí no hay ninguna pista del ataque."
+            }
+          ]
+        },
+        {
+          "id": "descubrir-2",
+          "tipoInteraccion": "seleccion-multiple",
+          "pregunta": "Elige las 2 pistas que van juntas",
+          "mensajeClienteDecision": "Solo dos se conectan entre sí.",
+          "hitoIndicador": 12,
+          "seleccionExacta": 2,
+          "tablaPuntaje": {
+            "2": 50,
+            "1": 25,
+            "0": 0
+          },
+          "opciones": [
+            {
+              "id": "cuenta-antigua",
+              "texto": "Una cuenta vieja de hace años",
+              "esCorrecta": true
+            },
+            {
+              "id": "terminal-publica",
+              "texto": "Entraron desde la computadora de la feria",
+              "esCorrecta": true
+            },
+            {
+              "id": "visitantes",
+              "texto": "Vinieron 400 visitantes",
+              "esCorrecta": false
+            },
+            {
+              "id": "clima",
+              "texto": "Llovió en el norte",
+              "esCorrecta": false
+            },
+            {
+              "id": "logo",
+              "texto": "El logo cambió de color",
+              "esCorrecta": false
+            },
+            {
+              "id": "wifi-lento",
+              "texto": "El wifi estaba lento",
+              "esCorrecta": false
+            }
+          ]
+        },
+        {
+          "id": "descubrir-3",
+          "tipoInteraccion": "seleccion-unica",
+          "pregunta": "¿Qué hacemos con el registro?",
+          "mensajeClienteDecision": "Ojo: lo que borres no vuelve.",
+          "hitoIndicador": 15,
+          "ilustracion": "pistas-nia",
+          "opciones": [
+            {
+              "id": "conservar",
+              "texto": "Guardarlo completo",
+              "escenaConsecuencia": "pistas-nia",
+              "rotuloConsecuencia": "EVIDENCIA A SALVO",
+              "puntaje": 45,
+              "esCorrecta": true,
+              "feedback": "Sin el registro nunca sabríamos qué pasó."
+            },
+            {
+              "id": "ignorar",
+              "texto": "Verlo después",
+              "escenaConsecuencia": "terminal-sola",
+              "rotuloConsecuencia": "RASTRO EN RIESGO",
+              "puntaje": 15,
+              "feedback": "Ganas minutos y pierdes la única pista."
+            },
+            {
+              "id": "borrar",
+              "texto": "Borrarlo",
+              "escenaConsecuencia": "protocolo-cero",
+              "rotuloConsecuencia": "EVIDENCIA PERDIDA",
+              "puntaje": 0,
+              "esTrampa": true,
+              "feedback": "Borras el problema y también la prueba."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "disenar",
+      "rol": "Diseñador UX/UI",
+      "titulo": "Fase 2 · Diseñar",
+      "musica": "misterio",
+      "intro": "Los operadores ven demasiado y no entienden nada.",
+      "imagen": null,
+      "tiempoSegFase": 95,
+      "estilo": "wireframe",
+      "textoBotonHistorieta": "ORDENAR LA PANTALLA",
+      "historieta": [
+        {
+          "escena": "control-saturado",
+          "texto": "Los operadores ven mil avisos a la vez."
+        },
+        {
+          "escena": "control-limpio",
+          "quien": "NIA",
+          "texto": "Deja en pantalla solo lo importante."
+        }
+      ],
+      "decisiones": [
+        {
+          "id": "disenar-1",
+          "tipoInteraccion": "seleccion-multiple",
+          "pregunta": "Elige los 4 datos que salvan vidas",
+          "mensajeClienteDecision": "Solo caben cuatro. Elige lo urgente.",
+          "hitoIndicador": 20,
+          "seleccionExacta": 4,
+          "tablaPuntaje": {
+            "4": 55,
+            "3": 35,
+            "2": 20,
+            "1": 0,
+            "0": 0
+          },
+          "opciones": [
+            {
+              "id": "mapa-ciudad",
+              "texto": "Mapa de la ciudad",
+              "esCorrecta": true
+            },
+            {
+              "id": "alertas-criticas",
+              "texto": "Avisos urgentes",
+              "esCorrecta": true
+            },
+            {
+              "id": "estado-servicios",
+              "texto": "Qué servicio anda y cuál no",
+              "esCorrecta": true
+            },
+            {
+              "id": "boton-recuperacion",
+              "texto": "Botón para recuperar",
+              "esCorrecta": true
+            },
+            {
+              "id": "publicidad",
+              "texto": "Publicidad",
+              "esCorrecta": false
+            },
+            {
+              "id": "fondo-animado",
+              "texto": "Fondo con animación",
+              "esCorrecta": false
+            },
+            {
+              "id": "grafica-inutil",
+              "texto": "Gráfico del año pasado",
+              "esCorrecta": false
+            },
+            {
+              "id": "reloj-mundial",
+              "texto": "Reloj de otras ciudades",
+              "esCorrecta": false
+            }
+          ]
+        },
+        {
+          "id": "disenar-2",
+          "tipoInteraccion": "seleccion-unica",
+          "pregunta": "¿Cuál se entiende más rápido?",
+          "mensajeClienteDecision": "Un operador no distingue rojo de verde.",
+          "hitoIndicador": 25,
+          "ilustracion": "control-saturado",
+          "opciones": [
+            {
+              "id": "color-icono-texto",
+              "texto": "Color, dibujo y palabra",
+              "escena": "op-alerta-completa",
+              "escenaConsecuencia": "control-limpio",
+              "rotuloConsecuencia": "CONTROL ORDENADO",
+              "puntaje": 45,
+              "esCorrecta": true,
+              "feedback": "Tres pistas: todos entienden, vean o no color."
+            },
+            {
+              "id": "solo-color",
+              "texto": "Solo colores",
+              "escena": "op-alerta-color",
+              "escenaConsecuencia": "control-saturado",
+              "rotuloConsecuencia": "MEDIO LEGIBLE",
+              "puntaje": 20,
+              "feedback": "Quien no distingue colores no ve nada."
+            },
+            {
+              "id": "brillos",
+              "texto": "Luces sin palabras",
+              "escena": "op-alerta-brillos",
+              "escenaConsecuencia": "control-saturado",
+              "rotuloConsecuencia": "SIGUE CONFUSO",
+              "puntaje": 0,
+              "esTrampa": true,
+              "feedback": "Brilla mucho y no dice qué pasa."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "construir",
+      "rol": "Desarrollador",
+      "titulo": "Fase 3 · Construir",
+      "musica": "tension",
+      "intro": "El hospital está por quedarse sin señal.",
+      "imagen": null,
+      "tiempoSegFase": 170,
+      "estilo": "logica",
+      "textoBotonHistorieta": "ABRIR LA CONSOLA",
+      "historieta": [
+        {
+          "escena": "hospital-sin-senal",
+          "texto": "El hospital se está quedando sin señal."
+        },
+        {
+          "escena": "jugador-terminal",
+          "quien": "NIA",
+          "texto": "Copia esta orden y el aviso se activa."
+        }
+      ],
+      "decisiones": [
+        {
+          "id": "construir-1",
+          "tipoInteraccion": "mecanografia-codigo",
+          "pregunta": "Copia la orden y ejecútala",
+          "mensajeClienteDecision": "Copia el código para activar el aviso.",
+          "hitoIndicador": 40,
+          "metaMinijuego": {
+            "codigo": "if (senal < 20) { activarAlerta(\"HOSPITAL\"); }",
+            "idRespuesta": "codigo-ejecutado",
+            "etiquetaEjecutar": "EJECUTAR",
+            "puntosMax": 150,
+            "puntosMin": 60,
+            "penalizacionPorError": 6,
+            "segundosRapido": 30,
+            "segundosLento": 110,
+            "escenaAntes": "hospital-sin-senal",
+            "escenaDespues": "hospital-encendido",
+            "mensajeExito": "¡Funcionó! El hospital volvió a conectarse.",
+            "salidaEjecucion": [
+              "> orden aceptada",
+              "> aviso conectado al hospital",
+              "> senal restablecida"
+            ]
+          },
+          "opciones": [
+            {
+              "id": "codigo-ejecutado",
+              "texto": "Código ejecutado",
+              "feedback": "El aviso quedó activo en el hospital."
+            }
+          ]
+        },
+        {
+          "id": "construir-2",
+          "tipoInteraccion": "circuito-conexiones",
+          "pregunta": "Lleva la luz al hospital sin tocar el rojo",
+          "mensajeClienteDecision": "Pasa por seguridad. Evita el bloque rojo.",
+          "hitoIndicador": 65,
+          "metaMinijuego": {
+            "idRespuesta": "circuito-resuelto",
+            "puntosMax": 200,
+            "puntosMin": 90,
+            "girosOptimos": 9,
+            "penalizacionPorGiroExtra": 4,
+            "penalizacionPorReinicio": 15,
+            "tablero": {
+              "columnas": 4,
+              "celdas": [
+                {
+                  "id": "respaldo",
+                  "rol": "origen",
+                  "label": "RESPALDO",
+                  "icono": "servidor",
+                  "fija": true,
+                  "conexiones": [
+                    false,
+                    false,
+                    true,
+                    false
+                  ]
+                },
+                {
+                  "id": "v1",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "p2",
+                  "forma": "curva",
+                  "rotacion": 0
+                },
+                {
+                  "id": "hospital",
+                  "rol": "destino",
+                  "label": "HOSPITAL",
+                  "icono": "hospital",
+                  "fija": true,
+                  "conexiones": [
+                    false,
+                    false,
+                    false,
+                    true
+                  ]
+                },
+                {
+                  "id": "p4",
+                  "forma": "recta",
+                  "rotacion": 1
+                },
+                {
+                  "id": "infectado",
+                  "rol": "infectado",
+                  "label": "INFECTADO",
+                  "icono": "infectado",
+                  "fija": true,
+                  "conexiones": [
+                    true,
+                    true,
+                    true,
+                    true
+                  ]
+                },
+                {
+                  "id": "p6",
+                  "forma": "recta",
+                  "rotacion": 1
+                },
+                {
+                  "id": "v7",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "p8",
+                  "forma": "curva",
+                  "rotacion": 2
+                },
+                {
+                  "id": "p9",
+                  "forma": "te",
+                  "rotacion": 3
+                },
+                {
+                  "id": "seguridad",
+                  "rol": "seguridad",
+                  "label": "SEGURIDAD",
+                  "icono": "seguridad",
+                  "fija": true,
+                  "conexiones": [
+                    true,
+                    false,
+                    true,
+                    true
+                  ]
+                },
+                {
+                  "id": "v11",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "v12",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "v13",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "p14",
+                  "forma": "curva",
+                  "rotacion": 2
+                },
+                {
+                  "id": "semaforos",
+                  "rol": "destino",
+                  "label": "SEMÁFOROS",
+                  "icono": "semaforo",
+                  "fija": true,
+                  "conexiones": [
+                    false,
+                    false,
+                    false,
+                    true
+                  ]
+                }
+              ]
+            }
+          },
+          "opciones": [
+            {
+              "id": "circuito-resuelto",
+              "texto": "Camino restablecido",
+              "feedback": "La luz llega sin pasar por el bloque rojo."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "probar",
+      "rol": "QA",
+      "titulo": "Fase 4 · Probar",
+      "musica": "tension",
+      "intro": "La red responde, pero algo sigue raro.",
+      "imagen": null,
+      "tiempoSegFase": 140,
+      "estilo": "bugs",
+      "textoBotonHistorieta": "REVISAR LA RED",
+      "historieta": [
+        {
+          "escena": "nodos-transmitiendo",
+          "texto": "Seis equipos conectados. Uno se porta raro."
+        },
+        {
+          "escena": "amenaza-sigue",
+          "quien": "NIA",
+          "texto": "Todavía hay alguien adentro."
+        }
+      ],
+      "decisiones": [
+        {
+          "id": "probar-1",
+          "tipoInteraccion": "seleccion-unica",
+          "pregunta": "¿Qué prueba haces?",
+          "mensajeClienteDecision": "Una sola prueba. Elige bien.",
+          "hitoIndicador": 68,
+          "ilustracion": "nodos-transmitiendo",
+          "opciones": [
+            {
+              "id": "usuarios-bloqueados",
+              "texto": "Si los bloqueados pueden entrar",
+              "escenaConsecuencia": "amenaza-sigue",
+              "rotuloConsecuencia": "AMENAZA DETECTADA",
+              "puntaje": 45,
+              "esCorrecta": true,
+              "feedback": "Ahí está: le quedó una puerta abierta."
+            },
+            {
+              "id": "color-botones",
+              "texto": "El color de los botones",
+              "escenaConsecuencia": "control-limpio",
+              "rotuloConsecuencia": "SIN HALLAZGOS",
+              "puntaje": 0,
+              "esTrampa": true,
+              "feedback": "Nadie entró por un botón mal pintado."
+            },
+            {
+              "id": "fondo-panel",
+              "texto": "El fondo de la pantalla",
+              "escenaConsecuencia": "control-limpio",
+              "rotuloConsecuencia": "SIN HALLAZGOS",
+              "puntaje": 0,
+              "esTrampa": true,
+              "feedback": "Eso no importa mientras haya riesgo."
+            },
+            {
+              "id": "animacion-logo",
+              "texto": "La animación del logo",
+              "escenaConsecuencia": "control-limpio",
+              "rotuloConsecuencia": "SIN HALLAZGOS",
+              "puntaje": 0,
+              "esTrampa": true,
+              "feedback": "Gastaste la prueba en un adorno."
+            }
+          ]
+        },
+        {
+          "id": "probar-2",
+          "tipoInteraccion": "detectar-intruso",
+          "pregunta": "Encuentra el equipo que no sigue el ritmo",
+          "mensajeClienteDecision": "Míralos. Uno va más rápido.",
+          "hitoIndicador": 80,
+          "metaMinijuego": {
+            "idRespuesta": "intruso-aislado",
+            "segundosObservacion": 4,
+            "puntosMax": 150,
+            "puntosMin": 50,
+            "penalizacionPorIntento": 30,
+            "nodos": [
+              {
+                "id": "n1",
+                "label": "NODO 01"
+              },
+              {
+                "id": "n2",
+                "label": "NODO 02"
+              },
+              {
+                "id": "n3",
+                "label": "NODO 03"
+              },
+              {
+                "id": "n4",
+                "label": "NODO 04",
+                "intruso": true
+              },
+              {
+                "id": "n5",
+                "label": "NODO 05"
+              },
+              {
+                "id": "n6",
+                "label": "NODO 06"
+              }
+            ],
+            "barreras": [
+              {
+                "id": "b-entrada",
+                "label": "Barrera de entrada",
+                "lado": "izquierda"
+              },
+              {
+                "id": "b-salida",
+                "label": "Barrera de salida",
+                "lado": "derecha"
+              }
+            ],
+            "feedbackFallo": "Ese va al mismo ritmo. Busca el del borde roto.",
+            "feedbackAcierto": "Ese es. Ciérrale los dos lados."
+          },
+          "opciones": [
+            {
+              "id": "intruso-aislado",
+              "texto": "Equipo encerrado",
+              "feedback": "El equipo quedó fuera de la red."
+            }
+          ]
+        },
+        {
+          "id": "probar-3",
+          "tipoInteraccion": "seleccion-unica",
+          "pregunta": "No es una persona: es un programa viejo",
+          "mensajeClienteDecision": "No lo borres. Podemos aprender de él.",
+          "hitoIndicador": 85,
+          "ilustracion": "programa-antiguo",
+          "opciones": [
+            {
+              "id": "conservar-aislar",
+              "texto": "Encerrarlo y guardar el registro",
+              "escenaConsecuencia": "barreras-cerradas",
+              "rotuloConsecuencia": "CONTENIDO",
+              "puntaje": 55,
+              "esCorrecta": true,
+              "feedback": "Encerrado no hace daño y explica qué pasó."
+            },
+            {
+              "id": "desconectar-todo",
+              "texto": "Apagar todos los servicios",
+              "escenaConsecuencia": "servicios-caen",
+              "rotuloConsecuencia": "CIUDAD A OSCURAS",
+              "puntaje": 20,
+              "feedback": "Dejarías la ciudad a oscuras sin necesidad."
+            },
+            {
+              "id": "borrar-todo",
+              "texto": "Borrar todo",
+              "escenaConsecuencia": "protocolo-cero",
+              "rotuloConsecuencia": "SIN RESPUESTAS",
+              "puntaje": 0,
+              "esTrampa": true,
+              "feedback": "Se va el problema y también la respuesta."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "desplegar",
+      "rol": "DevOps",
+      "titulo": "Fase 5 · Desplegar",
+      "musica": "resolucion",
+      "intro": "Todo listo. Tú decides el orden.",
+      "imagen": null,
+      "tiempoSegFase": 110,
+      "estilo": "deploy",
+      "textoBotonHistorieta": "DEVOLVER LA CIUDAD",
+      "historieta": [
+        {
+          "escena": "servicios-esperando",
+          "texto": "Los servicios esperan volver a encenderse."
+        },
+        {
+          "escena": "programa-antiguo",
+          "texto": "Era un programa viejo que nadie apagó."
+        },
+        {
+          "escena": "reescribiendo",
+          "quien": "NIA",
+          "texto": "Tú decides qué hacemos con él."
+        }
+      ],
+      "decisiones": [
+        {
+          "id": "desplegar-1",
+          "tipoInteraccion": "seleccion-unica",
+          "pregunta": "¿Qué encendemos primero?",
+          "mensajeClienteDecision": "La red aguanta un servicio por vez.",
+          "hitoIndicador": 92,
+          "ilustracion": "opciones-servicios",
+          "opciones": [
+            {
+              "id": "hospitales",
+              "texto": "Hospital y emergencias",
+              "escena": "op-hospital",
+              "escenaConsecuencia": "hospital-primero",
+              "rotuloConsecuencia": "VIDAS PRIMERO",
+              "puntaje": 50,
+              "esCorrecta": true,
+              "feedback": "Primero lo que salva vidas."
+            },
+            {
+              "id": "toda-ciudad",
+              "texto": "Toda la ciudad de golpe",
+              "escena": "op-toda-red",
+              "escenaConsecuencia": "servicios-esperando",
+              "rotuloConsecuencia": "RED SOBRECARGADA",
+              "puntaje": 20,
+              "feedback": "Todo junto sobrecarga la red y se cae."
+            },
+            {
+              "id": "centro-comercial",
+              "texto": "El centro comercial",
+              "escena": "op-comercial",
+              "escenaConsecuencia": "servicios-esperando",
+              "rotuloConsecuencia": "NADIE EN RIESGO",
+              "puntaje": 10,
+              "feedback": "Puede esperar. Ahí nadie corre peligro."
+            },
+            {
+              "id": "publicidad",
+              "texto": "Las pantallas de publicidad",
+              "escena": "op-publicidad",
+              "escenaConsecuencia": "servicios-esperando",
+              "rotuloConsecuencia": "SIN URGENCIA",
+              "puntaje": 0,
+              "esTrampa": true,
+              "feedback": "Es lo único que nadie necesita."
+            }
+          ]
+        },
+        {
+          "id": "desplegar-2",
+          "tipoInteraccion": "seleccion-unica",
+          "pregunta": "Última decisión: ¿qué haces?",
+          "mensajeClienteDecision": "Última decisión. La ciudad te mira.",
+          "hitoIndicador": 100,
+          "ilustracion": "reescribiendo",
+          "opciones": [
+            {
+              "id": "reescribir",
+              "texto": "Arreglar el programa y probarlo",
+              "escenaConsecuencia": "ciudad-recuperada",
+              "rotuloConsecuencia": "CIUDAD RECUPERADA",
+              "puntaje": 100,
+              "esCorrecta": true,
+              "feedback": "Arreglado y probado, ya no ataca a nadie."
+            },
+            {
+              "id": "destruir",
+              "texto": "Destruir el programa",
+              "escenaConsecuencia": "hospital-primero",
+              "rotuloConsecuencia": "SIN REGISTRO",
+              "puntaje": 30,
+              "feedback": "Se va el peligro y también lo aprendido."
+            },
+            {
+              "id": "apagar-nexo",
+              "texto": "Apagar toda la red",
+              "escenaConsecuencia": "servicios-caen",
+              "rotuloConsecuencia": "CIUDAD APAGADA",
+              "puntaje": 0,
+              "esTrampa": true,
+              "feedback": "Apagas también hospitales y semáforos."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "epilogos": [
+    {
+      "min": 800,
+      "max": 1000,
+      "texto": "La ciudad despierta. Frenaste el ataque y no perdiste ni un dato.",
+      "mensaje": "Investigar, programar y proteger: eso hace un desarrollador."
+    },
+    {
+      "min": 400,
+      "max": 799,
+      "texto": "La ciudad volvió, pero algunos servicios tardaron de más.",
+      "mensaje": "Ya sabes construir. El siguiente paso es hacerlo seguro."
+    },
+    {
+      "min": 0,
+      "max": 399,
+      "texto": "Frenaste el apagado justo a tiempo.",
+      "mensaje": "En software, equivocarse también enseña."
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+/* Pantalla de personalización del personaje.
+
+   Mismo shell de tres filas que el resto de las pantallas (topbar / cuerpo /
+   footer) para que se sienta parte del mismo producto. */
+
+.pers {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
+.pers-cuerpo {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--gap-row);
+  padding: var(--shell-pad-y) var(--shell-pad-x);
+  min-height: 0;
+  align-content: start;
+}
+
+.pers-encabezado .titulo {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+.pers-encabezado .subtitulo {
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.pers-tablero {
+  display: grid;
+  grid-template-columns: clamp(200px, 22vw, 300px) minmax(0, 1fr);
+  gap: var(--gap-col);
+  min-height: 0;
+}
+
+/* --- Vista previa --------------------------------------------------------- */
+
+.pers-vista {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: var(--pad-panel);
+  min-height: 0;
+}
+
+.pers-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+  padding: 8px 0;
+}
+.pers-avatar .avatar-pixel {
+  max-height: 100%;
+  width: auto;
+}
+
+.pers-nombre {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+}
+.pers-rol {
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  color: var(--cyan);
+}
+
+/* --- Opciones ------------------------------------------------------------- */
+
+.pers-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
+  min-height: 0;
+  overflow: auto;
+}
+
+.pers-fila {
+  border: 2px solid var(--border);
+  padding: clamp(8px, 1vh, 14px) var(--pad-panel) var(--pad-panel);
+  margin: 0;
+}
+.pers-fila legend {
+  padding: 0 6px;
+}
+
+.pers-chips {
+  display: flex;
+  gap: clamp(8px, 0.9vw, 14px);
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.pers-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  /* 64px de lado mínimo: objetivo táctil cómodo en tablet y celular. */
+  min-width: 72px;
+  padding: 8px 10px;
+  background: var(--panel-alt);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--body);
+  cursor: pointer;
+}
+.pers-chip:hover {
+  border-color: var(--cyan);
+}
+.pers-chip:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+/* La opción activa se marca por borde, fondo y un punto: no solo por color. */
+.pers-chip.on {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.12);
+}
+.pers-chip.on .pers-chip-nombre::after {
+  content: ' ✔';
+  color: var(--green);
+}
+
+.pers-chip-mini {
+  line-height: 0;
+  pointer-events: none;
+}
+.pers-chip-nombre {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.pers-comenzar {
+  align-self: flex-start;
+  justify-content: center;
+}
+
+.pers-footer {
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: clamp(6px, 0.8vh, 10px) var(--shell-pad-x);
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+}
+
+@media (max-width: 900px) {
+  .pers-tablero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pers-vista {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 16px;
+  }
+  .pers-avatar {
+    flex: 0 0 auto;
+  }
+  .pers-avatar .avatar-pixel {
+    width: 72px;
+    height: auto;
+  }
+}
+
+@media (max-height: 700px) {
+  .pers-avatar .avatar-pixel {
+    width: 96px;
+    height: auto;
+  }
+}

@@ -1,0 +1,150 @@
+/* Skyline de la ciudad de NEXO.
+
+   Un solo SVG, tres estados. Lo que cambia entre 'ataque', 'parcial' y
+   'recuperada' son colores de capa, no dibujos distintos: por eso la escena no
+   cuesta ni un archivo ni una petición de red.
+
+   Regla de accesibilidad que se respeta acá: nada de destellos rápidos. Las
+   barras de interferencia se desplazan despacio y con opacidad baja; no hay
+   ningún keyframe que encienda y apague por debajo de los 300 ms. */
+
+.ciudad {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ciudad svg {
+  display: block;
+  width: 100%;
+  height: clamp(64px, 11vh, 118px);
+}
+
+.ciudad-cielo {
+  fill: #0b1220;
+}
+.ciudad-estrellas rect {
+  fill: #8fa0c2;
+  opacity: 0.55;
+}
+.ciudad-astro {
+  fill: #2c3f74;
+}
+.ciudad-torres rect {
+  fill: #141d38;
+  stroke: #25324f;
+  stroke-width: 1;
+}
+.ciudad-suelo {
+  fill: #0a1020;
+}
+.ciudad-linea {
+  fill: #25324f;
+}
+.ciudad-ventanas rect.off {
+  fill: #1b2540;
+}
+.ciudad-ventanas rect.on {
+  fill: var(--gold);
+}
+.ciudad-glitch rect {
+  fill: transparent;
+}
+
+/* --- Estado: bajo ataque -------------------------------------------------- */
+
+.ciudad-ataque .ciudad-cielo {
+  fill: #1a0f1c;
+}
+.ciudad-ataque .ciudad-astro {
+  fill: #5a2036;
+}
+.ciudad-ataque .ciudad-torres rect {
+  fill: #170f22;
+  stroke: #4a2036;
+}
+.ciudad-ataque .ciudad-ventanas rect.on {
+  fill: var(--red);
+}
+.ciudad-ataque .ciudad-glitch rect {
+  fill: var(--red);
+  opacity: 0.16;
+  animation: ciudad-interferencia 5.5s linear infinite;
+}
+.ciudad-ataque .ciudad-glitch rect:nth-child(2) {
+  animation-duration: 7.5s;
+  animation-direction: reverse;
+}
+
+/* --- Estado: recuperación parcial ---------------------------------------- */
+
+.ciudad-parcial .ciudad-cielo {
+  fill: #101a30;
+}
+.ciudad-parcial .ciudad-ventanas rect.on {
+  fill: var(--gold);
+}
+.ciudad-parcial .ciudad-astro {
+  fill: #3a4f8f;
+}
+
+/* --- Estado: recuperada --------------------------------------------------- */
+
+.ciudad-recuperada .ciudad-cielo {
+  fill: #0d2233;
+}
+.ciudad-recuperada .ciudad-astro {
+  fill: #2fe6a6;
+  opacity: 0.55;
+}
+.ciudad-recuperada .ciudad-torres rect {
+  stroke: #2a6f7a;
+}
+.ciudad-recuperada .ciudad-ventanas rect.on {
+  fill: var(--cyan);
+}
+
+/* --- Marcadores de servicio ---------------------------------------------- */
+
+.ciudad-servicios {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ciudad-servicio {
+  position: absolute;
+  top: 6px;
+  transform: translateX(-50%);
+  line-height: 0;
+  padding: 3px;
+  border-radius: 5px;
+  background: rgba(11, 18, 32, 0.75);
+  border: 1px solid var(--border);
+  color: #45557d;
+  transition: color 0.35s ease, border-color 0.35s ease;
+}
+.ciudad-servicio.on {
+  color: var(--cyan);
+  border-color: var(--cyan);
+}
+
+@keyframes ciudad-interferencia {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(58px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ciudad-ataque .ciudad-glitch rect {
+    animation: none;
+  }
+  .ciudad-servicio {
+    transition: none;
+  }
+}

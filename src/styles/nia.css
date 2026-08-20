@@ -1,0 +1,44 @@
+/* Retrato de NIA. Se dibuja dentro del mismo hueco que usaba el emoji del
+   cliente en Ccorca, así que hereda el tamaño del contenedor y no hay que
+   tocar cliente-flotante.css. */
+
+.nia-retrato {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.nia-svg {
+  width: 100%;
+  height: 100%;
+  max-width: 56px;
+  max-height: 56px;
+  filter: drop-shadow(0 0 6px rgba(74, 217, 255, 0.25));
+}
+
+/* Línea de barrido: baja y vuelve a subir, lento. Es lo único que se mueve. */
+.nia-scan {
+  animation: nia-barrer 3.2s ease-in-out infinite;
+}
+
+.nia-molesto .nia-scan {
+  animation-duration: 1.1s;
+}
+
+@keyframes nia-barrer {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(7px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nia-scan {
+    animation: none;
+  }
+}

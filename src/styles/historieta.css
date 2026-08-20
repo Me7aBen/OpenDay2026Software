@@ -1,0 +1,173 @@
+/* Tira de historieta.
+
+   Reparto vertical dentro del panel del HUD: la tira se queda con todo el alto
+   disponible (es la imagen, y es lo que tiene que dominar la pantalla) y el pie
+   con el botón ocupa solo lo suyo. A 1366x768 eso deja las viñetas cerca del
+   65-70% del área principal, que es la proporción pedida. */
+
+.hist {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(8px, 1.2vh, 16px);
+  height: 100%;
+  min-height: 0;
+}
+
+.hist-tira {
+  display: grid;
+  grid-template-columns: repeat(var(--paneles, 3), minmax(0, 1fr));
+  gap: clamp(8px, 0.9vw, 16px);
+  align-items: stretch;
+  min-height: 0;
+  cursor: pointer;
+}
+
+/* Dos filas: el dibujo toma lo que sobre, el texto se lleva lo suyo SIEMPRE.
+   Que la fila del texto sea `auto` y la del dibujo `minmax(0, 1fr)` es lo que
+   garantiza que la imagen se encoja antes de tapar la frase. */
+.hist-panel {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin: 0;
+  min-height: 0;
+  /* Las viñetas que todavía no salieron dejan su hueco reservado: la tira no
+     salta de tamaño al revelar la siguiente. */
+  opacity: 0.25;
+  transition: opacity 0.35s ease;
+}
+.hist-panel.visible {
+  opacity: 1;
+}
+/* La viñeta recién revelada se destaca del resto por el borde, no por opacidad
+   sola: las anteriores siguen legibles, que es la gracia de una tira. */
+.hist-panel:not(.actual).visible .hist-vineta {
+  opacity: 0.72;
+}
+
+.hist-vineta {
+  position: relative;
+  /* Misma proporción que el viewBox de la escena (64x48). `width: 100%` con
+     `aspect-ratio` fija el alto, y `max-height: 100%` lo recorta si la fila es
+     baja: así la viñeta nunca desborda su fila ni empuja al texto. */
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 100%;
+  align-self: center;
+  min-height: 0;
+  border: 3px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0b1020;
+  transition: opacity 0.35s ease;
+}
+.hist-panel.actual .hist-vineta {
+  border-color: var(--cyan);
+  animation: hist-entra 0.35s ease-out 1;
+}
+
+.hist-numero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: var(--pixel);
+  font-size: 12px;
+  line-height: 1;
+  padding: 3px 6px;
+  color: var(--bg);
+  background: var(--cyan);
+  border-bottom-right-radius: 6px;
+}
+
+/* Alto reservado de antemano: el texto no depende de lo que sobre. */
+.hist-texto {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 2px;
+  min-height: 3.4em;
+  padding-top: 2px;
+}
+.hist-quien {
+  font-family: var(--pixel);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  color: var(--cyan);
+}
+.hist-frase {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+/* El anuncio para lectores de pantalla no se dibuja, pero tampoco se saca del
+   árbol de accesibilidad con display:none, que lo silenciaría. */
+.hist-anuncio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.hist-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hist-progreso {
+  display: flex;
+  gap: 8px;
+}
+.hist-punto {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--border);
+}
+.hist-punto.on {
+  background: var(--cyan);
+}
+
+.hist-boton {
+  justify-content: center;
+}
+
+@keyframes hist-entra {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Pantallas angostas: las viñetas se apilan en una columna. */
+@media (max-width: 700px) {
+  .hist-tira {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hist-vineta {
+    aspect-ratio: 4 / 3;
+  }
+  .hist-panel:not(.visible) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hist-panel,
+  .hist-vineta,
+  .hist-panel.actual .hist-vineta {
+    transition: none;
+    animation: none;
+  }
+}

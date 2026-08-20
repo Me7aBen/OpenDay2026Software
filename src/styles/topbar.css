@@ -133,3 +133,45 @@
   color: var(--text-dim);
   font-weight: 600;
 }
+
+/* Cuando el escenario pidió personalizar personaje, el hueco circular del
+   perfil aloja el avatar pixel art en vez del emoji. El fondo pasa a ser
+   neutro para no teñir el dibujo. */
+.topbar-profile .avatar.con-pixel {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  padding-top: 4px;
+  align-items: flex-end;
+}
+.topbar-profile .avatar.con-pixel .avatar-pixel {
+  display: block;
+}
+
+/* Pantallas angostas (celular en vertical).
+
+   La barra tiene logo + wordmark + tres enlaces + música + perfil en una sola
+   fila sin envolver, y eso le imponía un ancho mínimo de ~728px a TODA la
+   página: en un celular de 375px el documento entero quedaba más ancho que la
+   pantalla y todo se desplazaba en horizontal.
+
+   Debajo de 700px se ocultan los tres enlaces de navegación (apuntan a anclas
+   que hoy no existen en la app, así que no se pierde ninguna función) y el
+   tagline. Quedan logo, wordmark, botón de música y perfil, que sí hacen algo.
+
+   Nada de esto se activa por encima de 700px: el laboratorio no cambia. */
+
+@media (max-width: 700px) {
+  .topbar-right .topbar-link {
+    display: none;
+  }
+  .topbar-wordmark .tagline {
+    display: none;
+  }
+  .topbar-profile {
+    padding-left: 10px;
+  }
+  .topbar-profile .meta {
+    max-width: 96px;
+  }
+}

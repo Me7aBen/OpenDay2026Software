@@ -75,7 +75,7 @@ function SeleccionMultiple({ decision, onElegir }) {
 // La fase 'diseñar' mezcla decisiones de arrastrar varios elementos
 // (seleccion-multiple) con decisiones de elegir una sola opción
 // (seleccion-unica, ej. idioma o colores). Este componente atiende ambas.
-export default function Wireframe({ decision, onElegir }) {
+export default function Wireframe({ decision, onElegir, avatar }) {
   if (decision.tipoInteraccion === 'seleccion-multiple') {
     return (
       <div>
@@ -86,5 +86,12 @@ export default function Wireframe({ decision, onElegir }) {
       </div>
     );
   }
-  return <DecisionUnica decision={decision} onElegir={onElegir} encabezado={<div className="label-pixel">📱 DISEÑO DE PANTALLA</div>} />;
+  return (
+    <DecisionUnica
+      decision={decision}
+      onElegir={onElegir}
+      avatar={avatar}
+      encabezado={<div className="label-pixel">📱 DISEÑO DE PANTALLA</div>}
+    />
+  );
 }
