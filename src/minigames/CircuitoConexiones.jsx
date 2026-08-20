@@ -132,28 +132,28 @@ export default function CircuitoConexiones({ decision, onElegir }) {
   // pantalla, así que nunca hay información que solo exista para uno de los dos.
   let mensajeEstado;
   if (analisis.resuelto) {
-    mensajeEstado = 'RED RESTAURADA · la energía llega a los servicios críticos.';
+    mensajeEstado = meta.mensajeResuelto ?? 'RED RESTAURADA · la energía llega a los servicios críticos.';
   } else if (analisis.tocaInfectado) {
-    mensajeEstado = 'La ruta está tocando el nodo infectado. Desvíala por otro camino.';
+    mensajeEstado = meta.mensajePeligro ?? 'La ruta está tocando el nodo infectado. Desvíala por otro camino.';
   } else if (analisis.destinosFaltan.length) {
     const faltan = analisis.destinosFaltan.map((id) => etiquetaDestino[id] ?? id).join(', ');
-    mensajeEstado = `Sin energía: ${faltan}.`;
+    mensajeEstado = `${meta.prefijoFaltan ?? 'Sin energía'}: ${faltan}.`;
   } else if (!analisis.seguridadOk) {
-    mensajeEstado = 'La ruta llega, pero no pasa por el nodo de seguridad.';
+    mensajeEstado = meta.mensajeSinSeguridad ?? 'La ruta llega, pero no pasa por el nodo de seguridad.';
   } else {
-    mensajeEstado = 'Gira las piezas para llevar la energía.';
+    mensajeEstado = meta.mensajeInicio ?? 'Gira las piezas para llevar la energía.';
   }
 
   return (
     <div className="circ">
       <div className="circ-encabezado">
-        <div className="label-pixel">RED NEXO · RUTA DE ENERGÍA</div>
+        <div className="label-pixel">{meta.titulo ?? 'RED NEXO · RUTA DE ENERGÍA'}</div>
         <div className="circ-medidores">
           <span className="medidor">
             GIROS <strong>{giros}</strong>
           </span>
           <span className="medidor">
-            SERVICIOS{' '}
+            {meta.etiquetaConteo ?? 'SERVICIOS'}{' '}
             <strong className="pts">
               {analisis.destinosOk.length}/{analisis.destinosOk.length + analisis.destinosFaltan.length}
             </strong>
@@ -162,6 +162,13 @@ export default function CircuitoConexiones({ decision, onElegir }) {
       </div>
 
       <div className="circ-pregunta">{decision.pregunta}</div>
+      <div className="circ-instrucciones" aria-label="Cómo jugar">
+        <span><b>1</b> TOCA UNA PIEZA</span>
+        <span className="flecha" aria-hidden="true">→</span>
+        <span><b>2</b> GÍRALA</span>
+        <span className="flecha" aria-hidden="true">→</span>
+        <span><b>3</b> SIGUE LA RUTA ENCENDIDA</span>
+      </div>
 
       <div className="circ-cuerpo">
         <div
@@ -238,15 +245,15 @@ export default function CircuitoConexiones({ decision, onElegir }) {
           <div className="circ-leyenda">
             <div className="circ-leyenda-fila">
               <IconoServicio tipo="servidor" tam={18} />
-              <span>Servidor de respaldo · punto de partida</span>
+              <span>{meta.leyendaOrigen ?? 'Servidor de respaldo · punto de partida'}</span>
             </div>
             <div className="circ-leyenda-fila">
               <IconoServicio tipo="seguridad" tam={18} />
-              <span>Seguridad · la ruta debe pasar por aquí</span>
+              <span>{meta.leyendaSeguridad ?? 'Seguridad · la ruta debe pasar por aquí'}</span>
             </div>
             <div className="circ-leyenda-fila peligro">
               <IconoServicio tipo="infectado" tam={18} />
-              <span>Nodo infectado · no debe tocarse</span>
+              <span>{meta.leyendaInfectado ?? 'Nodo infectado · no debe tocarse'}</span>
             </div>
           </div>
 
@@ -260,7 +267,11 @@ export default function CircuitoConexiones({ decision, onElegir }) {
                     <IconoServicio tipo={c.icono ?? 'nodo'} tam={18} />
                     <span className="nombre">{c.label ?? c.id}</span>
                     {/* El check no es solo color: es un glifo distinto. */}
-                    <span className="marca">{ok ? '✔ activo' : '— sin energía'}</span>
+                    <span className="marca">
+                      {ok
+                        ? (meta.textoDestinoActivo ?? '✔ activo')
+                        : (meta.textoDestinoInactivo ?? '— sin energía')}
+                    </span>
                   </div>
                 );
               })}

@@ -81,7 +81,7 @@ Decision
 ├─ tipoInteraccion: 'seleccion-unica' | 'seleccion-multiple' | 'escribir'
 │                   | 'arquitectura-nodos' | 'mapa-calor' | 'seleccion-cards'
 │                   | 'circuito-conexiones' | 'detectar-intruso'
-│                   | 'mecanografia-codigo' | 'ordenar-pasos'
+│                   | 'mecanografia-codigo' | 'ordenar-pasos' | 'puerta-seguridad'
 ├─ pregunta: string                     // máx 2 líneas
 ├─ mensajeClienteDecision?: string      // lo que dice el cliente en el panel lateral MIENTRAS
 │                                        // esta decisión está en pantalla. Si falta, se sigue

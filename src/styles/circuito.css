@@ -48,6 +48,32 @@
   line-height: 1.35;
 }
 
+.circ-instrucciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--text-dim);
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+.circ-instrucciones span:not(.flecha) {
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--panel-alt);
+}
+
+.circ-instrucciones b {
+  color: var(--cyan);
+}
+
+.circ-instrucciones .flecha {
+  color: var(--gold);
+}
+
 .circ-cuerpo {
   display: grid;
   grid-template-columns: minmax(0, auto) minmax(220px, 1fr);
@@ -324,5 +350,9 @@
      ancho y falta alto, al revés que en el laboratorio. */
   .circ-tablero {
     width: min(92vw, 340px);
+  }
+
+  .circ-instrucciones .flecha {
+    display: none;
   }
 }

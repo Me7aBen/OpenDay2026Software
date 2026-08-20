@@ -3,7 +3,7 @@ import EscenaPixel from '../ui/EscenaPixel';
 import { reproducirEfecto } from '../lib/musica';
 import '../styles/codigo-mecanografia.css';
 
-// Puzzle de código de "Código Cero": copiar una línea completa y ejecutarla.
+// Puzzle de código de "Código Cero": escribir una línea completa y ejecutarla.
 //
 // La diferencia con el minijuego `escribir` (Logica.jsx, el de Ccorca) es el
 // tipo de esfuerzo que pide. Allá hay que DEDUCIR qué valor va en un hueco;
@@ -178,8 +178,10 @@ export default function CodigoMecanografia({ decision, onElegir }) {
             onCopy={bloquear}
             onCut={bloquear}
             onDragStart={bloquear}
+            onContextMenu={bloquear}
+            onPointerDown={bloquear}
           >
-            <code>{renderObjetivo()}</code>
+            <code draggable="false">{renderObjetivo()}</code>
             {fase === 'ejecutando' && <span className="cm-barrido" aria-hidden="true" />}
           </div>
 
@@ -204,12 +206,16 @@ export default function CodigoMecanografia({ decision, onElegir }) {
               onChange={tipear}
               onPaste={bloquear}
               onDrop={bloquear}
+              onBeforeInput={(e) => {
+                const tipo = e.nativeEvent?.inputType ?? '';
+                if (tipo === 'insertFromPaste' || tipo === 'insertFromDrop') bloquear(e);
+              }}
               disabled={fase !== 'tipeando'}
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
               spellCheck={false}
-              aria-label="Copia aquí la línea de código que se muestra arriba"
+              aria-label="Escribe aquí la línea de código que se muestra arriba"
             />
           </div>
 
@@ -248,7 +254,7 @@ export default function CodigoMecanografia({ decision, onElegir }) {
               {fase === 'ejecutando' ? 'EJECUTANDO…' : (meta.etiquetaEjecutar ?? 'EJECUTAR')}
             </button>
             {!completo && fase === 'tipeando' && (
-              <span className="cm-pista">Copia la línea completa para poder ejecutar.</span>
+              <span className="cm-pista">Escribe la línea completa para poder ejecutar.</span>
             )}
           </div>
 

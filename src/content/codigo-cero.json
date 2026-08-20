@@ -8,7 +8,7 @@
     "retrato": "nia",
     "imagen": null
   },
-  "tiempoTotalSeg": 600,
+  "tiempoTotalSeg": 480,
   "presentacion": {
     "escena": "ciudad-nexo",
     "personalizacionAvatar": {
@@ -97,7 +97,7 @@
       "musica": "misterio",
       "intro": "Alguien entró a la red. Averigua por dónde.",
       "imagen": null,
-      "tiempoSegFase": 150,
+      "tiempoSegFase": 120,
       "estilo": "entrevista",
       "textoBotonHistorieta": "INVESTIGAR",
       "historieta": [
@@ -116,12 +116,8 @@
       "historietaCierre": [
         {
           "escena": "pistas-nia",
-          "texto": "Las pistas muestran una cuenta vieja y una terminal pública."
-        },
-        {
-          "escena": "control-saturado",
           "quien": "NIA",
-          "texto": "Ya sabemos qué pasó. Ahora debemos mostrarlo con claridad."
+          "texto": "La cuenta vieja se usó en la terminal pública. Ahora ordenemos la respuesta."
         }
       ],
       "decisiones": [
@@ -129,8 +125,8 @@
           "id": "descubrir-1",
           "tipoInteraccion": "seleccion-unica",
           "contexto": "La terminal quedó abierta y el atacante dejó un rastro.",
-          "pregunta": "¿Qué revisas primero?",
-          "pista": "Busca una fuente que guarde quién entró y a qué hora.",
+          "pregunta": "¿Dónde puedes ver quién entró y a qué hora?",
+          "pista": "Busca el lugar donde se guardan todos los ingresos.",
           "mensajeClienteDecision": "Poco tiempo. Busca dónde quedó el rastro.",
           "hitoIndicador": 8,
           "ilustracion": "opciones-pistas",
@@ -141,7 +137,7 @@
               "escena": "op-registro",
               "escenaConsecuencia": "pistas-nia",
               "rotuloConsecuencia": "PISTA ENCONTRADA",
-              "puntaje": 60,
+              "puntaje": 80,
               "esCorrecta": true,
               "descubrimiento": "Alguien usó una cuenta vieja hoy.",
               "feedback": "El registro guarda quién entró y cuándo."
@@ -166,17 +162,6 @@
               "esTrampa": true,
               "descubrimiento": "Los colores están perfectos.",
               "feedback": "Cambia cómo se ve, no arregla nada."
-            },
-            {
-              "id": "publicidad-feria",
-              "texto": "Cartel de la feria",
-              "escena": "op-publicidad",
-              "escenaConsecuencia": "protocolo-cero",
-              "rotuloConsecuencia": "SIN AVANCE",
-              "puntaje": 0,
-              "esTrampa": true,
-              "descubrimiento": "Afiches y horarios. Nada más.",
-              "feedback": "Ahí no hay ninguna pista del ataque."
             }
           ]
         },
@@ -184,17 +169,17 @@
           "id": "descubrir-2",
           "tipoInteraccion": "seleccion-multiple",
           "contexto": "Hay muchos datos, pero solo dos explican cómo entraron.",
-          "pregunta": "Elige las 2 pistas que van juntas",
-          "pista": "Relaciona una credencial antigua con el lugar público desde donde fue utilizada.",
+          "pregunta": "Elige las 2 pistas que explican cómo entraron",
+          "pista": "Une la cuenta utilizada con la computadora desde donde entraron.",
           "mensajeClienteDecision": "Solo dos se conectan entre sí.",
-          "hitoIndicador": 12,
+          "hitoIndicador": 15,
           "seleccionExacta": 2,
           "etiquetaDestino": "Pistas relacionadas",
           "feedbackAcierto": "La cuenta vieja se usó desde la computadora pública.",
           "feedbackError": "Los datos elegidos no demuestran cómo entraron.",
           "tablaPuntaje": {
-            "2": 50,
-            "1": 20,
+            "2": 80,
+            "1": 30,
             "0": 0
           },
           "opciones": [
@@ -214,57 +199,9 @@
               "esCorrecta": false
             },
             {
-              "id": "clima",
-              "texto": "Llovió en el norte",
-              "esCorrecta": false
-            },
-            {
-              "id": "logo",
-              "texto": "El logo cambió de color",
-              "esCorrecta": false
-            },
-            {
               "id": "wifi-lento",
               "texto": "El wifi estaba lento",
               "esCorrecta": false
-            }
-          ]
-        },
-        {
-          "id": "descubrir-3",
-          "tipoInteraccion": "seleccion-unica",
-          "contexto": "El registro es la única evidencia que explica el ataque.",
-          "pregunta": "¿Qué hacemos con el registro?",
-          "pista": "Si desaparece la evidencia, ya no podrás explicar ni evitar el siguiente ataque.",
-          "mensajeClienteDecision": "Ojo: lo que borres no vuelve.",
-          "hitoIndicador": 15,
-          "ilustracion": "pistas-nia",
-          "opciones": [
-            {
-              "id": "conservar",
-              "texto": "Guardarlo completo",
-              "escenaConsecuencia": "pistas-nia",
-              "rotuloConsecuencia": "EVIDENCIA A SALVO",
-              "puntaje": 50,
-              "esCorrecta": true,
-              "feedback": "Sin el registro nunca sabríamos qué pasó."
-            },
-            {
-              "id": "ignorar",
-              "texto": "Verlo después",
-              "escenaConsecuencia": "terminal-sola",
-              "rotuloConsecuencia": "RASTRO EN RIESGO",
-              "puntaje": 20,
-              "feedback": "Ganas minutos y pierdes la única pista."
-            },
-            {
-              "id": "borrar",
-              "texto": "Borrarlo",
-              "escenaConsecuencia": "protocolo-cero",
-              "rotuloConsecuencia": "EVIDENCIA PERDIDA",
-              "puntaje": 0,
-              "esTrampa": true,
-              "feedback": "Borras el problema y también la prueba."
             }
           ]
         }
@@ -277,7 +214,7 @@
       "musica": "misterio",
       "intro": "Los operadores ven demasiado y no entienden nada.",
       "imagen": null,
-      "tiempoSegFase": 120,
+      "tiempoSegFase": 95,
       "estilo": "wireframe",
       "textoBotonHistorieta": "ORDENAR LA PANTALLA",
       "historieta": [
@@ -296,12 +233,8 @@
       "historietaCierre": [
         {
           "escena": "control-limpio",
-          "texto": "El operador distingue la emergencia y sabe qué hacer."
-        },
-        {
-          "escena": "jugador-terminal",
           "quien": "NIA",
-          "texto": "El diseño está listo. Convirtámoslo en código."
+          "texto": "La emergencia ya se entiende con claridad. Ahora convirtámosla en código."
         }
       ],
       "decisiones": [
@@ -309,8 +242,8 @@
           "id": "disenar-1",
           "tipoInteraccion": "seleccion-multiple",
           "contexto": "Los operadores pierden tiempo buscando lo urgente entre datos inútiles.",
-          "pregunta": "Elige los 4 datos que salvan vidas",
-          "pista": "Elige información para ubicar el problema, entender su gravedad y actuar de inmediato.",
+          "pregunta": "Elige los 4 datos necesarios para atender la emergencia",
+          "pista": "Necesitas saber dónde ocurre, qué pasó, qué servicio falló y cómo recuperarlo.",
           "mensajeClienteDecision": "Solo caben cuatro. Elige lo urgente.",
           "hitoIndicador": 20,
           "seleccionExacta": 4,
@@ -354,16 +287,6 @@
               "id": "fondo-animado",
               "texto": "Fondo con animación",
               "esCorrecta": false
-            },
-            {
-              "id": "grafica-inutil",
-              "texto": "Gráfico del año pasado",
-              "esCorrecta": false
-            },
-            {
-              "id": "reloj-mundial",
-              "texto": "Reloj de otras ciudades",
-              "esCorrecta": false
             }
           ]
         },
@@ -371,8 +294,8 @@
           "id": "disenar-2",
           "tipoInteraccion": "seleccion-unica",
           "contexto": "Una alerta solo por color excluye a operadores con daltonismo.",
-          "pregunta": "¿Cuál se entiende más rápido?",
-          "pista": "Una alerta accesible comunica lo mismo de más de una forma.",
+          "pregunta": "¿Qué alerta puede entender cualquier persona?",
+          "pista": "La mejor opción usa texto, dibujo y color al mismo tiempo.",
           "mensajeClienteDecision": "Un operador no distingue rojo de verde.",
           "hitoIndicador": 25,
           "ilustracion": "control-saturado",
@@ -417,7 +340,7 @@
       "musica": "tension",
       "intro": "El hospital está por quedarse sin señal.",
       "imagen": null,
-      "tiempoSegFase": 260,
+      "tiempoSegFase": 210,
       "estilo": "logica",
       "textoBotonHistorieta": "ABRIR LA CONSOLA",
       "historieta": [
@@ -436,77 +359,25 @@
       "historietaCierre": [
         {
           "escena": "hospital-encendido",
-          "texto": "La alerta funciona y el hospital recupera señal."
-        },
-        {
-          "escena": "nodos-transmitiendo",
           "quien": "NIA",
-          "texto": "Funciona, pero aún debemos buscar errores ocultos."
+          "texto": "La alerta funciona y el hospital responde. Ahora busquemos errores ocultos."
         }
       ],
       "decisiones": [
         {
-          "id": "construir-completar-umbral",
-          "tipoInteraccion": "escribir",
-          "contexto": "Elegiste alertar cuando la señal baje de 20. Completa esa regla.",
-          "pregunta": "Escribe el número que falta y ejecuta",
-          "pista": "La alerta debe activarse antes de llegar a cero; el límite ya aparece explicado en el problema.",
-          "mensajeClienteDecision": "Completa el límite que protege al hospital.",
-          "hitoIndicador": 36,
-          "metaMinijuego": {
-            "plantillaCodigo": "if (senal < ___) { activarAlerta(\"HOSPITAL\"); }",
-            "modoEntrada": "numeric",
-            "placeholder": "Ejemplo: 20",
-            "etiquetaEjecutar": "EJECUTAR REGLA",
-            "autoFoco": true,
-            "intentosPermitidos": 3,
-            "penalizacionPorIntento": 5,
-            "puntajeMinimo": 20,
-            "animarEjecucion": true,
-            "salidaEjecucion": [
-              "> límite guardado: 20",
-              "> alerta preparada antes del corte"
-            ]
-          },
-          "feedbackSinCoincidencia": "Ese valor no corresponde a la regla elegida.",
-          "opciones": [
-            {
-              "id": "umbral-20",
-              "texto": "20",
-              "puntaje": 30,
-              "esCorrecta": true,
-              "feedback": "Correcto: 20 deja tiempo para reaccionar antes del corte."
-            },
-            {
-              "id": "umbral-0",
-              "texto": "0",
-              "puntaje": 0,
-              "esTrampa": true,
-              "feedback": "A cero ya no queda señal para enviar la alerta."
-            },
-            {
-              "id": "umbral-80",
-              "texto": "80",
-              "puntaje": 0,
-              "esTrampa": true,
-              "feedback": "Con 80 la alerta sonaría durante el funcionamiento normal."
-            }
-          ]
-        },
-        {
           "id": "construir-1",
           "tipoInteraccion": "mecanografia-codigo",
-          "pregunta": "Copia la orden y ejecútala",
-          "pista": "Copia exactamente todos los símbolos, incluidas las llaves, comillas y el punto y coma.",
-          "mensajeClienteDecision": "Copia el código para activar el aviso.",
+          "pregunta": "Escribe abajo el mismo código que aparece arriba",
+          "pista": "Escribe carácter por carácter. También cuentan las llaves, las comillas y el punto y coma.",
+          "mensajeClienteDecision": "El código de arriba es el modelo. Debes escribirlo completo abajo.",
           "hitoIndicador": 40,
           "metaMinijuego": {
             "codigo": "if (senal < 20) { activarAlerta(\"HOSPITAL\"); }",
             "idRespuesta": "codigo-ejecutado",
             "etiquetaEjecutar": "EJECUTAR",
-            "puntosMax": 60,
-            "puntosMin": 30,
-            "penalizacionPorError": 3,
+            "puntosMax": 90,
+            "puntosMin": 45,
+            "penalizacionPorError": 4,
             "segundosRapido": 30,
             "segundosLento": 110,
             "escenaAntes": "hospital-sin-senal",
@@ -529,8 +400,8 @@
         {
           "id": "construir-2",
           "tipoInteraccion": "circuito-conexiones",
-          "pregunta": "Lleva la luz al hospital sin tocar el rojo",
-          "pista": "Desde RESPALDO baja por la izquierda, cruza por SEGURIDAD y luego ve hacia el HOSPITAL.",
+          "pregunta": "Gira los cables para conectar RESPALDO con HOSPITAL y SEMÁFOROS",
+          "pista": "La ruta debe pasar por SEGURIDAD y nunca tocar el bloque rojo.",
           "mensajeClienteDecision": "Pasa por seguridad. Evita el bloque rojo.",
           "hitoIndicador": 65,
           "metaMinijuego": {
@@ -678,7 +549,7 @@
       "musica": "tension",
       "intro": "La red responde, pero algo sigue raro.",
       "imagen": null,
-      "tiempoSegFase": 190,
+      "tiempoSegFase": 150,
       "estilo": "bugs",
       "textoBotonHistorieta": "REVISAR LA RED",
       "historieta": [
@@ -697,62 +568,40 @@
       "historietaCierre": [
         {
           "escena": "barreras-cerradas",
-          "texto": "El programa queda aislado entre dos barreras."
-        },
-        {
-          "escena": "servicios-esperando",
           "quien": "NIA",
-          "texto": "La red está segura. Encendamos los servicios en orden."
+          "texto": "El programa quedó aislado. Ahora encendamos los servicios en orden."
         }
       ],
       "decisiones": [
         {
           "id": "probar-codigo-bloqueo",
-          "tipoInteraccion": "escribir",
-          "contexto": "Una cuenta bloqueada intenta entrar. El sistema debe rechazarla.",
-          "pregunta": "Escribe el resultado seguro: falso o verdadero",
-          "pista": "Si la cuenta está bloqueada, permitir su acceso debe dar un resultado negativo.",
-          "mensajeClienteDecision": "Una cuenta bloqueada nunca debe recibir acceso.",
+          "tipoInteraccion": "puerta-seguridad",
+          "contexto": "Una cuenta marcada como bloqueada está intentando entrar a la red.",
+          "pregunta": "Cierra la puerta del firewall y prueba el acceso",
+          "pista": "Antes de simular, la puerta del firewall debe quedar CERRADA.",
+          "mensajeClienteDecision": "Cierra el paso y comprueba que la cuenta quede afuera.",
           "hitoIndicador": 72,
           "metaMinijuego": {
-            "plantillaCodigo": "permitirAcceso(cuentaBloqueada) === ___;",
-            "placeholder": "falso o verdadero",
-            "etiquetaEjecutar": "PROBAR ACCESO",
-            "autoFoco": true,
-            "intentosPermitidos": 3,
-            "penalizacionPorIntento": 5,
-            "puntajeMinimo": 20,
-            "animarEjecucion": true,
-            "salidaEjecucion": [
-              "> cuenta bloqueada: acceso denegado",
-              "> prueba de seguridad superada"
-            ]
+            "idRespuesta": "puerta-cerrada",
+            "puntosMax": 30,
+            "puntosMin": 20,
+            "penalizacionPorFallo": 5
           },
-          "feedbackSinCoincidencia": "Puedes escribir falso/verdadero o false/true.",
           "opciones": [
             {
-              "id": "acceso-false",
-              "texto": "false",
-              "aliases": ["falso"],
+              "id": "puerta-cerrada",
+              "texto": "Acceso rechazado",
               "puntaje": 30,
               "esCorrecta": true,
-              "feedback": "Correcto: false significa que el acceso fue rechazado."
-            },
-            {
-              "id": "acceso-true",
-              "texto": "true",
-              "aliases": ["verdadero"],
-              "puntaje": 0,
-              "esTrampa": true,
-              "feedback": "true volvería a dejar entrar a la cuenta bloqueada."
+              "feedback": "La puerta cerrada impidió que la cuenta bloqueada entrara."
             }
           ]
         },
         {
           "id": "probar-2",
           "tipoInteraccion": "detectar-intruso",
-          "pregunta": "Encuentra el equipo que no sigue el ritmo",
-          "pista": "Observa la velocidad y el borde: el intruso parpadea distinto y parece dañado.",
+          "pregunta": "Encuentra el nodo diferente y cierra sus dos barreras",
+          "pista": "El nodo diferente parpadea más rápido y tiene el borde roto.",
           "mensajeClienteDecision": "Míralos. Uno va más rápido.",
           "hitoIndicador": 80,
           "metaMinijuego": {
@@ -813,39 +662,156 @@
         },
         {
           "id": "probar-3",
-          "tipoInteraccion": "seleccion-unica",
-          "contexto": "El intruso es un programa viejo que contiene evidencia útil.",
-          "pregunta": "No es una persona: es un programa viejo",
-          "pista": "La opción más segura impide que haga daño sin destruir la evidencia.",
-          "mensajeClienteDecision": "No lo borres. Podemos aprender de él.",
+          "tipoInteraccion": "circuito-conexiones",
+          "contexto": "El programa viejo debe quedar aislado, pero su registro y una copia segura deben conservarse para investigarlo.",
+          "pregunta": "Conecta ESCÁNER con REGISTRO y BÓVEDA sin tocar RED ABIERTA",
+          "pista": "Sube por la segunda columna, pasa por FIREWALL y abre una ruta a cada destino.",
+          "mensajeClienteDecision": "Guarda las pruebas, pero no abras una salida hacia la red.",
           "hitoIndicador": 85,
-          "ilustracion": "programa-antiguo",
+          "metaMinijuego": {
+            "idRespuesta": "cuarentena-resuelta",
+            "titulo": "LABORATORIO NEXO · RUTA DE CUARENTENA",
+            "etiquetaConteo": "PRUEBAS",
+            "leyendaOrigen": "Escáner · punto de partida del análisis",
+            "leyendaSeguridad": "Firewall · toda la ruta debe pasar por aquí",
+            "leyendaInfectado": "Red abierta · no debe recibir la conexión",
+            "textoDestinoActivo": "✔ protegido",
+            "textoDestinoInactivo": "— sin conexión",
+            "mensajeResuelto": "CUARENTENA LISTA · las pruebas quedaron protegidas sin abrir la red.",
+            "mensajePeligro": "¡Cuidado! La ruta está saliendo hacia la red abierta. Gira esa pieza.",
+            "prefijoFaltan": "Falta proteger",
+            "mensajeSinSeguridad": "Las pruebas están conectadas, pero la ruta no pasa por el FIREWALL.",
+            "mensajeInicio": "Gira cada pieza hasta proteger las dos pruebas.",
+            "puntosMax": 60,
+            "puntosMin": 30,
+            "girosOptimos": 13,
+            "penalizacionPorGiroExtra": 2,
+            "penalizacionPorReinicio": 8,
+            "tablero": {
+              "columnas": 4,
+              "celdas": [
+                {
+                  "id": "v0",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "v1",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "registro",
+                  "rol": "destino",
+                  "label": "REGISTRO",
+                  "icono": "nodo",
+                  "fija": true,
+                  "conexiones": [
+                    false,
+                    false,
+                    true,
+                    false
+                  ]
+                },
+                {
+                  "id": "v3",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "red-abierta",
+                  "rol": "infectado",
+                  "label": "RED ABIERTA",
+                  "icono": "infectado",
+                  "fija": true,
+                  "conexiones": [
+                    true,
+                    true,
+                    true,
+                    true
+                  ]
+                },
+                {
+                  "id": "q5",
+                  "forma": "curva",
+                  "rotacion": 3
+                },
+                {
+                  "id": "firewall",
+                  "rol": "seguridad",
+                  "label": "FIREWALL",
+                  "icono": "seguridad",
+                  "fija": true,
+                  "conexiones": [
+                    true,
+                    true,
+                    false,
+                    true
+                  ]
+                },
+                {
+                  "id": "q7",
+                  "forma": "curva",
+                  "rotacion": 0
+                },
+                {
+                  "id": "v8",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "q9",
+                  "forma": "recta",
+                  "rotacion": 1
+                },
+                {
+                  "id": "v10",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "q11",
+                  "forma": "recta",
+                  "rotacion": 1
+                },
+                {
+                  "id": "escaner",
+                  "rol": "origen",
+                  "label": "ESCÁNER",
+                  "icono": "servidor",
+                  "fija": true,
+                  "conexiones": [
+                    false,
+                    true,
+                    false,
+                    false
+                  ]
+                },
+                {
+                  "id": "q13",
+                  "forma": "curva",
+                  "rotacion": 0
+                },
+                {
+                  "id": "v14",
+                  "forma": "vacia"
+                },
+                {
+                  "id": "boveda",
+                  "rol": "destino",
+                  "label": "BÓVEDA",
+                  "icono": "seguridad",
+                  "fija": true,
+                  "conexiones": [
+                    true,
+                    false,
+                    false,
+                    false
+                  ]
+                }
+              ]
+            }
+          },
           "opciones": [
             {
-              "id": "conservar-aislar",
-              "texto": "Encerrarlo y guardar el registro",
-              "escenaConsecuencia": "barreras-cerradas",
-              "rotuloConsecuencia": "CONTENIDO",
-              "puntaje": 60,
-              "esCorrecta": true,
-              "feedback": "Encerrado no hace daño y explica qué pasó."
-            },
-            {
-              "id": "desconectar-todo",
-              "texto": "Apagar todos los servicios",
-              "escenaConsecuencia": "servicios-caen",
-              "rotuloConsecuencia": "CIUDAD A OSCURAS",
-              "puntaje": 20,
-              "feedback": "Dejarías la ciudad a oscuras sin necesidad."
-            },
-            {
-              "id": "borrar-todo",
-              "texto": "Borrar todo",
-              "escenaConsecuencia": "protocolo-cero",
-              "rotuloConsecuencia": "SIN RESPUESTAS",
-              "puntaje": 0,
-              "esTrampa": true,
-              "feedback": "Se va el problema y también la respuesta."
+              "id": "cuarentena-resuelta",
+              "texto": "Pruebas protegidas",
+              "feedback": "El programa queda aislado y todavía podemos aprender de su registro."
             }
           ]
         }
@@ -858,7 +824,7 @@
       "musica": "resolucion",
       "intro": "Todo listo. Tú decides el orden.",
       "imagen": null,
-      "tiempoSegFase": 150,
+      "tiempoSegFase": 120,
       "estilo": "deploy",
       "textoBotonHistorieta": "DEVOLVER LA CIUDAD",
       "historieta": [
@@ -881,8 +847,8 @@
           "id": "desplegar-orden-recuperacion",
           "tipoInteraccion": "ordenar-pasos",
           "contexto": "Encender todo a la vez sobrecarga la red recién reparada.",
-          "pregunta": "Ordena la recuperación desde lo más seguro y urgente",
-          "pista": "Primero confirma una base limpia; después prioriza vidas, movilidad y finalmente vigilancia.",
+          "pregunta": "Ordena los pasos para recuperar la ciudad sin sobrecargar la red",
+          "pista": "Primero revisa el respaldo; después vidas, tránsito y vigilancia.",
           "mensajeClienteDecision": "Primero seguridad, luego vidas y al final vigilancia.",
           "hitoIndicador": 88,
           "metaMinijuego": {
@@ -933,8 +899,8 @@
           "id": "desplegar-2",
           "tipoInteraccion": "seleccion-unica",
           "contexto": "El programa está aislado; ahora debes evitar otro ataque.",
-          "pregunta": "Última decisión: ¿qué haces?",
-          "pista": "Una solución responsable corrige el problema, conserva lo aprendido y vuelve a comprobar que sea segura.",
+          "pregunta": "¿Qué solución evita que el programa vuelva a atacar?",
+          "pista": "Corrígelo, pruébalo y conserva lo aprendido.",
           "mensajeClienteDecision": "Última decisión. La ciudad te mira.",
           "hitoIndicador": 100,
           "ilustracion": "reescribiendo",
