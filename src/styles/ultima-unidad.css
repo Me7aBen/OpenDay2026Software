@@ -1,0 +1,384 @@
+/* BACKEND RUSH · NIVEL 5 — Última unidad.
+   Reutiliza el marco de backend-rush.css (.br-*) y agrega lo propio del nivel.
+   Mobile first: los dos carriles se apilan en el celular y se ponen lado a lado
+   con la ranura del bloqueo en el medio a partir de 720px. */
+
+.uu-insignia {
+  display: inline-block;
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  color: var(--green);
+  border: 1px solid rgba(47, 230, 166, 0.5);
+  background: rgba(47, 230, 166, 0.1);
+  border-radius: 4px;
+  padding: 3px 8px;
+  margin-bottom: 8px;
+}
+
+/* --- Producto ------------------------------------------------------------ */
+
+.uu-producto {
+  border: 2px solid var(--cyan);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  background: rgba(74, 217, 255, 0.08);
+}
+.uu-producto.ok {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.08);
+}
+.uu-producto-nombre {
+  font-family: var(--pixel);
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.uu-stock {
+  font-family: var(--pixel);
+  font-size: 22px;
+  letter-spacing: 1.5px;
+  color: var(--cyan);
+}
+.uu-stock strong {
+  font-weight: inherit;
+}
+.uu-stock strong.mal {
+  color: var(--red);
+}
+.uu-stock strong.ok {
+  color: var(--green);
+}
+
+/* --- Carriles ------------------------------------------------------------ */
+
+.uu-carriles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.uu-carril {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  background: linear-gradient(160deg, #101c33, #0c1526);
+}
+
+.uu-persona {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.uu-avatar {
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+}
+.uu-nombre {
+  font-family: var(--pixel);
+  font-size: 13px;
+  letter-spacing: 1.2px;
+  color: var(--cyan);
+}
+
+.uu-caja {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 13px;
+  color: var(--text-dim);
+  background: rgba(24, 37, 67, 0.4);
+  opacity: 0.35;
+  transition: opacity 0.25s ease, border-color 0.25s ease;
+}
+.uu-caja.on {
+  opacity: 1;
+  border-color: #34507f;
+  color: var(--text);
+}
+.uu-caja-rotulo {
+  display: block;
+  font-family: var(--pixel);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+.uu-caja.resultado.on {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.uu-caja.resultado.on.negativo {
+  border-color: var(--green);
+  color: var(--green);
+}
+.uu-caja.escribir.on {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.uu-caja.escribir.on.malo {
+  border-color: var(--red);
+  color: #ff9aa3;
+  background: rgba(255, 92, 106, 0.1);
+}
+.uu-caja.espera.on {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(47, 230, 166, 0.1);
+}
+
+/* --- Ranura del bloqueo -------------------------------------------------- */
+
+.uu-ranura {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 92px;
+  padding: 12px;
+  border: 2px dashed var(--gold);
+  border-radius: 10px;
+  background: rgba(255, 209, 102, 0.06);
+  text-align: center;
+}
+.uu-ranura.llena {
+  border-style: solid;
+  border-color: var(--red);
+  background: rgba(255, 92, 106, 0.08);
+}
+.uu-ranura.llena.correcta {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.1);
+}
+.uu-ranura-icono {
+  font-size: 24px;
+}
+.uu-ranura-texto {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  color: var(--gold);
+  line-height: 1.5;
+}
+.uu-ranura.llena .uu-ranura-texto {
+  color: var(--text);
+}
+.uu-ranura-boton {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: none;
+  background: var(--gold);
+  color: #2b1e00;
+  font-family: var(--pixel);
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+/* --- Resultado ----------------------------------------------------------- */
+
+.uu-resultado {
+  border: 2px solid var(--red);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  background: rgba(255, 92, 106, 0.08);
+  min-height: 74px;
+  display: grid;
+  place-content: center;
+  gap: 2px;
+}
+.uu-resultado.ok {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.08);
+}
+.uu-resultado-cifra {
+  font-family: var(--pixel);
+  font-size: 26px;
+  letter-spacing: 1.5px;
+}
+.uu-resultado-cifra.mal {
+  color: var(--red);
+}
+.uu-resultado-cifra.ok {
+  color: var(--green);
+}
+.uu-resultado-rotulo {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  color: var(--text-dim);
+}
+.uu-resultado-rotulo.mal {
+  color: var(--red);
+}
+.uu-resultado-rotulo.ok {
+  color: var(--green);
+}
+
+/* --- Herramientas -------------------------------------------------------- */
+
+.uu-herramientas {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--panel);
+}
+.uu-herramientas-lista {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.uu-herramienta {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 60px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+.uu-herramienta:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+.uu-herramienta.activa {
+  border-color: var(--gold);
+  background: rgba(255, 209, 102, 0.12);
+}
+.uu-herramienta.descartada {
+  opacity: 0.45;
+}
+.uu-herramienta:disabled {
+  cursor: default;
+}
+.uu-herramienta-icono {
+  font-size: 20px;
+  flex: 0 0 auto;
+}
+.uu-herramienta-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.uu-herramienta-nombre {
+  font-family: var(--pixel);
+  font-size: 12px;
+  letter-spacing: 0.8px;
+}
+.uu-herramienta-desc {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--text-dim);
+}
+.uu-descartada-marca {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-family: var(--pixel);
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  color: var(--red);
+}
+
+/* --- Cierre -------------------------------------------------------------- */
+
+.uu-cierre {
+  border: 2px solid var(--green);
+  border-radius: 10px;
+  padding: 14px;
+  background: rgba(47, 230, 166, 0.1);
+}
+.uu-cierre-titulo {
+  font-family: var(--pixel);
+  font-size: 18px;
+  letter-spacing: 1.4px;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+.uu-flujo-correcto {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 0.8px;
+}
+.uu-flujo-correcto span {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+.uu-flujo-correcto .flecha {
+  border: none;
+  background: none;
+  color: var(--cyan);
+  padding: 0;
+}
+.uu-flujo-correcto .bloqueo {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.uu-flujo-correcto .ok {
+  border-color: var(--green);
+  color: var(--green);
+}
+.uu-flujo-correcto .espera {
+  border-color: var(--text-dim);
+}
+.uu-cierre-concepto {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.uu-cierre-concepto strong {
+  color: var(--cyan);
+}
+
+/* --- Tablet y desktop ---------------------------------------------------- */
+
+@media (min-width: 720px) {
+  .uu-carriles {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .uu-herramientas-lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .uu-stock {
+    font-size: 28px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .uu-herramientas-lista {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uu-caja {
+    transition: none;
+  }
+}

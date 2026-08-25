@@ -696,7 +696,7 @@
       "rotuloPuntaje": "QA",
       "titulo": "Pruebas",
       "intro": "El error principal está corregido. Pero nadie debería desplegar una versión sin probar.",
-      "explicacion": "Probar es buscar a propósito lo que puede fallar, antes de que lo encuentre un cliente. Casi nunca alcanza el tiempo para corregir todo: parte del trabajo es decidir qué error importa más.",
+      "explicacion": "Probar es buscar a propósito lo que puede fallar antes de que lo encuentre un cliente. Casi nunca alcanza el tiempo para corregir todo: primero decides qué error importa más, y después lo arreglas de verdad.",
       "tiempoSegFase": 240,
       "estilo": "bugs",
       "decisiones": [
@@ -735,42 +735,65 @@
         },
         {
           "id": "qa-2",
-          "tipoInteraccion": "seleccion-multiple",
-          "contexto": "Antes de publicar hay que probar los casos que de verdad pueden romperse.",
-          "pregunta": "Elige las 2 pruebas que hay que correr sí o sí",
-          "mensajeClienteDecision": "Dos pruebas. Las que demuestran que el bug ya no vuelve.",
-          "pista": "Prueba justo lo que fallaba: reintentos y última unidad.",
-          "seleccionExacta": 2,
-          "tablaPuntaje": {
-            "0": 0,
-            "1": 45,
-            "2": 100
+          "tipoInteraccion": "ultima-unidad",
+          "pregunta": "Queda una unidad y dos personas la están comprando. Evita la sobreventa.",
+          "mensajeClienteDecision": "Mira lo que pasa cuando los dos llegan al mismo tiempo.",
+          "pista": "Leer el stock otra vez no sirve: el problema es que los DOS pueden leerlo antes de que alguno lo actualice.",
+          "pistaGratis": true,
+          "metaMinijuego": {
+            "idRespuesta": "sobreventa-evitada",
+            "rotuloNivel": "NIVEL 5 · ÚLTIMA UNIDAD",
+            "producto": "Café Premium",
+            "solicitudAndrea": "#A-5512",
+            "solicitudLuis": "#L-9931",
+            "objetivo": "Evita la sobreventa: haz que solo un proceso pueda modificar el inventario a la vez.",
+            "pistaInterna": "El problema ocurre cuando los dos leen el stock antes de que cualquiera lo actualice.",
+            "dialogoFallo": "Andrea y Luis consultaron el stock casi al mismo tiempo. Los dos vieron que quedaba una unidad. Los dos la descontaron. Resultado: vendimos café que no existe.",
+            "dialogoElegir": "Necesitamos que solo uno pueda tocar el inventario a la vez. ¿Cuál de estas herramientas hace eso?",
+            "dialogoExito": "Ahora entra uno por vez. Andrea se lleva el café y Luis recibe un \"sin stock\" honesto, que es molesto pero verdadero.",
+            "conceptoTitulo": "Lo que acabas de resolver se llama condición de carrera.",
+            "conceptoTexto": "Ocurre cuando dos procesos leen el mismo dato antes de que alguno lo actualice. Dejar entrar a uno a la vez se llama exclusión mutua, y es de las primeras cosas que aprende quien trabaja en backend.",
+            "puntosMax": 100,
+            "puntosMin": 30,
+            "penalizacionPorIntento": 25,
+            "herramientaCorrecta": "bloquear",
+            "herramientas": [
+              {
+                "id": "bloquear",
+                "nombre": "BLOQUEAR STOCK",
+                "icono": "🔒",
+                "descripcion": "Solo un proceso puede tocar el inventario a la vez. El otro espera su turno."
+              },
+              {
+                "id": "verificar",
+                "nombre": "VERIFICAR",
+                "icono": "🔍",
+                "descripcion": "Consulta el stock actual sin modificarlo.",
+                "porQueNo": "Volver a leer no cambia nada: los dos siguen pudiendo leer al mismo tiempo y los dos siguen viendo \"queda 1\"."
+              },
+              {
+                "id": "reintentar",
+                "nombre": "REINTENTAR",
+                "icono": "🔁",
+                "descripcion": "Repite la operación desde el inicio.",
+                "porQueNo": "Repetir una carrera es volver a correrla. Los dos vuelven a salir al mismo tiempo y vuelve a pasar lo mismo."
+              },
+              {
+                "id": "reservar",
+                "nombre": "RESERVAR",
+                "icono": "📦",
+                "descripcion": "Aparta la unidad antes de confirmar la compra.",
+                "porQueNo": "Vas bien encaminado, pero si los dos pueden reservar a la vez, el problema es el mismo un paso más arriba. Falta que solo uno entre por vez."
+              }
+            ]
           },
           "opciones": [
             {
-              "id": "reintentos",
-              "texto": "Comprar y cortar la conexión para forzar reintentos",
-              "esCorrecta": true
-            },
-            {
-              "id": "ultima-unidad",
-              "texto": "Dos personas comprando la última unidad a la vez",
-              "esCorrecta": true
-            },
-            {
-              "id": "colores",
-              "texto": "Revisar que los colores del sitio combinen",
-              "esCorrecta": false
-            },
-            {
-              "id": "logo",
-              "texto": "Medir el tamaño del logo en el pie de página",
-              "esCorrecta": false
+              "id": "sobreventa-evitada",
+              "texto": "Sobreventa evitada",
+              "feedback": "El inventario dejó de poder quedar en negativo."
             }
-          ],
-          "encabezado": "🧪 PLAN DE PRUEBAS",
-          "etiquetaDisponibles": "Pruebas posibles (toca para elegir →)",
-          "etiquetaDestino": "Las que vas a correr"
+          ]
         }
       ]
     },

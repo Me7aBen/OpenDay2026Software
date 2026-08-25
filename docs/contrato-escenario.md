@@ -637,6 +637,8 @@ decision.metaMinijuego.quienComenta?  // mecanografia-codigo (default 'NIA')
 | `revelar-codigo`   | completa la condición que falta en un bloque de código | `puntosMax` si acierta, `puntosMin` si no |
 | `evento-trafico`   | `seleccion-unica` precedida por una alerta de CPU en vivo | como `seleccion-unica` |
 | `deploy-secuencia` | publica una versión con barras de progreso              | `puntosMax` al completar |
+| `detectar-fantasma` | BACKEND RUSH nivel 1: los pedidos fluyen en vivo y hay que tocar los duplicados antes de que entren | `puntosPorDuplicado` por acierto, menos `penalizacionFalsoPositivo` y `penalizacionEscapado`, más `bonoRapidez`; tope `puntosMax` |
+| `ultima-unidad` | BACKEND RUSH nivel 5: dos compras simultáneas de la última unidad; hay que colocar la herramienta que impide la sobreventa | `puntosMax` menos `penalizacionPorIntento`, piso `puntosMin` |
 
 Los cinco declaran su techo en `metaMinijuego.puntosMax` y mandan el puntaje ya
 calculado como `puntajeDirecto`, igual que las mecánicas que ya existían.
@@ -646,3 +648,29 @@ calculado como `puntajeDirecto`, igual que las mecánicas que ya existían.
 `engine/gameEngine.js` expone `puntajeMaximoEscenario(escenario)`. El HUD lo usa
 para mostrar "X / techo" en vez del `/ 800` fijo que tenía. Un escenario nuevo no
 necesita declarar nada: el techo es la suma de lo que valen sus decisiones.
+
+## Pistas gratuitas
+
+`decision.pistaGratis: true` hace que pedir la pista no descuente los
+`PENALIZACION_PISTA` puntos habituales, y el botón lo dice ("gratis" en vez de
+"−10 pts"). Se usa en las mecánicas nuevas: la información que hace falta para
+ENTENDER cómo se juega algo no debería costar puntos, porque castiga justo a
+quien más la necesita. Sin el campo, el comportamiento es el de siempre.
+
+## BACKEND RUSH
+
+Las mecánicas activas de "El Pedido Fantasma" comparten marca y estética
+(`src/styles/backend-rush.css`, clases `.br-*`). La idea es que el estudiante
+NO lea un diálogo y elija una tarjeta, sino que vea un sistema funcionando y
+actúe sobre él. Los niveles construidos hasta ahora:
+
+| nivel | `tipoInteraccion` | fase | qué enseña |
+|-------|-------------------|------|------------|
+| 1 · Encuentra al fantasma | `detectar-fantasma` | investigacion | leer un flujo, reconocer un duplicado |
+| 2 · Construye la defensa | `flow-debugger` | flujo | orden de operaciones e idempotencia |
+| 5 · Última unidad | `ultima-unidad` | pruebas | condición de carrera y exclusión mutua |
+
+Los niveles 3 (tormenta de reintentos como nivel propio) y 4 (pico de tráfico
+con colas y límites) todavía no existen como mecánica: hoy viven como la consola
+del Flow Debugger y como `evento-trafico`, que sigue siendo una decisión de
+opción única con una alerta de CPU delante.

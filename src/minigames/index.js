@@ -13,6 +13,7 @@ import OrdenarPasos from './OrdenarPasos';
 import PuertaSeguridad from './PuertaSeguridad';
 import FlowDebugger from './FlowDebugger';
 import DetectarFantasma from './DetectarFantasma';
+import UltimaUnidad from './UltimaUnidad';
 import TrazaPeticiones from './TrazaPeticiones';
 import RevelarCodigo from './RevelarCodigo';
 import EventoTrafico from './EventoTrafico';
@@ -37,6 +38,7 @@ export const minijuegoPorTipo = {
   // Mecánicas de "El Pedido Fantasma". Se registran igual que el resto: el
   // motor no las conoce, solo las busca por el `tipoInteraccion` del JSON.
   'detectar-fantasma': DetectarFantasma,
+  'ultima-unidad': UltimaUnidad,
   'flow-debugger': FlowDebugger,
   'traza-peticiones': TrazaPeticiones,
   'revelar-codigo': RevelarCodigo,

@@ -31,6 +31,7 @@ export function puntajeMaximoDecision(decision) {
     case 'ordenar-pasos':
     case 'puerta-seguridad':
     case 'detectar-fantasma':
+    case 'ultima-unidad':
     case 'flow-debugger':
     case 'traza-peticiones':
     case 'revelar-codigo':
