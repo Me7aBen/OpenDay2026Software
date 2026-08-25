@@ -15,7 +15,23 @@ export const ORDEN_MISIONES = ['codigo-cero', 'ccorca-v2'];
 //   'completada' | 'disponible' | 'bloqueada'
 //
 // completadas: { [escenarioId]: { puntaje, tiempoSeg } }
-export function estadoMisiones(escenarios, completadas = {}) {
+// `secuencial` decide si una misión se bloquea hasta terminar la anterior.
+//
+//   true  (default) — la jornada del evento: misión 1, después la 2. Es la
+//                     regla del Open Day y no cambia.
+//   false           — el catálogo de la plataforma vocacional: un estudiante
+//                     elige la simulación que quiera, cuando quiera. Nada se
+//                     bloquea (§5 del brief).
+export function estadoMisiones(escenarios, completadas = {}, { secuencial = true } = {}) {
+  if (!secuencial) {
+    return escenarios.map((escenario, i) => ({
+      escenario,
+      estado: completadas[escenario.id] ? 'completada' : 'disponible',
+      numero: i + 1,
+      resultado: completadas[escenario.id] ?? null,
+    }));
+  }
+
   const porId = new Map(escenarios.map((e) => [e.id, e]));
   const ordenados = ORDEN_MISIONES.map((id) => porId.get(id)).filter(Boolean);
 

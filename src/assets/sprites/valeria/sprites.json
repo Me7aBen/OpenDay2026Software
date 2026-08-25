@@ -1,0 +1,45 @@
+{
+  "character": "valeria",
+  "style": "pixel-art",
+  "rendering": "pixelated",
+  "portrait": {
+    "file": "portrait/valeria-portrait-neutral.png",
+    "width": 1199,
+    "height": 1312
+  },
+  "expressions": {
+    "sheet": "sheets/valeria-expressions-sheet.png",
+    "frameWidth": 512,
+    "frameHeight": 512,
+    "frames": [
+      "expressions/valeria-neutral.png",
+      "expressions/valeria-happy.png",
+      "expressions/valeria-concerned.png",
+      "expressions/valeria-thinking.png"
+    ]
+  },
+  "dialogue": {
+    "sheet": "sheets/valeria-dialogue-sheet.png",
+    "frameWidth": 543,
+    "frameHeight": 724,
+    "frames": [
+      "dialogue/valeria-speaking.png",
+      "dialogue/valeria-explaining.png",
+      "dialogue/valeria-listening.png",
+      "dialogue/valeria-celebrating.png"
+    ]
+  },
+  "body": {
+    "sheet": "sheets/valeria-body-sheet.png",
+    "frameWidth": 362,
+    "frameHeight": 724,
+    "frames": [
+      "body/valeria-idle-front.png",
+      "body/valeria-idle-side.png",
+      "body/valeria-walk-01.png",
+      "body/valeria-walk-02.png",
+      "body/valeria-walk-03.png",
+      "body/valeria-walk-04.png"
+    ]
+  }
+}

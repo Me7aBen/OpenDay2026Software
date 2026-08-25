@@ -1,5 +1,6 @@
 import EstadoCliente from './EstadoCliente';
 import RetratoNIA from './RetratoNIA';
+import RetratoValeria from '../features/simulations/ui/RetratoValeria';
 
 // Elige cómo se dibuja el cliente del escenario. Es un mapa de componentes, no
 // una cadena de ifs: agregar un retrato nuevo es agregar una entrada acá y
@@ -11,6 +12,7 @@ import RetratoNIA from './RetratoNIA';
 const RETRATOS = {
   emoji: EstadoCliente,
   nia: RetratoNIA,
+  valeria: RetratoValeria,
 };
 
 export default function RetratoCliente({ tipo, estado }) {

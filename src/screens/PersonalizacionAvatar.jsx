@@ -4,6 +4,7 @@ import TopBar from '../ui/TopBar';
 import Avatar from '../ui/Avatar';
 import { ACCESORIOS, AVATAR_POR_DEFECTO, COLORES, ROSTROS } from '../ui/avatarOpciones';
 import '../styles/personalizacion.css';
+import { APP_NAME, APP_TAGLINE } from '../config/marca';
 
 // Pantalla de personalización del personaje. Se muestra entre la selección de
 // escenario y la partida, y SOLO si el escenario declaró
@@ -100,8 +101,8 @@ export default function PersonalizacionAvatar() {
       </div>
 
       <div className="pers-footer">
-        <span>TECSUP · Formación que transforma</span>
-        <span>Diseño y Desarrollo de Software · Centro de Innovación Tecnológica</span>
+        <span>{APP_NAME}</span>
+        <span>{APP_TAGLINE}</span>
       </div>
     </div>
   );

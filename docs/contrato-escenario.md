@@ -582,3 +582,67 @@ campos obligatorios por tipo de interacción alcanza).
 
 Mientras tanto, la red de seguridad es jugar el escenario completo antes de
 subirlo — que es el criterio de aceptación permanente de `docs/CLAUDE.md`.
+
+---
+
+# Adenda — plataforma vocacional (migración de agosto 2026)
+
+El contrato de arriba sigue siendo válido palabra por palabra: "Código Cero" y
+"Luz para Ccorca" no cambiaron un solo campo. Lo que sigue son campos NUEVOS y
+OPCIONALES que agregó "El Pedido Fantasma". Un escenario que no los declara se
+comporta exactamente como antes.
+
+## Campos nuevos del escenario
+
+```
+presentacion.temporizador?: boolean      // default true. En false:
+                                          //   - el reloj no corre (el TICK no hace nada)
+                                          //   - el HUD no muestra el contador
+                                          //   - no hay bono de tiempo
+                                          // Es lo que pide una simulación pensada
+                                          // para jugarse desde el celular sin presión.
+presentacion.etapas?: string[]           // nombres de las etapas visibles en la pantalla
+                                          // de entrada (/simulaciones/:slug).
+presentacion.desfaseEtapa?: number       // cuántas etapas ocurren FUERA del motor
+                                          // (la intro cinemática es la etapa 1).
+presentacion.introSimulacion?: object    // toda la pantalla de entrada: diálogo,
+                                          // objetivo, consejo, métricas del tablero.
+presentacion.conceptos?: object          // "sin darte cuenta usaste ..." del resultado.
+presentacion.reflexion?: object          // pregunta de interés vocacional tras jugar.
+                                          // Se guarda SEPARADA del puntaje, a propósito.
+
+fase.rotuloPuntaje?: string              // nombre de la fase en el desglose de puntaje
+                                          // ("ANÁLISIS", "QA"). Default: `rol`.
+```
+
+## Campos nuevos de decisión (rótulos que dejaron de estar hardcodeados)
+
+Varias mecánicas traían texto de "Código Cero" incrustado en el componente. Ahora
+sale del contenido, con el valor de antes como default:
+
+```
+decision.metaMinijuego.encabezado?    // seleccion-unica  (default '📞 VIDEOLLAMADA CON EL CLIENTE')
+decision.encabezado?                  // seleccion-multiple (default '📱 WIREFRAME')
+decision.metaMinijuego.rotulo?        // ordenar-pasos    (default 'RUTA DE RECUPERACIÓN')
+                                       // mecanografia-codigo (default 'CONSOLA NEXO')
+decision.metaMinijuego.quienComenta?  // mecanografia-codigo (default 'NIA')
+```
+
+## tipoInteraccion nuevos
+
+| tipo               | qué hace                                              | puntaje |
+|--------------------|-------------------------------------------------------|---------|
+| `flow-debugger`    | arma un flujo de backend con piezas; una pieza tiene dos lógicas y solo una evita el duplicado | `puntosMax` menos `penalizacionPorIntento` por intento fallido, piso `puntosMin` |
+| `traza-peticiones` | lee una traza de red y marca en el diagrama dónde nace el bug | `puntosMax` menos `penalizacionPorError`, piso `puntosMin` |
+| `revelar-codigo`   | completa la condición que falta en un bloque de código | `puntosMax` si acierta, `puntosMin` si no |
+| `evento-trafico`   | `seleccion-unica` precedida por una alerta de CPU en vivo | como `seleccion-unica` |
+| `deploy-secuencia` | publica una versión con barras de progreso              | `puntosMax` al completar |
+
+Los cinco declaran su techo en `metaMinijuego.puntosMax` y mandan el puntaje ya
+calculado como `puntajeDirecto`, igual que las mecánicas que ya existían.
+
+## Techo de puntaje
+
+`engine/gameEngine.js` expone `puntajeMaximoEscenario(escenario)`. El HUD lo usa
+para mostrar "X / techo" en vez del `/ 800` fijo que tenía. Un escenario nuevo no
+necesita declarar nada: el techo es la suma de lo que valen sus decisiones.

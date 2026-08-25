@@ -1,52 +1,118 @@
-# MISIÓN DEPLOY — contexto del proyecto
+# Contexto del proyecto
 
-Simulador web tipo videojuego para un taller de ~30 minutos donde estudiantes de 4to y 5to de secundaria viven el ciclo de desarrollo de software resolviendo un problema social peruano. Se usa en el laboratorio de cómputo de Tecsup Arequipa, en varias sesiones, con leaderboard por sesión y premiación al top 3.
+**Plataforma de exploración vocacional para estudiantes de secundaria en Perú.**
 
-La propuesta completa está en `docs/propuesta.md`. **Léela antes de proponer cambios de alcance.** El estado y la bitácora de avance están en `docs/PLAN.md`.
+El estudiante busca una carrera, lee qué se estudia en ella, y —esto es lo que
+distingue al producto— **la experimenta** jugando una simulación basada en un
+problema profesional real antes de decidir si le interesa.
+
+> Antes de elegir una carrera, experiméntala.
+
+El nombre comercial todavía no está definido. El provisional es **PRIMER DÍA** y
+vive en `src/config/marca.js`: no se escribe a mano en ningún componente.
+
+## Historia: de dónde viene este repo
+
+Nació como "Misión Deploy", un simulador para un taller de Tecsup Day. Esa
+aplicación completa **sigue existiendo y funcionando** en la ruta `/evento`
+(registro por colegio, misiones en secuencia obligatoria, ranking por sesión).
+No se eliminó: se convirtió en un modo más del producto, útil para ferias y
+visitas escolares.
+
+El principio de la migración fue **cambiar la cáscara, conservar el corazón**:
+el motor de simulación, los minijuegos y el pixel art se reutilizaron enteros;
+lo que cambió fue lo que los rodea.
 
 ## Reglas de oro
 
-1. **El motor no contiene narrativa.** Ni un solo string de historia, pregunta, opción o feedback vive en `src/`. Todo el contenido está en `src/content/*.json`. Si necesitas texto para probar, ponlo en el JSON.
-2. **Agregar un escenario nuevo = agregar un JSON.** Si un escenario nuevo obligara a tocar el motor, el diseño del motor está mal.
-3. **La partida corre offline.** Ninguna fase puede quedar bloqueada esperando red. Supabase solo se usa al inicio (resolver sesión abierta) y al final (guardar partida), y ambos fallan en silencio hacia un modo local.
-4. **Público real: chicos de 15-17 años en ~16 minutos, sin saber nada de desarrollo de software.** No conocen las etapas del ciclo de vida, ni jerga técnica, ni programación. Cada fase abre con una explicación explícita y breve en lenguaje simple (qué va a hacer, por qué, sin dar por sabido nada) *antes* de pedir la primera decisión — recién ahí se decide. Máximo 2 líneas de texto por decisión (la explicación de fase puede ser un poco más larga, pero se lee una sola vez por fase, no en cada decisión). Cero jerga técnica antes del final. Si una pantalla necesita explicación del facilitador, está mal diseñada.
-5. **No todo es un cuestionario.** Cada minijuego debe usar la interacción que le corresponda de verdad — arrastrar en el wireframe, escribir en el bloque de lógica — no un listado de botones disfrazado. Selección por clic solo cuando la decisión real es "elegir una opción de una lista" (entrevista, bugs, deploy).
-6. **Objetivo 1366×768, horizontal, sin scroll durante la partida.** Es la resolución típica del laboratorio.
-7. **Sin audio indispensable.** Las PCs del lab no tienen parlantes. Todo sonido es decorativo.
+1. **El motor no contiene narrativa.** Ni un solo string de historia, pregunta,
+   opción o feedback vive en `src/engine` o `src/minigames`. Todo el contenido
+   está en `src/content/*.json`. Si un minijuego necesita un rótulo distinto
+   según la simulación, ese rótulo se declara en el JSON con el valor histórico
+   como default — no se agrega un `if` por escenario.
+2. **Agregar una simulación = agregar un JSON.** Si obligara a tocar el motor,
+   el diseño del motor está mal.
+3. **Las dos simulaciones heredadas no se rompen.** "Código Cero" y "Luz para
+   Ccorca" tienen que poder jugarse de punta a punta en cada commit, tanto desde
+   la plataforma (`/simulaciones/:slug/jugar`) como desde `/evento`.
+   `npm test` juega las tres simulaciones completas contra el reducer real.
+4. **Mobile first.** El público principal entra desde un celular. Se diseña
+   primero para 360–390 px de ancho y se crece hacia arriba. Nada de "desktop
+   encogido": en móvil los componentes se **reorganizan**, no se achican. Cero
+   scroll horizontal, objetivos táctiles de 44 px o más.
+5. **Público real: chicos de 15–17 años que no saben nada de la profesión.**
+   Cada fase abre con una explicación breve en lenguaje simple antes de pedir la
+   primera decisión. Cero jerga sin explicar.
+6. **No todo es un cuestionario.** Cada minijuego usa la interacción que le
+   corresponde de verdad. Selección por clic solo cuando la decisión real es
+   "elegir una opción de una lista".
+7. **El puntaje no es una señal vocacional.** Es el resultado de un juego. La
+   señal vocacional es la respuesta explícita del estudiante a "¿qué te pareció
+   la experiencia?", y se guarda **separada** del puntaje. Ninguna pantalla dice
+   "eres ideal para X".
+8. **No se inventan datos.** Nada de sueldos, rankings de universidades ni
+   mallas presentadas como oficiales. Todo dato de carrera o institución lleva
+   `fuenteEstado` y la UI dice cuando es contenido de ejemplo.
+9. **No se simula un pago.** Mientras no haya backend seguro, el CTA de compra
+   dice "Próximamente disponible" y no se pide ni un dato. Cero secretos en el
+   frontend.
+10. **Sin audio indispensable.** Todo sonido es decorativo, opcional y
+    lazy-loaded.
+11. **Sin dependencias nuevas sin preguntar.** Este proyecto debe seguir
+    funcionando dentro de un año sin mantenimiento. Por eso el router es propio
+    (~100 líneas) y no hay librería de estado, de UI ni de animación.
 
 ## Stack
 
-- React + Vite (JS, no TS salvo que ya esté configurado)
-- Sin librería de estado: `useReducer` + contexto es suficiente
-- Supabase JS client para persistencia
-- CSS con variables en `src/styles/tokens.css` — los tokens vienen del diseño, no los inventes
-- Deploy: GitHub Pages vía GitHub Actions
+- React + Vite (JS, no TS). **Cero dependencias runtime** además de React.
+- Estado: `useReducer` + contexto.
+- Router propio sobre la History API (`src/app/router/`), con `public/404.html`
+  para que las URLs profundas funcionen en GitHub Pages.
+- Supabase opcional, solo en modo evento; falla en silencio a localStorage.
+- CSS con variables en `src/styles/tokens.css`.
+- Deploy: GitHub Pages vía GitHub Actions, base `/OpenDay2026Software/`.
 
 ## Estructura
 
 ```
 src/
-  engine/      máquina de estados de fases, scoring, timer, cola de envío
-  screens/     una carpeta por pantalla
-  minigames/   los 5 tipos: entrevista, wireframe, logica, bugs, deploy
-  ui/          componentes visuales compartidos entre pantallas (TopBar, EscenaCliente)
-  content/     un JSON por escenario (contenido, no código)
-  lib/         supabase.js, queue.js, storage.js
-  styles/      tokens.css (fuente de verdad del diseño) y un .css por componente
+  app/           router, layout de la plataforma, metadatos SEO
+  config/        marca.js — nombre, tagline y logo, en un solo lugar
+  features/
+    careers/     modelo de carrera, catálogo, ficha, buscador
+    institutions/ instituciones y programas académicos (entidades separadas)
+    compare/     comparador de hasta 3 carreras
+    simulations/ catálogo, pantalla de entrada, host del motor, resultado
+    exploration/ "Mi exploración": guardadas, historial, opiniones
+    learning/    microcursos
+    home/        homepage
+    event/       modo evento (la jornada del Open Day, intacta)
+  engine/        máquina de fases, scoring, timer   ← el corazón, reutilizado
+  minigames/     mecánicas, mapeadas por tipoInteraccion  ← reutilizadas
+  screens/       pantallas del motor (HUD, registro, resultado del evento)
+  ui/            componentes visuales compartidos, pixel art
+  content/       un JSON por simulación (contenido, no código)
+  lib/           supabase, storage, audio
+  styles/        tokens.css y un .css por componente
+tests/           node --test, sin runner ni dependencias
 ```
+
+## Rendimiento
+
+La homepage **no** carga el motor, ni los minijuegos, ni los JSON de escenario,
+ni el audio. Todo eso está detrás de `lazy()` y de imports dinámicos, y baja
+recién cuando el estudiante entra a una simulación. Al tocar esto, revisar que
+el chunk inicial siga sin arrastrar `PantallaJuego`.
 
 ## Convenciones
 
-- Español en UI, textos de contenido y comentarios. Nombres de variables y funciones en inglés.
-- Commits cortos y en español: `feat: minijuego de bugs`, `fix: timer no pausa en el epílogo`.
-- Nada de dependencias nuevas sin preguntar primero. Este proyecto debe seguir funcionando dentro de un año sin mantenimiento.
-- `localStorage` siempre con prefijo `md:` y limpieza al terminar la partida o al cambiar el código de sesión.
-- Los secretos van en `.env.local` (ignorado) y en GitHub Actions secrets. La `anon key` de Supabase queda visible en el bundle: es esperado, la seguridad la da RLS.
+- Español en UI, contenido y comentarios. Nombres de variables y funciones en
+  inglés cuando corresponda; el dominio está en español.
+- Commits cortos y en español: `feat: flow debugger`, `fix: reloj de fase en NaN`.
+- `localStorage` siempre con prefijo `md:`.
+- Los secretos van en `.env.local` (ignorado) y en GitHub Actions secrets.
 
 ## Criterio de aceptación permanente
 
-Una partida completa, de la pantalla de registro al epílogo, debe poder jugarse de punta a punta **en cada commit**. Si algo se rompe a mitad del flujo, eso se arregla antes de seguir construyendo.
-
-## Al terminar cada sesión de trabajo
-
-Actualiza `docs/PLAN.md`: qué quedó hecho, qué decisiones se tomaron y por qué, y qué sigue. Es el handoff para la próxima sesión.
+`npm run lint`, `npm test` y `npm run build` pasan, y las tres simulaciones se
+juegan de principio a fin —desde el celular— en cada commit.

@@ -1,16 +1,57 @@
-# React + Vite
+# PRIMER DÍA — plataforma de exploración vocacional
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Un estudiante de secundaria puede buscar una carrera, leer qué se estudia en
+ella, ver dónde puede estudiarla y —lo que hace distinto al producto—
+**experimentarla**: jugar gratis una simulación basada en un problema real de esa
+profesión antes de decidir si le interesa.
 
-Currently, two official plugins are available:
+> Antes de elegir una carrera, experiméntala.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+El nombre comercial es provisional y se cambia en un solo archivo:
+`src/config/marca.js`.
 
-## React Compiler
+## Cómo correrlo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+| comando         | qué hace                                             |
+|-----------------|------------------------------------------------------|
+| `npm run dev`   | servidor de desarrollo                                |
+| `npm run build` | build de producción                                   |
+| `npm run lint`  | ESLint                                                |
+| `npm test`      | juega las tres simulaciones completas contra el motor |
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+`npm test` usa `node --test`: sin runner y sin dependencias nuevas.
+
+## Rutas
+
+| ruta | qué es |
+|------|--------|
+| `/` | homepage con buscador de carreras |
+| `/carreras` · `/carreras/:slug` | explorador y ficha de carrera |
+| `/simulaciones` · `/simulaciones/:slug` | catálogo y pantalla de entrada |
+| `/simulaciones/:slug/jugar` | la simulación corriendo |
+| `/aprender` · `/aprender/:slug` | microcursos |
+| `/comparar` | comparador de hasta 3 carreras |
+| `/mi-exploracion` | carreras guardadas, historial y opiniones |
+| `/evento` | **modo evento**: la jornada del Open Day, con registro por colegio, misiones en secuencia y ranking |
+| `?vista=leaderboard` | panel de ranking para el facilitador |
+
+## Simulaciones
+
+| simulación | carrera | estado |
+|------------|---------|--------|
+| El Pedido Fantasma | Ingeniería de Software | gratis |
+| Código Cero | Ingeniería de Software | gratis |
+| Luz para Ccorca | Ingeniería Civil / Arquitectura | gratis |
+
+Agregar una simulación es agregar un JSON en `src/content/` y una entrada en
+`src/features/simulations/catalogo.js`. El motor no se toca.
+
+## Documentación
+
+- `docs/CLAUDE.md` — contexto del producto y reglas de oro. **Léelo primero.**
+- `docs/contrato-escenario.md` — el contrato del JSON de cada simulación.

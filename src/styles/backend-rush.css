@@ -1,0 +1,673 @@
+/* BACKEND RUSH — tablero de flujo en vivo.
+   Mobile first: en el celular el tablero se lee en vertical (una tarjeta por
+   pedido con su etapa actual) y en pantallas anchas se abre como la tabla de
+   4 columnas de la referencia. Nunca hay scroll horizontal de página. */
+
+.br {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* --- Cabecera ----------------------------------------------------------- */
+
+.br-cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.br-nivel {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  color: var(--cyan);
+}
+
+.br-titulo {
+  margin: 4px 0 0;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.br-marcadores {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.br-marcador {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.br-marcador .etiqueta {
+  font-family: var(--pixel);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+.br-marcador .valor {
+  font-family: var(--pixel);
+  font-size: 17px;
+  line-height: 1;
+}
+
+/* --- Layout general ----------------------------------------------------- */
+
+.br-cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.br-tablero-zona {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* --- Tablero ------------------------------------------------------------ */
+
+.br-tablero {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  background:
+    linear-gradient(180deg, rgba(74, 217, 255, 0.05), transparent 40%),
+    linear-gradient(160deg, #101c33, #0b1424);
+  min-height: 300px;
+}
+
+.br-encabezados {
+  display: none;
+}
+
+.br-filas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.br-fila-vacia {
+  color: var(--text-dim);
+  font-size: 13px;
+  font-style: italic;
+  padding: 20px 4px;
+  text-align: center;
+}
+
+.br-fila {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  align-items: center;
+  animation: br-entrar 0.28s ease-out;
+}
+
+@keyframes br-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.br-fila.sacudir {
+  animation: br-sacudir 0.3s ease-in-out;
+}
+@keyframes br-sacudir {
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.br-fila.cazado {
+  opacity: 0.75;
+}
+.br-fila.escapado .br-pedido.activo {
+  border-color: var(--red);
+}
+
+.br-celda {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+/* Cada pedido es un chip. En móvil los 4 caben porque el código se recorta y
+   la tipografía baja; el chip activo se distingue por color y borde. */
+.br-pedido {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 6px 6px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--body);
+  text-align: left;
+}
+
+.br-pedido.pendiente {
+  opacity: 0.18;
+  border-style: dashed;
+  border-color: var(--border);
+}
+
+.br-pedido.activo {
+  border-color: rgba(47, 230, 166, 0.55);
+  background: rgba(47, 230, 166, 0.08);
+  color: var(--text);
+}
+
+.br-pedido.duplicado {
+  border-color: var(--red);
+  background: rgba(255, 92, 106, 0.12);
+  color: #ffb3ba;
+}
+
+.br-pedido.cazado {
+  border-color: var(--cyan);
+  background: rgba(74, 217, 255, 0.16);
+  color: var(--cyan);
+}
+
+button.br-pedido {
+  cursor: pointer;
+  min-height: 44px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
+}
+button.br-pedido:hover {
+  filter: brightness(1.25);
+}
+
+.br-pedido-icono {
+  font-size: 13px;
+  flex: 0 0 auto;
+}
+
+.br-pedido-codigo {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: -0.2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mira de puntería sobre el pedido tocable. */
+.br-mira {
+  margin-left: auto;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  position: relative;
+  opacity: 0.85;
+  animation: br-latir 1.1s ease-in-out infinite;
+}
+.br-mira::before,
+.br-mira::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+.br-mira::before {
+  left: 50%;
+  top: -4px;
+  width: 2px;
+  height: 4px;
+  transform: translateX(-50%);
+}
+.br-mira::after {
+  left: 50%;
+  bottom: -4px;
+  width: 2px;
+  height: 4px;
+  transform: translateX(-50%);
+}
+@keyframes br-latir {
+  50% { opacity: 0.35; }
+}
+
+.br-check {
+  margin-left: auto;
+  color: var(--green);
+  font-weight: 800;
+}
+.br-cruz {
+  margin-left: auto;
+  color: var(--red);
+  font-weight: 800;
+}
+
+.br-conector {
+  display: none;
+}
+
+/* Burbuja de puntos */
+.br-aviso {
+  position: absolute;
+  right: 4px;
+  top: -10px;
+  z-index: 3;
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  animation: br-subir 0.9s ease-out forwards;
+  pointer-events: none;
+}
+.br-aviso.ok {
+  background: rgba(47, 230, 166, 0.18);
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+.br-aviso.error {
+  background: rgba(255, 92, 106, 0.18);
+  border: 1px solid var(--red);
+  color: #ff9aa3;
+}
+@keyframes br-subir {
+  to {
+    transform: translateY(-16px);
+    opacity: 0;
+  }
+}
+
+/* --- Valeria ------------------------------------------------------------ */
+
+.br-valeria {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.br-valeria .valeria-busto {
+  width: 72px;
+  height: 96px;
+  flex: 0 0 auto;
+}
+
+.br-globo {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(8, 16, 31, 0.92);
+  padding: 10px 12px;
+  animation: br-entrar 0.25s ease-out;
+}
+.br-globo-quien {
+  font-family: var(--pixel);
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  color: var(--cyan);
+  margin-bottom: 3px;
+}
+.br-globo p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/* --- Panel lateral ------------------------------------------------------ */
+
+.br-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.br-panel-bloque {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--panel);
+}
+.br-panel-titulo {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+.br-panel-bloque p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.br-progreso-rotulo {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.br-progreso-cifra {
+  font-family: var(--pixel);
+  font-size: 26px;
+  color: var(--green);
+  line-height: 1.1;
+}
+.br-progreso,
+.br-estabilidad {
+  height: 8px;
+  border-radius: 999px;
+  background: #0d1830;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.br-progreso span,
+.br-estabilidad span {
+  display: block;
+  height: 100%;
+  background: var(--green);
+  transition: width 0.3s ease;
+}
+
+.br-dato {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-dim);
+  padding: 3px 0;
+}
+.br-dato strong {
+  font-family: var(--pixel);
+  font-size: 15px;
+}
+
+.br-estabilidad-rotulo {
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-top: 10px;
+}
+
+.br-estado {
+  margin-top: 8px;
+  font-family: var(--pixel);
+  font-size: 14px;
+  letter-spacing: 1.2px;
+  color: var(--green);
+}
+.br-estado.alerta {
+  color: var(--red);
+}
+
+.br-leyenda div {
+  font-size: 13px;
+  color: var(--text-dim);
+  padding: 2px 0;
+}
+
+/* --- Controles y cierre -------------------------------------------------- */
+
+.br-controles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.br-boton {
+  min-height: 48px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  font-family: var(--pixel);
+  font-size: 13px;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.br-boton:hover:not(:disabled) {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.br-boton:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.br-cierre {
+  border: 2px solid var(--green);
+  background: rgba(47, 230, 166, 0.1);
+  border-radius: 10px;
+  padding: 14px;
+}
+.br-cierre.parcial {
+  border-color: var(--gold);
+  background: rgba(255, 209, 102, 0.1);
+}
+.br-cierre-titulo {
+  font-family: var(--pixel);
+  font-size: 18px;
+  letter-spacing: 1.4px;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.br-cierre.parcial .br-cierre-titulo {
+  color: var(--gold);
+}
+.br-cierre p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.br-cierre-datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.br-cierre-datos strong {
+  font-family: var(--pixel);
+  color: var(--text);
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+/* --- Reorganización móvil (§53) ------------------------------------------
+   En un celular no entran cuatro chips legibles en una fila. En vez de
+   encogerlos, la fila se convierte en UNA tarjeta ancha con el pedido actual y
+   un rastro de puntos que dice por dónde va. El objetivo táctil pasa de 72px a
+   todo el ancho de la pantalla. */
+
+.br-etapas-mini {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  padding-right: 2px;
+}
+
+.br-punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2b3f66;
+}
+.br-punto.on {
+  background: var(--green);
+}
+.br-punto.on.rojo {
+  background: var(--red);
+}
+
+.br-etapa-nombre {
+  font-family: var(--pixel);
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  color: var(--text-dim);
+  margin-left: 4px;
+  min-width: 58px;
+}
+
+@media (max-width: 719px) {
+  .br-fila {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px 8px 4px 4px;
+    background: rgba(24, 37, 67, 0.45);
+  }
+  .br-fila.escapado {
+    border-color: rgba(255, 92, 106, 0.55);
+  }
+  .br-fila.cazado {
+    border-color: rgba(74, 217, 255, 0.55);
+  }
+
+  /* Solo se muestra la etapa donde está el pedido ahora mismo. */
+  .br-celda {
+    display: none;
+  }
+  .br-celda.actual {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .br-pedido {
+    min-height: 48px;
+  }
+  .br-pedido-codigo {
+    font-size: 14px;
+  }
+  .br-pedido-icono {
+    font-size: 17px;
+  }
+  .br-pedido.pendiente {
+    display: none;
+  }
+}
+
+@media (min-width: 720px) {
+  .br-etapas-mini {
+    display: none;
+  }
+}
+
+/* --- Tablet y desktop ---------------------------------------------------- */
+
+@media (min-width: 720px) {
+  .br-cabecera {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .br-marcadores {
+    grid-template-columns: repeat(3, 110px);
+    flex: 0 0 auto;
+  }
+  .br-titulo {
+    font-size: 18px;
+  }
+
+  .br-encabezados {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    padding: 0 0 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .br-encabezado {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--pixel);
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+  .br-encabezado-flecha {
+    position: absolute;
+    right: -2px;
+    color: #3d5686;
+  }
+
+  .br-pedido {
+    min-height: 44px;
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .br-pedido-codigo {
+    font-size: 13px;
+  }
+  .br-pedido-icono {
+    font-size: 15px;
+  }
+
+  /* Línea punteada entre columnas: solo cuando hay espacio real. */
+  .br-conector {
+    display: block;
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    width: 8px;
+    height: 2px;
+    background: repeating-linear-gradient(
+      90deg,
+      #2b3f66 0 3px,
+      transparent 3px 6px
+    );
+  }
+  .br-conector.on {
+    background: repeating-linear-gradient(90deg, var(--green) 0 3px, transparent 3px 6px);
+  }
+  .br-conector.on.rojo {
+    background: repeating-linear-gradient(90deg, var(--red) 0 3px, transparent 3px 6px);
+  }
+
+  .br-valeria .valeria-busto {
+    width: 96px;
+    height: 128px;
+  }
+
+  .br-controles {
+    grid-template-columns: repeat(2, 180px);
+  }
+}
+
+@media (min-width: 1100px) {
+  .br-cuerpo {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    align-items: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .br-fila,
+  .br-globo,
+  .br-mira,
+  .br-aviso {
+    animation: none;
+  }
+  .br-progreso span,
+  .br-estabilidad span {
+    transition: none;
+  }
+}

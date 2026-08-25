@@ -11,6 +11,12 @@ import DetectarIntruso from './DetectarIntruso';
 import CodigoMecanografia from './CodigoMecanografia';
 import OrdenarPasos from './OrdenarPasos';
 import PuertaSeguridad from './PuertaSeguridad';
+import FlowDebugger from './FlowDebugger';
+import DetectarFantasma from './DetectarFantasma';
+import TrazaPeticiones from './TrazaPeticiones';
+import RevelarCodigo from './RevelarCodigo';
+import EventoTrafico from './EventoTrafico';
+import DeploySecuencia from './DeploySecuencia';
 
 // Mapeo de tipoInteraccion (declarado por cada Decision en el JSON del
 // escenario) -> componente de minijuego. Esto reemplaza el antiguo mapeo
@@ -28,6 +34,14 @@ export const minijuegoPorTipo = {
   'mecanografia-codigo': CodigoMecanografia,
   'ordenar-pasos': OrdenarPasos,
   'puerta-seguridad': PuertaSeguridad,
+  // Mecánicas de "El Pedido Fantasma". Se registran igual que el resto: el
+  // motor no las conoce, solo las busca por el `tipoInteraccion` del JSON.
+  'detectar-fantasma': DetectarFantasma,
+  'flow-debugger': FlowDebugger,
+  'traza-peticiones': TrazaPeticiones,
+  'revelar-codigo': RevelarCodigo,
+  'evento-trafico': EventoTrafico,
+  'deploy-secuencia': DeploySecuencia,
 };
 
 // Compatibilidad hacia atrás: mapa por estilo de fase, para los lugares que

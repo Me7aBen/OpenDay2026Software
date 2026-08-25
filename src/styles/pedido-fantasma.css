@@ -1,0 +1,367 @@
+/* Mecánicas propias de "El Pedido Fantasma": traza, revelar código, evento de
+   tráfico y despliegue. Mobile first, como el resto de la simulación. */
+
+.pfz {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pfz-pregunta {
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.pfz-boton {
+  min-height: 50px;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--cyan);
+  background: rgba(74, 217, 255, 0.1);
+  color: var(--cyan);
+  font-family: var(--pixel);
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.pfz-boton.grande {
+  min-height: 60px;
+  font-size: 18px;
+  background: var(--green);
+  border-color: var(--green);
+  color: #06251c;
+}
+.pfz-boton:hover {
+  filter: brightness(1.1);
+}
+
+/* --- Traza / flujo ------------------------------------------------------ */
+
+.pfz-flujo {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: linear-gradient(160deg, #101c33, #0c1526);
+}
+.pfz-flujo-item {
+  display: flex;
+  flex-direction: column;
+}
+.pfz-flujo-flecha {
+  align-self: center;
+  color: #3d5686;
+  line-height: 1;
+  padding: 2px 0;
+}
+.pfz-nodo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+.pfz-nodo:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+.pfz-nodo:disabled {
+  cursor: default;
+}
+.pfz-nodo.ok {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.12);
+}
+.pfz-nodo.mal {
+  border-color: var(--red);
+}
+.pfz-nodo-nombre {
+  font-family: var(--pixel);
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+.pfz-nodo-detalle {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.pfz-consola {
+  background: #060d19;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  line-height: 1.75;
+  overflow-x: auto;
+}
+.pfz-linea.ok {
+  color: var(--green);
+}
+.pfz-linea.error {
+  color: var(--red);
+}
+.pfz-linea.aviso {
+  color: var(--gold);
+}
+.pfz-linea.info {
+  color: var(--text-dim);
+}
+
+.pfz-hallazgo {
+  border: 2px solid var(--green);
+  background: rgba(47, 230, 166, 0.1);
+  border-radius: 10px;
+  padding: 14px;
+}
+.pfz-hallazgo-titulo {
+  font-family: var(--pixel);
+  font-size: 18px;
+  letter-spacing: 1.5px;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.pfz-hallazgo p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* --- Revelar código ----------------------------------------------------- */
+
+.pfz-codigo {
+  margin: 0;
+  background: #060d19;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #cfe0ff;
+  overflow-x: auto;
+  white-space: pre;
+}
+.pfz-hueco {
+  display: inline-block;
+  min-width: 120px;
+  padding: 0 6px;
+  border-bottom: 2px dashed var(--gold);
+  color: var(--gold);
+}
+.pfz-hueco.ok {
+  border-color: var(--green);
+  color: var(--green);
+}
+.pfz-hueco.mal {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.pfz-opciones {
+  display: grid;
+  gap: 8px;
+}
+.pfz-opcion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  min-height: 52px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+.pfz-opcion code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+  color: #b7f7e0;
+}
+.pfz-opcion-glosa {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.pfz-opcion:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+.pfz-opcion.ok {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.12);
+}
+.pfz-opcion.mal {
+  border-color: var(--red);
+  background: rgba(255, 92, 106, 0.1);
+}
+.pfz-opcion:disabled {
+  cursor: default;
+}
+
+.pfz-cita {
+  margin: 0;
+  border-left: 3px solid var(--cyan);
+  padding: 6px 0 6px 14px;
+}
+.pfz-cita p {
+  margin: 0 0 4px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.pfz-cita footer {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* --- Evento de tráfico -------------------------------------------------- */
+
+.pfz-alerta {
+  border: 1px solid var(--gold);
+  background: rgba(255, 209, 102, 0.08);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.pfz-alerta.critica {
+  border-color: var(--red);
+  background: rgba(255, 92, 106, 0.1);
+}
+.pfz-alerta-titulo {
+  font-family: var(--pixel);
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.pfz-alerta.critica .pfz-alerta-titulo {
+  color: var(--red);
+}
+.pfz-alerta p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.pfz-cpu-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--pixel);
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.pfz-cpu-fila strong {
+  font-size: 18px;
+}
+
+.pfz-diagrama {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--panel);
+}
+.pfz-diagrama-nodos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.pfz-diagrama-nodo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  font-family: var(--pixel);
+  font-size: 12px;
+  letter-spacing: 0.8px;
+}
+.pfz-diagrama-flecha {
+  color: var(--cyan);
+}
+
+/* --- Despliegue --------------------------------------------------------- */
+
+.pfz-versiones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pfz-version {
+  flex: 1 1 130px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--panel);
+}
+.pfz-version.nueva {
+  border-color: var(--green);
+}
+.pfz-version .rotulo {
+  display: block;
+  font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+.pfz-version strong {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 15px;
+}
+.pfz-version-flecha {
+  color: var(--cyan);
+  font-size: 20px;
+}
+
+.pfz-pasos {
+  display: grid;
+  gap: 12px;
+}
+.pfz-paso-fila {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.pfz-paso-pct {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--cyan);
+}
+.pfz-barra {
+  height: 10px;
+  border-radius: 999px;
+  background: #0d1830;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.pfz-barra-relleno {
+  height: 100%;
+  background: var(--green);
+  transition: width 0.12s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pfz-barra-relleno {
+    transition: none;
+  }
+}
+
+@media (min-width: 700px) {
+  .pfz-opciones {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}

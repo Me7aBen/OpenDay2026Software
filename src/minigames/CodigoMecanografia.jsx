@@ -169,7 +169,7 @@ export default function CodigoMecanografia({ decision, onElegir }) {
 
         {/* Columna de código */}
         <div className="cm-panel">
-          <div className="label-pixel">CONSOLA NEXO</div>
+          <div className="label-pixel">{meta.rotulo ?? 'CONSOLA NEXO'}</div>
           <p className="cm-pregunta">{decision.pregunta}</p>
 
           {/* Arriba: la línea completa a copiar. No se puede seleccionar. */}
@@ -269,7 +269,9 @@ export default function CodigoMecanografia({ decision, onElegir }) {
                 ))}
                 {meta.mensajeExito && (
                   <div className="cm-nia">
-                    <span className="quien">NIA</span>
+                    {/* Quién comenta el resultado lo dice el contenido. "NIA" es la guía de
+                        Código Cero; en otra simulación habla otra persona. */}
+                    <span className="quien">{meta.quienComenta ?? 'NIA'}</span>
                     {meta.mensajeExito}
                   </div>
                 )}

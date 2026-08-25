@@ -4,10 +4,18 @@ import {
   calcularPuntajeDecision,
   calcularPuntajeFinal,
   encontrarEpilogo,
-} from './gameEngine';
-import { calcularPerfil } from '../lib/perfilVocacional';
+} from './gameEngine.js';
+import { calcularPerfil } from '../lib/perfilVocacional.js';
 
 export const estadoInicial = {
+  // Cómo se está jugando:
+  //   'evento' — la jornada de siempre: registro por colegio, misiones en
+  //              secuencia, ranking. Sigue viva en la ruta /evento.
+  //   'libre'  — un estudiante entra desde la plataforma vocacional a una
+  //              simulación suelta, sin cuenta y sin ranking.
+  // El motor es el mismo en los dos; lo único que cambia es quién lo arranca y
+  // qué pantalla de resultado lo cierra.
+  modo: 'evento',
   // registro | seleccion-escenario | personalizacion | intro | jugando | resultado
   pantalla: 'registro',
   jugador: null, // { nombre, colegio, numeroColegio, avatar? }
@@ -41,6 +49,7 @@ export function crearEstadoConEscenario(state, escenario) {
   const hayIntro = !!escenario.presentacion?.historietaIntro?.length;
   return {
     ...estadoInicial,
+    modo: state.modo ?? 'evento',
     jugador: state.jugador,
     // El progreso de la jornada se arrastra entre misiones: arrancar la misión 2
     // no borra lo que sumó la 1.
@@ -50,7 +59,11 @@ export function crearEstadoConEscenario(state, escenario) {
     faseIndex: 0,
     decisionIndex: 0,
     tiempoGlobalRestante: escenario.tiempoTotalSeg ?? TIEMPO_TOTAL_DEFAULT_SEG,
-    tiempoFaseRestante: primeraFase.tiempoSegFase,
+    // `tiempoSegFase` es opcional: "Luz para Ccorca" nunca lo declaró y su fase
+    // simplemente no se auto-adelanta. Antes eso metía `undefined` en el estado
+    // y el TICK lo convertía en NaN; no rompía nada visible, pero dejaba el
+    // estado sucio. Ahora la ausencia significa explícitamente "sin límite".
+    tiempoFaseRestante: primeraFase.tiempoSegFase ?? null,
     indicadorValor: escenario.presentacion?.indicadorGlobal?.inicial ?? 0,
   };
 }
@@ -111,7 +124,7 @@ function avanzarFase(state) {
     ...state,
     faseIndex: siguienteFaseIndex,
     decisionIndex: 0,
-    tiempoFaseRestante: siguienteFase.tiempoSegFase,
+    tiempoFaseRestante: siguienteFase.tiempoSegFase ?? null,
   };
 }
 
@@ -148,6 +161,18 @@ export function gameReducer(state, action) {
     case 'INICIAR_PARTIDA':
       return crearEstadoConEscenario(state, action.escenario);
 
+    // Entrada desde la plataforma vocacional: no hay registro, no hay colegio y
+    // no hay ranking. Se crea un jugador anónimo porque medio motor lo asume
+    // presente (el HUD, el avatar de las historietas), pero nada de él viaja a
+    // Supabase: en modo libre la pantalla de resultado ni siquiera guarda.
+    case 'INICIAR_SIMULACION_LIBRE': {
+      const base = crearEstadoConEscenario(
+        { ...state, modo: 'libre', jugador: state.jugador ?? { nombre: 'Explorador' } },
+        action.escenario,
+      );
+      return { ...base, modo: 'libre' };
+    }
+
     // Cierra la pantalla de personalización y arranca la partida. Solo la
     // disparan los escenarios que la pidieron; el avatar se guarda dentro de
     // `jugador` como campo opcional, así que quien no lo tiene sigue siendo un
@@ -172,7 +197,11 @@ export function gameReducer(state, action) {
       // las decisiones compuestas (arquitectura-nodos) que ya acumularon
       // su puntaje internamente.
       const { puntaje, bono } = calcularPuntajeDecision(decision, action.opcionIds, action.puntajeDirecto);
-      const pistaUsada = state.pistasUsadasIds.includes(decision.id);
+      // Una decisión puede regalar su pista (`pistaGratis: true`). La
+      // información que hace falta para ENTENDER una mecánica nueva no debería
+      // costar puntos: eso castiga justo a quien más lo necesita.
+      const pistaUsada =
+        state.pistasUsadasIds.includes(decision.id) && decision.pistaGratis !== true;
       const respuesta = { opcionIds: action.opcionIds, puntaje, bono, pistaUsada };
       // Una respuesta incorrecta deja continuar la historia, pero no puede
       // pintar el medidor como si hubiera recuperado la ciudad. El hito solo
@@ -202,10 +231,18 @@ export function gameReducer(state, action) {
 
     case 'TICK': {
       if (state.pantalla !== 'jugando') return state;
+      // Simulación sin reloj (§55): el estudiante avanza a su ritmo y ninguna
+      // fase se auto-adelanta. El HUD tampoco muestra el contador.
+      if (state.escenario?.presentacion?.temporizador === false) return state;
 
       const tiempoGlobalRestante = Math.max(0, state.tiempoGlobalRestante - 1);
       if (tiempoGlobalRestante <= 0) {
         return terminarPartida({ ...state, tiempoGlobalRestante: 0 });
+      }
+
+      // Fase sin límite declarado: solo corre el reloj global.
+      if (state.tiempoFaseRestante === null || state.tiempoFaseRestante === undefined) {
+        return { ...state, tiempoGlobalRestante };
       }
 
       const tiempoFaseRestante = Math.max(0, state.tiempoFaseRestante - 1);

@@ -3,47 +3,78 @@ import { useGame } from '../engine/useGame';
 import BotonMusica from './BotonMusica';
 import Avatar from './Avatar';
 import ComoSeJuega from './ComoSeJuega';
-import logoTecsup from '../assets/tecsup-logo.png';
+import { Enlace } from '../app/router/Router';
+import { APP_NAME, APP_TAGLINE, APP_LOGO } from '../config/marca';
 import '../styles/topbar.css';
 
-const URL_CARRERA = 'https://www.tecsup.edu.pe/carrera/diseno-y-desarrollo-de-software-2/';
-
-// Barra superior, presente en todas las pantallas.
+// Barra superior de las pantallas de juego.
+//
+// Antes mostraba el logo y el nombre de la institución del evento, más un
+// enlace externo a una carrera concreta. La plataforma es de otra cosa: el
+// logo ahora sale de `config/marca.js` (§7, §8) y el enlace vuelve al catálogo
+// de la propia plataforma, que es a donde el estudiante quiere ir cuando sale
+// de una simulación.
 //
 // El perfil de la derecha sale del estado del juego (`state.jugador`), no de
-// props: así se actualiza solo en cuanto el jugador se registra y no hay que
-// ir pantalla por pantalla pasándole el nombre. Antes cada pantalla mandaba el
-// colegio a mano — dos de ellas con un string fijo — y el nombre no se mostraba
-// en ninguna, así que el perfil recién parecía correcto en el resultado.
-//
-// Si todavía no hay jugador (pantalla de registro), el bloque no se muestra.
+// props: así se actualiza solo en cuanto el jugador se registra. Si todavía no
+// hay jugador (pantalla de registro del modo evento), el bloque no se muestra.
 //
 // Props:
 //   mostrarPerfil  boolean - para ocultarlo aunque haya jugador
+
+function LogoMarca() {
+  return (
+    <svg
+      width="26"
+      height="26"
+      viewBox={APP_LOGO.viewBox}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      {APP_LOGO.trazos.map((trazo, i) =>
+        trazo.tipo === 'circulo' ? (
+          <circle key={i} cx={trazo.cx} cy={trazo.cy} r={trazo.r} />
+        ) : (
+          <path key={i} d={trazo.d} />
+        ),
+      )}
+    </svg>
+  );
+}
+
 export default function TopBar({ mostrarPerfil = true }) {
   const { state } = useGame();
   const jugador = state.jugador;
-  const verPerfil = mostrarPerfil && !!jugador;
+  // En modo libre no hay registro ni colegio: el "perfil" del evento no aplica.
+  const verPerfil = mostrarPerfil && !!jugador && state.modo !== 'libre';
   const [ayudaAbierta, setAyudaAbierta] = useState(false);
 
   return (
     <div className="topbar">
-      <div className="topbar-logo">
-        <img src={logoTecsup} alt="Tecsup" width="30" height="30" />
-        <span>TECSUP</span>
-      </div>
+      <Enlace to="/" className="topbar-logo" aria-label={`${APP_NAME} — inicio`}>
+        <LogoMarca />
+        <span>{APP_NAME}</span>
+      </Enlace>
 
+      {/* El centro de la barra es la SIMULACIÓN en curso, no la marca: la
+          marca ya está a la izquierda y repetirla dos veces se veía como un
+          error. Sin escenario (tablero de misiones del evento) queda el
+          eslogan solo. */}
       <div className="topbar-wordmark">
-        <div className="word">
-          <span style={{ color: 'var(--cyan)' }}>MISIÓN</span> DEPLOY
-        </div>
-        <div className="tagline">Decidir. Programar. Impactar.</div>
+        {state.escenario ? (
+          <>
+            <div className="word">{state.escenario.titulo}</div>
+            <div className="tagline">{state.escenario.cliente.nombre} · {state.escenario.cliente.rol}</div>
+          </>
+        ) : (
+          <div className="tagline">{APP_TAGLINE}</div>
+        )}
       </div>
 
       <div className="topbar-right">
-        {/* Botón, no enlace: abre el modal de ayuda. Antes era un href a un
-            ancla que no existía en ninguna pantalla y por lo tanto no hacía
-            nada al clickearlo. */}
         <button type="button" className="topbar-link" onClick={() => setAyudaAbierta(true)}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <circle cx="12" cy="12" r="9" />
@@ -52,29 +83,19 @@ export default function TopBar({ mostrarPerfil = true }) {
           </svg>
           ¿Cómo se juega?
         </button>
-        {/* El "Ranking" queda fuera hasta que exista el leaderboard por sesión
-            (Supabase). Hoy el ranking solo vive en el localStorage de la PC y
-            se muestra al final de la partida. */}
-        <a
-          className="topbar-link"
-          href={URL_CARRERA}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+
+        <Enlace className="topbar-link" to="/carreras">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M22 10 12 5 2 10l10 5 10-5Z" />
             <path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5" />
           </svg>
-          Sobre la carrera
-        </a>
+          Ver carreras
+        </Enlace>
 
         <BotonMusica />
 
         {verPerfil && (
           <div className="topbar-profile">
-            {/* Si el escenario pidió personalizar personaje, el perfil muestra
-                el avatar del jugador. Quien viene de un escenario sin
-                personalización (Ccorca) sigue viendo el mismo icono de antes. */}
             <div className={`avatar${jugador.avatar ? ' con-pixel' : ''}`}>
               {jugador.avatar ? <Avatar avatar={jugador.avatar} tam={26} /> : '🧑'}
             </div>

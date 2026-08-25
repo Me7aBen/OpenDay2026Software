@@ -3,6 +3,7 @@ import { obtenerRanking, estaConfigurado } from '../lib/leaderboard';
 import { ORDEN_MISIONES } from '../engine/misiones';
 import { ESCENARIOS } from '../content/catalogo';
 import '../styles/panel-leaderboard.css';
+import { APP_NAME } from '../config/marca';
 
 // Pantalla del facilitador: el ranking de la jornada, proyectable.
 //
@@ -161,7 +162,7 @@ export default function PanelLeaderboard() {
       </div>
 
       <footer className="panel-lb-pie">
-        <span>TECSUP · Formación que transforma</span>
+        <span>{APP_NAME} · modo evento</span>
         <span>
           Se actualiza cada 3 s
           {actualizado && ` · última lectura ${actualizado.toLocaleTimeString('es-PE')}`}

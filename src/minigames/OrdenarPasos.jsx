@@ -78,7 +78,10 @@ export default function OrdenarPasos({ decision, onElegir }) {
   return (
     <div className="ordenar">
       <div className="ordenar-cabecera">
-        <div className="label-pixel">RUTA DE RECUPERACIÓN</div>
+        {/* El rótulo lo pone el contenido: "RUTA DE RECUPERACIÓN" era de Código
+              Cero y no describe cualquier secuencia. Sin declararlo, se sigue
+              viendo exactamente lo de antes. */}
+          <div className="label-pixel">{meta.rotulo ?? 'RUTA DE RECUPERACIÓN'}</div>
         <div className="ordenar-etapas" aria-hidden="true">
           <span>1 · PIENSA</span><b>→</b><span>2 · ORDENA</span><b>→</b><span>3 · CONFIRMA</span>
         </div>

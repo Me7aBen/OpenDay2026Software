@@ -3,6 +3,7 @@ import { estadoMisiones, puntajeTotal } from '../engine/misiones';
 import { ESCENARIOS, PORTADA_DEFECTO } from '../content/catalogo';
 import TopBar from '../ui/TopBar';
 import '../styles/seleccion.css';
+import { APP_NAME, APP_TAGLINE } from '../config/marca';
 
 export default function SeleccionEscenario() {
   const { state, iniciarPartida } = useGame();
@@ -80,8 +81,8 @@ export default function SeleccionEscenario() {
       </div>
 
       <div className="seleccion-footer">
-        <span>TECSUP · Formación que transforma</span>
-        <span>Diseño y Desarrollo de Software · Centro de Innovación Tecnológica</span>
+        <span>{APP_NAME}</span>
+        <span>{APP_TAGLINE}</span>
       </div>
     </div>
   );

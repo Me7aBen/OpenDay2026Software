@@ -1,0 +1,51 @@
+/* Contenedor de la simulación cuando corre dentro de la plataforma.
+   El HUD del motor ocupa el alto completo por diseño; acá solo se le da un
+   fondo y se maneja el estado de carga. */
+
+.sim-shell {
+  min-height: 100dvh;
+  background: var(--bg);
+}
+
+.sim-cargando {
+  min-height: 60vh;
+  display: grid;
+  place-content: center;
+  gap: 14px;
+  text-align: center;
+  color: var(--text-dim);
+  padding: 32px 16px;
+}
+
+.sim-cargando-barra {
+  width: min(240px, 70vw);
+  height: 6px;
+  border-radius: 999px;
+  background: var(--panel-alt);
+  overflow: hidden;
+  margin: 0 auto;
+}
+.sim-cargando-barra span {
+  display: block;
+  width: 40%;
+  height: 100%;
+  background: var(--cyan);
+  animation: sim-cargando 1.1s ease-in-out infinite;
+}
+
+@keyframes sim-cargando {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sim-cargando-barra span {
+    animation: none;
+    width: 100%;
+    opacity: 0.5;
+  }
+}

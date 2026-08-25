@@ -3,6 +3,7 @@ import { useGame } from '../engine/useGame';
 import { nuevoParticipante } from '../lib/leaderboard';
 import TopBar from '../ui/TopBar';
 import '../styles/registro.css';
+import { APP_NAME, APP_TAGLINE } from '../config/marca';
 
 // El número de colegio agrupa a todos los alumnos de una misma ronda, así el
 // facilitador filtra el ranking por el grupo que tiene en el aula.
@@ -131,8 +132,8 @@ export default function Registro() {
       </div>
 
       <div className="registro-footer">
-        <span>TECSUP · Formación que transforma</span>
-        <span>Diseño y Desarrollo de Software · Centro de Innovación Tecnológica</span>
+        <span>{APP_NAME}</span>
+        <span>{APP_TAGLINE}</span>
       </div>
     </div>
   );

@@ -1,0 +1,447 @@
+/* Pantalla de entrada a una simulación.
+   Acá SÍ vive la estética de videojuego (§6): fuente pixel, marcos duros,
+   colores saturados. Es la frontera entre la plataforma y el juego.
+   Mobile first: una columna en el celular, dos a partir de 900px. */
+
+.si {
+  padding-bottom: 40px;
+}
+
+.si-volver {
+  padding: 14px 0 6px;
+}
+.si-volver-link {
+  color: var(--cyan);
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.si-cabecera {
+  margin-bottom: 14px;
+}
+
+.si-tag-fase {
+  display: inline-block;
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--green);
+  border: 1px solid rgba(47, 230, 166, 0.5);
+  background: rgba(47, 230, 166, 0.1);
+  border-radius: 4px;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+}
+
+.si-titulo {
+  font-family: var(--pixel);
+  font-size: clamp(28px, 9vw, 52px);
+  line-height: 1;
+  letter-spacing: 2px;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+
+.si-subtitulo {
+  font-family: var(--pixel);
+  font-size: clamp(13px, 3.4vw, 17px);
+  letter-spacing: 1px;
+  color: var(--green);
+}
+
+.si-cuerpo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* --- Escena ------------------------------------------------------------- */
+
+.si-escena {
+  position: relative;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0b1220;
+}
+
+.si-escena-generica {
+  padding: 32px 20px;
+  min-height: 200px;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  background: linear-gradient(160deg, #16233f, #0d1729);
+}
+.si-escena-generica-tag {
+  font-family: var(--pixel);
+  color: var(--cyan);
+  letter-spacing: 1px;
+  font-size: 13px;
+}
+.si-escena-generica p {
+  margin: 0;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* Caja de diálogo: en móvil va debajo de la escena (no encima, donde taparía
+   el tablero de pedidos que hay que poder leer). */
+.si-dialogo {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  background: rgba(8, 16, 31, 0.96);
+  border-top: 2px solid var(--border);
+}
+
+.si-dialogo-retrato {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.si-dialogo-cuerpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.si-dialogo-quien {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.si-dialogo-quien strong {
+  font-family: var(--pixel);
+  color: var(--cyan);
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+.si-dialogo-quien span {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.si-dialogo-texto {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  animation: si-aparecer 0.25s ease-out;
+}
+
+@keyframes si-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.si-dialogo-siguiente {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--cyan);
+  cursor: pointer;
+  font-size: 14px;
+  animation: si-latir 1.6s ease-in-out infinite;
+}
+
+@keyframes si-latir {
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+.si-mision {
+  margin-top: 12px;
+  border: 2px solid rgba(74, 217, 255, 0.4);
+  background: rgba(74, 217, 255, 0.07);
+  border-radius: 10px;
+  padding: 14px;
+}
+.si-mision-rotulo {
+  font-family: var(--pixel);
+  color: var(--cyan);
+  letter-spacing: 1.5px;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.si-mision p {
+  margin: 0;
+  line-height: 1.55;
+  font-size: 15px;
+}
+
+/* --- Acciones ----------------------------------------------------------- */
+
+.si-acciones {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.si-boton-principal {
+  min-height: 56px;
+  border: none;
+  border-radius: 10px;
+  background: var(--green);
+  color: #06251c;
+  font-family: var(--pixel);
+  font-size: 18px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+.si-boton-principal:hover {
+  filter: brightness(1.08);
+}
+
+.si-boton-secundario {
+  min-height: 56px;
+  border: 2px solid var(--cyan);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--cyan);
+  font-family: var(--pixel);
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.si-boton-secundario:hover {
+  color: var(--cyan);
+  background: rgba(74, 217, 255, 0.08);
+}
+
+.si-consejo {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--panel);
+}
+.si-consejo-icono {
+  font-family: var(--pixel);
+  color: var(--cyan);
+  background: var(--panel-alt);
+  border-radius: 6px;
+  padding: 6px 8px;
+  flex: 0 0 auto;
+}
+.si-consejo-titulo {
+  font-family: var(--pixel);
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--gold);
+  margin-bottom: 2px;
+}
+.si-consejo p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+/* --- Panel lateral ------------------------------------------------------ */
+
+.si-lateral {
+  display: grid;
+  gap: 10px;
+}
+
+.si-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--panel);
+}
+.si-panel-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--pixel);
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+.si-panel-texto {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.si-panel-valor {
+  margin: 0;
+  font-family: var(--pixel);
+  font-size: 22px;
+  color: var(--green);
+}
+.si-panel-nota {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+.si-panel-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 5px;
+}
+.si-panel-lista li {
+  font-size: 13px;
+  color: var(--text);
+  display: flex;
+  gap: 8px;
+}
+.si-panel-lista li::before {
+  content: '•';
+  color: var(--green);
+}
+.si-panel-enlace {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.si-dificultad {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+.si-dificultad span {
+  width: 22px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--border);
+}
+.si-dificultad span.on {
+  background: var(--gold);
+}
+
+/* --- Barra de etapas ---------------------------------------------------- */
+
+.si-etapas {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 16px 0 8px;
+  margin: 16px 0 0;
+  border-top: 1px solid var(--border);
+  scrollbar-width: none;
+}
+.si-etapas::-webkit-scrollbar {
+  display: none;
+}
+.si-etapas li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  color: var(--text-dim);
+}
+.si-etapa-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  font-family: var(--pixel);
+  font-size: 12px;
+}
+.si-etapa-nombre {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.si-etapas li.activa {
+  color: var(--green);
+}
+.si-etapas li.activa .si-etapa-num {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.15);
+}
+
+/* --- Detalles ----------------------------------------------------------- */
+
+.si-detalles {
+  margin-top: 28px;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+.si-detalles h2 {
+  font-size: 19px;
+  margin: 0 0 8px;
+}
+.si-detalles h3 {
+  font-size: 15px;
+  margin: 20px 0 8px;
+}
+.si-detalles p {
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin: 0 0 12px;
+  max-width: 70ch;
+}
+.si-detalles-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.si-detalles-nota {
+  margin-top: 18px;
+  font-size: 13px;
+  border-left: 3px solid var(--gold);
+  padding-left: 12px;
+}
+
+/* --- Desktop / tablet --------------------------------------------------- */
+
+@media (min-width: 900px) {
+  .si-cuerpo {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: start;
+  }
+  .si-acciones {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .si-dialogo-siguiente,
+  .si-dialogo-texto {
+    animation: none;
+  }
+}

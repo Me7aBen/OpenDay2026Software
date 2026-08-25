@@ -1,0 +1,29 @@
+/* Escena pixel art de Kawsay Market. */
+
+.kawsay-escena {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  border-radius: 8px;
+}
+
+/* El texto dentro del SVG usa la fuente pixel del proyecto. Los tamaños están
+   en unidades del viewBox (160x90), por eso son números tan chicos. */
+.kawsay-rotulo {
+  font-family: var(--pixel);
+  font-size: 3.2px;
+  letter-spacing: 0.2px;
+  fill: var(--text-dim);
+}
+
+.kawsay-cifra {
+  font-family: var(--pixel);
+  font-size: 9px;
+  fill: var(--text);
+}
+
+.kawsay-cifra-min {
+  font-family: var(--pixel);
+  font-size: 5px;
+}

@@ -7,10 +7,28 @@ import EscenaFondo from '../ui/EscenaFondo';
 import IndicadorGlobal from '../ui/IndicadorGlobal';
 import HistorietaPixel from '../ui/HistorietaPixel';
 import { calcularEstadoActualDecision } from '../ui/estadosCliente';
-import { PENALIZACION_PISTA } from '../engine/gameEngine';
+import { PENALIZACION_PISTA, puntajeMaximoEscenario } from '../engine/gameEngine';
+import { APP_NAME, APP_TAGLINE } from '../config/marca';
 import '../styles/hud.css';
 
-const ORDEN_FASES = ['descubrir', 'disenar', 'construir', 'probar', 'desplegar'];
+// El orden de fases sale del escenario, no de una lista fija. Antes estaba
+// hardcodeado con las 5 fases del ciclo clásico, y por eso una simulación con
+// otras etapas (El Pedido Fantasma tiene 6) rompía la barra de progreso.
+
+const ICONO_GENERICO = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="8" />
+    <path d="M12 8v4l3 2" />
+  </svg>
+);
+
+function nombreDeFase(fase) {
+  return NOMBRES_FASE[fase.id] ?? (fase.titulo ?? fase.id).toUpperCase();
+}
+
+function iconoDeFase(fase) {
+  return ICONOS_FASE[fase.id] ?? ICONO_GENERICO;
+}
 
 const NOMBRES_FASE = {
   descubrir: 'DESCUBRIR',
@@ -54,7 +72,7 @@ function formatearTiempo(seg) {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisionesFase, tiempoGlobalRestante, puntajeAcumulado, cliente, onAbandonar }) {
+function Sidebar({ escenario, fase, faseIndex, totalFases, decisionesResueltas, totalDecisionesFase, tiempoGlobalRestante, puntajeAcumulado, puntajeMaximo, mostrarTiempo, cliente, onAbandonar }) {
   return (
     <div className="hud-sidebar">
       {/* Acá había un bloque de marca ("MISIÓN DEPLOY" + subtítulo) que repetía
@@ -64,8 +82,8 @@ function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisi
       <div className="panel hud-fase-card">
         <div className="rotulo label-pixel">FASE ACTUAL <span style={{ color: 'var(--cyan)' }}>{faseIndex + 1}/{totalFases}</span></div>
         <div className="encabezado">
-          <div className="icono">{ICONOS_FASE[fase.id]}</div>
-          <div className="titulo">{NOMBRES_FASE[fase.id]}</div>
+          <div className="icono">{iconoDeFase(fase)}</div>
+          <div className="titulo">{nombreDeFase(fase)}</div>
         </div>
         <div className="descripcion">{fase.intro}</div>
       </div>
@@ -74,18 +92,23 @@ function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisi
         <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l2.9 6.1 6.6.7-4.9 4.5 1.4 6.5L12 16.8 6 19.8l1.4-6.5-4.9-4.5 6.6-.7L12 2z" /></svg>
         <div>
           <div className="label-pixel">PUNTAJE RETOS</div>
-          <div className="valor" style={{ color: 'var(--gold)' }}>{puntajeAcumulado} / 800</div>
+          <div className="valor" style={{ color: 'var(--gold)' }}>{puntajeAcumulado} / {puntajeMaximo}</div>
         </div>
       </div>
 
       <div className="hud-stats-row">
-        <div className="panel hud-stat">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3.5 2" /></svg>
-          <div>
-            <div className="label-pixel" style={{ fontSize: "10px" }}>TIEMPO</div>
-            <div className="valor">{formatearTiempo(tiempoGlobalRestante)}</div>
+        {/* El reloj solo aparece si la simulación lo usa. Una simulación que
+            declara `temporizador: false` no debe mostrar un contador detenido:
+            confunde y presiona sin motivo (§55). */}
+        {mostrarTiempo && (
+          <div className="panel hud-stat">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3.5 2" /></svg>
+            <div>
+              <div className="label-pixel" style={{ fontSize: "10px" }}>TIEMPO</div>
+              <div className="valor">{formatearTiempo(tiempoGlobalRestante)}</div>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="panel hud-stat">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.4" strokeLinecap="round"><path d="m4 12 5 5L20 6" /></svg>
@@ -99,9 +122,9 @@ function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisi
       <div className="hud-progreso">
         <div className="label-pixel" style={{ marginBottom: 8 }}>PROGRESO</div>
         <div className="puntos">
-          {ORDEN_FASES.map((id, i) => (
+          {escenario.fases.map((faseDelEscenario, i) => (
             <div
-              key={id}
+              key={faseDelEscenario.id}
               className="punto"
               style={{
                 width: i === faseIndex ? 14 : 11,
@@ -117,7 +140,7 @@ function Sidebar({ fase, faseIndex, totalFases, decisionesResueltas, totalDecisi
 
       <button type="button" className="btn-outline-danger" onClick={onAbandonar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></svg>
-        ABANDONAR MISIÓN
+        SALIR DE LA SIMULACIÓN
       </button>
     </div>
   );
@@ -176,6 +199,9 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, pis
       puntajeAcumulado={puntajeAcumulado}
       cliente={cliente}
       onAbandonar={onAbandonar}
+      escenario={escenario}
+      puntajeMaximo={puntajeMaximoEscenario(escenario)}
+      mostrarTiempo={presentacion.temporizador !== false}
     />
   );
 
@@ -308,7 +334,8 @@ function CuerpoFase({ escenario, fase, faseIndex, decisionIndex, respuestas, pis
                   onClick={() => pedirPista(decision.id)}
                   disabled={yaResuelta}
                 >
-                  💡 VER PISTA <span>−{PENALIZACION_PISTA} pts</span>
+                  💡 VER PISTA{' '}
+                  <span>{decision.pistaGratis ? 'gratis' : `−${PENALIZACION_PISTA} pts`}</span>
                 </button>
               ) : (
                 <div className="hud-pista-texto" role="status">
@@ -362,8 +389,8 @@ export default function PantallaJuego() {
         onAbandonar={reiniciar}
       />
       <div className="hud-footer">
-        <span>TECSUP · Formación que transforma</span>
-        <span>Diseño y Desarrollo de Software · Centro de Innovación Tecnológica</span>
+        <span>{APP_NAME}</span>
+        <span>{APP_TAGLINE}</span>
       </div>
     </div>
   );

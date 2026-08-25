@@ -10,6 +10,7 @@ import EscenaFondo from '../ui/EscenaFondo';
 import HistorietaPixel from '../ui/HistorietaPixel';
 import RetratoCliente from '../ui/RetratoCliente';
 import '../styles/resultado.css';
+import { APP_NAME, APP_TAGLINE } from '../config/marca';
 
 export default function Resultado() {
   const { state, reiniciar, volverAMisiones } = useGame();
@@ -195,8 +196,8 @@ export default function Resultado() {
       </div>
 
       <div className="resultado-footer">
-        <span>TECSUP · Formación que transforma</span>
-        <span>Diseño y Desarrollo de Software · Centro de Innovación Tecnológica</span>
+        <span>{APP_NAME}</span>
+        <span>{APP_TAGLINE}</span>
       </div>
     </div>
   );

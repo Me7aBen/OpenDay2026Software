@@ -414,3 +414,108 @@
 .hud-pista-texto strong {
   color: var(--gold);
 }
+
+/* ==========================================================================
+   MÓVIL Y TABLET (§52, §53)
+   ==========================================================================
+   El HUD nació para 1366x768 horizontal, sin scroll y con dos columnas. En un
+   celular eso no se encoge: se REORGANIZA.
+
+   La técnica es `display: contents` sobre el sidebar: sus hijos dejan de estar
+   encajonados en una columna y pasan a ser filas del cuerpo, así se pueden
+   ordenar uno por uno. El orden que queda es el que pide el brief:
+
+       fase  ->  diálogo  ->  escena + actividad  ->  stats  ->  salir
+
+   y la página vuelve a hacer scroll vertical normal (en un celular el scroll
+   no es un defecto, forzar todo en una pantalla sí).                        */
+
+@media (max-width: 899px) {
+  .hud {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .hud-cuerpo {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .hud-sidebar {
+    display: contents;
+  }
+
+  .hud-fase-card {
+    order: 1;
+  }
+  .cliente-flotante {
+    order: 2;
+  }
+  .hud-principal {
+    order: 3;
+    min-height: 0;
+  }
+  .hud-stat,
+  .hud-stats-row {
+    order: 4;
+  }
+  .hud-progreso {
+    order: 5;
+  }
+  .hud-sidebar > .btn-outline-danger {
+    order: 6;
+  }
+
+  /* Los paneles ya no compiten por altura: crecen con su contenido y el
+     scroll lo hace la página. */
+  .hud-panel,
+  .hud-panel-decision {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .hud-stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* La franja de escena ocupaba un alto pensado para desktop. */
+  .hud-escenario {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .hud-escenario-vista {
+    max-height: 30vh;
+  }
+
+  .hud-footer {
+    padding: 12px;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+    font-size: 11px;
+  }
+
+  /* Objetivo táctil mínimo (§59). */
+  .hud-pista-boton,
+  .hud-sidebar .btn-outline-danger,
+  .hud-panel .btn-primary {
+    min-height: 48px;
+  }
+}
+
+/* En pantallas muy angostas (360px) el texto del sidebar se aprieta. */
+@media (max-width: 420px) {
+  .hud-fase-card .descripcion {
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+  }
+  .hud-cuerpo {
+    padding: 10px;
+  }
+}

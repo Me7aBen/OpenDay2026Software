@@ -1,0 +1,964 @@
+{
+  "id": "pedido-fantasma",
+  "titulo": "El Pedido Fantasma",
+  "cliente": {
+    "nombre": "VALERIA",
+    "rol": "Tech Lead",
+    "dolorFrase": "Un cliente compró una sola vez y el sistema generó cinco pedidos.",
+    "retrato": "valeria",
+    "imagen": null
+  },
+  "tiempoTotalSeg": 660,
+  "presentacion": {
+    "temporizador": false,
+    "etapas": [
+      "INTRO",
+      "INVESTIGACIÓN",
+      "FLUJO",
+      "IMPLEMENTACIÓN",
+      "PRUEBAS",
+      "DESPLIEGUE"
+    ],
+    "desfaseEtapa": 1,
+    "introSimulacion": {
+      "etiquetaFase": "INTRO CINEMÁTICA",
+      "objetivo": "Detecta la causa de los pedidos duplicados y corrige el origen en el backend para que cada compra genere un solo pedido.",
+      "consejo": "Revisa la traza, sigue el flujo de la compra y encuentra dónde se está duplicando el pedido.",
+      "metricas": {
+        "total": "1,248",
+        "pendientes": "1,102",
+        "enProceso": "126",
+        "completadas": "20",
+        "duplicados": "5",
+        "cuentaRegresiva": "10:00"
+      },
+      "misionTitulo": "TU MISIÓN",
+      "misionTexto": "Encuentra dónde se está duplicando el pedido, corrige el flujo y despliega la solución antes de que comience la campaña.",
+      "dialogo": [
+        {
+          "hablante": "VALERIA",
+          "rol": "Tech Lead",
+          "estado": "idle",
+          "texto": "Llegaste justo a tiempo."
+        },
+        {
+          "hablante": "VALERIA",
+          "rol": "Tech Lead",
+          "estado": "idle",
+          "texto": "Hoy comienza nuestra campaña más grande."
+        },
+        {
+          "hablante": "VALERIA",
+          "rol": "Tech Lead",
+          "estado": "idle",
+          "texto": "Esperamos miles de pedidos en pocos minutos."
+        },
+        {
+          "hablante": "VALERIA",
+          "rol": "Tech Lead",
+          "estado": "molesto",
+          "texto": "Pero tenemos un problema."
+        },
+        {
+          "hablante": "VALERIA",
+          "rol": "Tech Lead",
+          "estado": "molesto",
+          "texto": "Un cliente compró una sola vez."
+        },
+        {
+          "hablante": "VALERIA",
+          "rol": "Tech Lead",
+          "estado": "sorprendido",
+          "texto": "El sistema generó 5 pedidos."
+        },
+        {
+          "hablante": "VALERIA",
+          "rol": "Tech Lead",
+          "estado": "confundido",
+          "texto": "Si esto continúa, enviaremos productos que nadie pidió y nuestro inventario quedará fuera de control."
+        }
+      ]
+    },
+    "conceptos": {
+      "titulo": "SIN DARTE CUENTA USASTE",
+      "lista": [
+        {
+          "nombre": "Lógica",
+          "detalle": "Ordenaste pasos que dependen unos de otros."
+        },
+        {
+          "nombre": "Condiciones",
+          "detalle": "Decidiste qué hacer según si el pedido ya existía."
+        },
+        {
+          "nombre": "Bases de datos",
+          "detalle": "Consultaste si un dato ya estaba guardado."
+        },
+        {
+          "nombre": "Validación",
+          "detalle": "Verificaste antes de crear, no después."
+        },
+        {
+          "nombre": "Debugging",
+          "detalle": "Seguiste una traza hasta encontrar el origen del error."
+        },
+        {
+          "nombre": "APIs",
+          "detalle": "Trabajaste con peticiones, respuestas y reintentos."
+        },
+        {
+          "nombre": "Testing",
+          "detalle": "Priorizaste qué error corregir antes de publicar."
+        },
+        {
+          "nombre": "Deploy",
+          "detalle": "Publicaste una versión nueva a producción."
+        }
+      ]
+    },
+    "reflexion": {
+      "pregunta": "¿QUÉ TE PARECIÓ LA EXPERIENCIA?",
+      "aclaracion": "Esta respuesta es solo tuya y no afecta tu puntaje. Sirve para que recuerdes cómo te sentiste resolviendo esto.",
+      "opciones": [
+        {
+          "id": "me-encanto",
+          "emoji": "😍",
+          "texto": "Me gustó mucho"
+        },
+        {
+          "id": "me-intereso",
+          "emoji": "🙂",
+          "texto": "Me interesó"
+        },
+        {
+          "id": "no-seguro",
+          "emoji": "😐",
+          "texto": "No estoy seguro"
+        },
+        {
+          "id": "no-para-mi",
+          "emoji": "🙁",
+          "texto": "No fue para mí"
+        }
+      ]
+    },
+    "perfiles": [
+      {
+        "fase": "investigacion",
+        "nombre": "Debug Master",
+        "descripcion": "Lo tuyo es seguir el rastro hasta encontrar la causa real de un problema."
+      },
+      {
+        "fase": "flujo",
+        "nombre": "Backend Architect",
+        "descripcion": "Piensas en cómo deben encajar las piezas de un sistema antes de tocar nada."
+      },
+      {
+        "fase": "implementacion",
+        "nombre": "Problem Solver",
+        "descripcion": "Te sientes cómodo construyendo la solución paso a paso, sin apuro."
+      },
+      {
+        "fase": "pruebas",
+        "nombre": "QA Hunter",
+        "descripcion": "Distingues rápido qué error importa de verdad y cuál puede esperar."
+      },
+      {
+        "fase": "despliegue",
+        "nombre": "Release Owner",
+        "descripcion": "Te preocupa que lo que sale a producción salga bien y aguante."
+      }
+    ],
+    "mensajeFinal": "Tu puntuación refleja cómo resolviste esta simulación. No determina si una carrera es o no adecuada para ti."
+  },
+  "fases": [
+    {
+      "id": "investigacion",
+      "rol": "Análisis",
+      "rotuloPuntaje": "ANÁLISIS",
+      "titulo": "Investigación",
+      "intro": "Mira el tablero antes de tocar nada. El sistema te está mostrando el problema.",
+      "explicacion": "Cuando algo falla en un sistema real, lo primero no es escribir código: es VER qué está pasando. Vas a mirar el flujo de pedidos de Kawsay Market en vivo, cazar los que se repiten y después seguir uno de ellos paso a paso para entender de dónde salen.",
+      "tiempoSegFase": 240,
+      "estilo": "entrevista",
+      "decisiones": [
+        {
+          "id": "inv-1",
+          "tipoInteraccion": "detectar-fantasma",
+          "pregunta": "Observa el flujo y detecta los pedidos que están entrando más de una vez.",
+          "mensajeClienteDecision": "Mira el tablero. Algo se está repitiendo.",
+          "pista": "Un duplicado repite EXACTAMENTE el mismo código que un pedido que ya pasó. Compara los números.",
+          "pistaGratis": true,
+          "metaMinijuego": {
+            "idRespuesta": "fantasma-detectado",
+            "rotuloNivel": "NIVEL 1 · ENCUENTRA AL FANTASMA",
+            "objetivo": "Identifica 3 pedidos duplicados antes de que entren al sistema.",
+            "instruccion": "Observa el flujo. Algunos pedidos están entrando más de una vez. Toca los duplicados para detectarlos.",
+            "pistaInterna": "Fíjate en el código: un duplicado repite el mismo número que otro pedido que ya pasó por el tablero.",
+            "mensajeExito": "Ahí están. El mismo pedido entrando una y otra vez.",
+            "mensajeParcial": "Se nos escaparon algunos, pero ya viste el patrón: el mismo código se repite.",
+            "feedbackCierre": "KM-1006 entró al sistema varias veces siendo una sola compra. Eso es un pedido fantasma. Ahora hay que averiguar POR QUÉ pasa.",
+            "duplicadosObjetivo": 3,
+            "msPorEtapa": 900,
+            "msEntrePedidos": 1150,
+            "filasVisibles": 7,
+            "puntosMax": 100,
+            "puntosMin": 0,
+            "puntosPorDuplicado": 20,
+            "penalizacionFalsoPositivo": 5,
+            "penalizacionEscapado": 10,
+            "bonoRapidez": 40,
+            "segundosRapido": 40,
+            "codigoFantasma": "KM-1006",
+            "prefijo": "KM-",
+            "numeroInicial": 1001,
+            "cadaCuantosDuplicado": 3,
+            "topePedidos": 60
+          },
+          "opciones": [
+            {
+              "id": "fantasma-detectado",
+              "texto": "Duplicados detectados",
+              "feedback": "El mismo código entró varias veces al sistema."
+            }
+          ]
+        },
+        {
+          "id": "inv-2",
+          "tipoInteraccion": "traza-peticiones",
+          "pregunta": "Sigue la compra KM-84921 y marca dónde se está creando el pedido de más.",
+          "mensajeClienteDecision": "Esta es la traza real de esa compra. Léela hasta el final.",
+          "pista": "Fíjate qué paso aparece repetido en la traza después de cada reintento.",
+          "metaMinijuego": {
+            "idRespuesta": "bug-encontrado",
+            "codigoPedido": "KM-84921",
+            "puntosMax": 70,
+            "puntosMin": 30,
+            "penalizacionPorError": 15,
+            "nodoCulpable": "pedido",
+            "instruccion": "Toca el punto del flujo donde se está creando el pedido de más.",
+            "feedbackError": "Ahí el dato todavía era correcto: el carrito, el pago y el envío recibieron una sola compra.",
+            "feedbackAcierto": "El backend interpreta cada reintento como una compra nueva: crea un pedido sin preguntar si ese pedido ya existía.",
+            "nodos": [
+              {
+                "id": "cliente",
+                "nombre": "CLIENTE",
+                "detalle": "Presionó comprar una vez"
+              },
+              {
+                "id": "carrito",
+                "nombre": "CARRITO",
+                "detalle": "1 carrito, 3 productos"
+              },
+              {
+                "id": "pago",
+                "nombre": "PAGO",
+                "detalle": "1 pago confirmado"
+              },
+              {
+                "id": "pedido",
+                "nombre": "PEDIDO",
+                "detalle": "5 pedidos creados"
+              },
+              {
+                "id": "almacen",
+                "nombre": "ALMACÉN",
+                "detalle": "5 órdenes de preparación"
+              },
+              {
+                "id": "delivery",
+                "nombre": "DELIVERY",
+                "detalle": "5 paquetes asignados"
+              }
+            ],
+            "traza": [
+              {
+                "texto": "> compra recibida — ID: KM-84921",
+                "tono": "info"
+              },
+              {
+                "texto": "> pago confirmado ✓",
+                "tono": "ok"
+              },
+              {
+                "texto": "> pedido creado ✓",
+                "tono": "ok"
+              },
+              {
+                "texto": "> conexión interrumpida ⚠",
+                "tono": "aviso"
+              },
+              {
+                "texto": "> frontend: reintentando...",
+                "tono": "aviso"
+              },
+              {
+                "texto": "> pedido creado ✓ (2)",
+                "tono": "error"
+              },
+              {
+                "texto": "> conexión interrumpida ⚠",
+                "tono": "aviso"
+              },
+              {
+                "texto": "> frontend: reintentando...",
+                "tono": "aviso"
+              },
+              {
+                "texto": "> pedido creado ✓ (3)",
+                "tono": "error"
+              },
+              {
+                "texto": "> frontend: reintentando...",
+                "tono": "aviso"
+              },
+              {
+                "texto": "> pedido creado ✓ (4)",
+                "tono": "error"
+              },
+              {
+                "texto": "> frontend: reintentando...",
+                "tono": "aviso"
+              },
+              {
+                "texto": "> pedido creado ✓ (5)",
+                "tono": "error"
+              },
+              {
+                "texto": "> total pedidos para KM-84921: 5",
+                "tono": "error"
+              }
+            ]
+          },
+          "opciones": [
+            {
+              "id": "bug-encontrado",
+              "texto": "El pedido se crea de nuevo en cada reintento",
+              "feedback": "Nadie preguntó si ese pedido ya existía."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flujo",
+      "rol": "Lógica",
+      "rotuloPuntaje": "LÓGICA",
+      "titulo": "Flujo",
+      "intro": "Ahora vamos a construir el flujo correcto, antes de escribir una sola línea de código.",
+      "explicacion": "Un sistema es una serie de pasos que ocurren en un orden concreto. Vas a armar ese orden con piezas, como si dibujaras el plano del backend. Una de las piezas puede funcionar de dos formas distintas, y solo una evita el pedido duplicado: presta atención a esa.",
+      "tiempoSegFase": 300,
+      "estilo": "logica",
+      "decisiones": [
+        {
+          "id": "flujo-1",
+          "tipoInteraccion": "flow-debugger",
+          "pregunta": "Construye un flujo estable que evite pedidos duplicados.",
+          "mensajeClienteDecision": "Toca un componente y después la casilla donde va. Si una pieza puede decidir, usa ROTAR.",
+          "pista": "REINTENTO no es un paso del flujo: es lo que hace la app cuando se cae la conexión. Y VERIFICAR ID debe bloquear cuando el pedido YA existe.",
+          "metaMinijuego": {
+            "idRespuesta": "flujo-estable",
+            "objetivo": "Arma el camino que sigue una compra dentro del sistema. Siete pasos, en el orden correcto.",
+            "puntosMax": 185,
+            "puntosMin": 65,
+            "penalizacionPorIntento": 40,
+            "mensajeExito": "Cada compra genera un solo pedido, aunque la conexión se caiga diez veces.",
+            "mensajeOrdenMal": "Ese orden deja pasar la compra sin control.",
+            "mensajeLogicaMal": "El orden está bien, pero la verificación decide al revés: si el pedido YA existe, hay que bloquearlo.",
+            "flujoCorrecto": [
+              "carrito",
+              "validar-stock",
+              "pago",
+              "verificar-id",
+              "crear-pedido",
+              "actualizar-stock",
+              "enviar"
+            ],
+            "orientacionesCorrectas": {
+              "verificar-id": "bloquear"
+            },
+            "piezas": [
+              {
+                "id": "carrito",
+                "nombre": "CARRITO",
+                "icono": "carrito",
+                "descripcion": "Lo que el cliente eligió comprar."
+              },
+              {
+                "id": "validar-stock",
+                "nombre": "VALIDAR STOCK",
+                "icono": "stock",
+                "descripcion": "Revisa que haya unidades disponibles."
+              },
+              {
+                "id": "pago",
+                "nombre": "PAGO",
+                "icono": "pago",
+                "descripcion": "Cobra una sola vez."
+              },
+              {
+                "id": "verificar-id",
+                "nombre": "VERIFICAR ID",
+                "icono": "id",
+                "descripcion": "Pregunta si ese pedido ya existe.",
+                "orientaciones": [
+                  {
+                    "id": "crear",
+                    "resumen": "¿Ya existe? SÍ → crear pedido",
+                    "detalle": "Crea otro pedido aunque ya exista."
+                  },
+                  {
+                    "id": "bloquear",
+                    "resumen": "¿Ya existe? SÍ → bloquear duplicado",
+                    "detalle": "Si ya existe, no lo vuelve a crear."
+                  }
+                ]
+              },
+              {
+                "id": "crear-pedido",
+                "nombre": "CREAR PEDIDO",
+                "icono": "pedido",
+                "descripcion": "Registra el pedido con su ID único."
+              },
+              {
+                "id": "actualizar-stock",
+                "nombre": "ACTUALIZAR STOCK",
+                "icono": "stock",
+                "descripcion": "Descuenta las unidades vendidas."
+              },
+              {
+                "id": "enviar",
+                "nombre": "ENVIAR",
+                "icono": "enviar",
+                "descripcion": "Manda la orden al almacén."
+              },
+              {
+                "id": "reintento",
+                "nombre": "REINTENTO",
+                "icono": "reintento",
+                "descripcion": "Lo que hace la app cuando se cae la conexión. No es un paso del backend."
+              }
+            ],
+            "consolaExito": [
+              {
+                "texto": "> compra recibida",
+                "tono": "info"
+              },
+              {
+                "texto": "> ID: KM-84921",
+                "tono": "info"
+              },
+              {
+                "texto": "> stock disponible ✓",
+                "tono": "ok"
+              },
+              {
+                "texto": "> pago confirmado ✓",
+                "tono": "ok"
+              },
+              {
+                "texto": "> verificando pedido...",
+                "tono": "info"
+              },
+              {
+                "texto": "> pedido no encontrado",
+                "tono": "info"
+              },
+              {
+                "texto": "> creando pedido...",
+                "tono": "info"
+              },
+              {
+                "texto": "> pedido KM-84921 creado ✓",
+                "tono": "ok"
+              },
+              {
+                "texto": "> conexión interrumpida ⚠",
+                "tono": "aviso"
+              },
+              {
+                "texto": "> reintentando...",
+                "tono": "aviso"
+              },
+              {
+                "texto": "> ID: KM-84921",
+                "tono": "info"
+              },
+              {
+                "texto": "> verificando...",
+                "tono": "info"
+              },
+              {
+                "texto": "> pedido existente ✓",
+                "tono": "ok"
+              },
+              {
+                "texto": "> DUPLICADO BLOQUEADO ✓",
+                "tono": "ok"
+              }
+            ],
+            "consolaOrdenMal": [
+              {
+                "texto": "> compra recibida",
+                "tono": "info"
+              },
+              {
+                "texto": "> ejecutando flujo propuesto...",
+                "tono": "info"
+              },
+              {
+                "texto": "> paso fuera de orden ✕",
+                "tono": "error"
+              },
+              {
+                "texto": "> flujo detenido",
+                "tono": "error"
+              }
+            ],
+            "consolaLogicaMal": [
+              {
+                "texto": "> compra recibida",
+                "tono": "info"
+              },
+              {
+                "texto": "> pago confirmado ✓",
+                "tono": "ok"
+              },
+              {
+                "texto": "> pedido KM-84921 creado ✓",
+                "tono": "ok"
+              },
+              {
+                "texto": "> conexión interrumpida ⚠",
+                "tono": "aviso"
+              },
+              {
+                "texto": "> reintentando...",
+                "tono": "aviso"
+              },
+              {
+                "texto": "> verificando... pedido existente",
+                "tono": "info"
+              },
+              {
+                "texto": "> creando pedido ✕ DUPLICADO",
+                "tono": "error"
+              }
+            ]
+          },
+          "opciones": [
+            {
+              "id": "flujo-estable",
+              "texto": "Flujo estable",
+              "feedback": "El flujo aguanta los reintentos sin duplicar."
+            }
+          ],
+          "pistaGratis": true
+        },
+        {
+          "id": "flujo-2",
+          "tipoInteraccion": "revelar-codigo",
+          "pregunta": "Lo que acabas de construir se traduce a código. ¿Qué condición falta?",
+          "mensajeClienteDecision": "Programar no es memorizar código. Primero hay que entender qué debe hacer el sistema.",
+          "pista": "El signo ! significa 'no'. Quieres crear el pedido solo cuando NO existe.",
+          "metaMinijuego": {
+            "puntosMax": 60,
+            "puntosMin": 0,
+            "antes": "if (",
+            "despues": ") {\n  crearPedido(id);\n  actualizarStock();\n  enviarAlmacen();\n}",
+            "cierre": "Programar no es memorizar código. Primero necesitas entender qué debe hacer el sistema."
+          },
+          "opciones": [
+            {
+              "id": "no-existe",
+              "texto": "!pedidoExiste(id)",
+              "glosa": "si el pedido NO existe",
+              "esCorrecta": true,
+              "feedback": "Correcto. Solo se crea el pedido cuando todavía no existe."
+            },
+            {
+              "id": "existe",
+              "texto": "pedidoExiste(id)",
+              "glosa": "si el pedido ya existe",
+              "esCorrecta": false,
+              "feedback": "Al revés: así crearías un pedido nuevo cada vez que ya hay uno."
+            },
+            {
+              "id": "siempre",
+              "texto": "true",
+              "glosa": "siempre",
+              "esCorrecta": false,
+              "feedback": "Eso es exactamente el bug: crear siempre, sin preguntar nada."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "implementacion",
+      "rol": "Desarrollo",
+      "rotuloPuntaje": "DESARROLLO",
+      "titulo": "Implementación",
+      "intro": "Con el flujo claro, toca implementarlo en el backend.",
+      "explicacion": "Implementar es convertir la idea en instrucciones que la computadora ejecuta en un orden exacto. Vas a ordenar lo que hace el backend al recibir una compra y después vas a escribir la línea que corrige el bug.",
+      "tiempoSegFase": 300,
+      "estilo": "logica",
+      "decisiones": [
+        {
+          "id": "impl-1",
+          "tipoInteraccion": "ordenar-pasos",
+          "contexto": "El backend recibe la compra y ejecuta estos pasos uno detrás de otro.",
+          "pregunta": "Ordena lo que hace el backend al recibir una compra",
+          "mensajeClienteDecision": "Primero se pregunta si existe. Recién después se crea, se descuenta y se envía.",
+          "pista": "Nunca descuentes stock antes de saber si el pedido es nuevo.",
+          "metaMinijuego": {
+            "idRespuesta": "orden-backend-correcto",
+            "intentosPermitidos": 3,
+            "puntosMax": 130,
+            "puntosMin": 40,
+            "penalizacionPorIntento": 30,
+            "feedbackAcierto": "Verificar antes de crear: eso solo es lo que evita el pedido fantasma.",
+            "pasos": [
+              {
+                "id": "enviar",
+                "texto": "Enviar la orden al almacén",
+                "icono": "▶"
+              },
+              {
+                "id": "verificar",
+                "texto": "Verificar si el pedido ya existe",
+                "icono": "?"
+              },
+              {
+                "id": "stock",
+                "texto": "Descontar el stock vendido",
+                "icono": "▣"
+              },
+              {
+                "id": "crear",
+                "texto": "Crear el pedido con su ID",
+                "icono": "+"
+              }
+            ],
+            "ordenCorrecto": [
+              "verificar",
+              "crear",
+              "stock",
+              "enviar"
+            ],
+            "rotulo": "SECUENCIA DEL BACKEND"
+          },
+          "opciones": [
+            {
+              "id": "orden-backend-correcto",
+              "texto": "Secuencia sin duplicados",
+              "feedback": "El backend deja de crear pedidos repetidos."
+            }
+          ]
+        },
+        {
+          "id": "impl-2",
+          "tipoInteraccion": "mecanografia-codigo",
+          "pregunta": "Escribe abajo la misma línea que aparece arriba",
+          "mensajeClienteDecision": "Esta es la línea que corrige el bug. Cópiala tal cual, con paréntesis y todo.",
+          "pista": "Los paréntesis, el signo ! y las llaves también cuentan.",
+          "metaMinijuego": {
+            "codigo": "if (!pedidoExiste(id)) { crearPedido(id); }",
+            "idRespuesta": "codigo-ejecutado",
+            "etiquetaEjecutar": "EJECUTAR",
+            "puntosMax": 90,
+            "puntosMin": 45,
+            "penalizacionPorError": 4,
+            "segundosRapido": 35,
+            "segundosLento": 120,
+            "mensajeExito": "La corrección quedó aplicada en el backend.",
+            "salidaEjecucion": [
+              "> compilando cambios",
+              "> verificación de pedido activada",
+              "> duplicados bloqueados"
+            ],
+            "rotulo": "CONSOLA DE KAWSAY MARKET",
+            "quienComenta": "VALERIA"
+          },
+          "opciones": [
+            {
+              "id": "codigo-ejecutado",
+              "texto": "Código aplicado",
+              "feedback": "El backend ya pregunta antes de crear."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pruebas",
+      "rol": "QA",
+      "rotuloPuntaje": "QA",
+      "titulo": "Pruebas",
+      "intro": "El error principal está corregido. Pero nadie debería desplegar una versión sin probar.",
+      "explicacion": "Probar es buscar a propósito lo que puede fallar, antes de que lo encuentre un cliente. Casi nunca alcanza el tiempo para corregir todo: parte del trabajo es decidir qué error importa más.",
+      "tiempoSegFase": 240,
+      "estilo": "bugs",
+      "decisiones": [
+        {
+          "id": "qa-1",
+          "tipoInteraccion": "seleccion-unica",
+          "contexto": "BUG 132 · El logo está desplazado algunos píxeles. (BAJO) — BUG 187 · Algunos productos no muestran fotografía. (MEDIO) — BUG 201 · Cuando queda una sola unidad, dos usuarios pueden comprarla al mismo tiempo. (CRÍTICO)",
+          "pregunta": "Solo puedes corregir uno antes de la campaña. ¿Cuál?",
+          "mensajeClienteDecision": "La campaña arranca igual. Elige el que no podemos dejar pasar.",
+          "pista": "Pregúntate cuál de los tres puede hacer que vendamos algo que no tenemos.",
+          "opciones": [
+            {
+              "id": "bug-132",
+              "texto": "BUG 132 — El logo está desplazado",
+              "puntaje": 0,
+              "feedback": "Molesta a la vista, pero nadie pierde dinero por unos píxeles."
+            },
+            {
+              "id": "bug-187",
+              "texto": "BUG 187 — Faltan fotos de productos",
+              "puntaje": 40,
+              "feedback": "Afecta las ventas, sí, pero no rompe el inventario."
+            },
+            {
+              "id": "bug-201",
+              "texto": "BUG 201 — Dos usuarios compran la última unidad",
+              "puntaje": 115,
+              "esCorrecta": true,
+              "descubrimiento": "Los errores visuales molestan. Los errores de stock generan ventas imposibles.",
+              "feedback": "Correcto: vender algo que no existe obliga a cancelar pedidos y golpea a los productores."
+            }
+          ],
+          "metaMinijuego": {
+            "encabezado": "🐞 BANDEJA DE BUGS"
+          }
+        },
+        {
+          "id": "qa-2",
+          "tipoInteraccion": "seleccion-multiple",
+          "contexto": "Antes de publicar hay que probar los casos que de verdad pueden romperse.",
+          "pregunta": "Elige las 2 pruebas que hay que correr sí o sí",
+          "mensajeClienteDecision": "Dos pruebas. Las que demuestran que el bug ya no vuelve.",
+          "pista": "Prueba justo lo que fallaba: reintentos y última unidad.",
+          "seleccionExacta": 2,
+          "tablaPuntaje": {
+            "0": 0,
+            "1": 45,
+            "2": 100
+          },
+          "opciones": [
+            {
+              "id": "reintentos",
+              "texto": "Comprar y cortar la conexión para forzar reintentos",
+              "esCorrecta": true
+            },
+            {
+              "id": "ultima-unidad",
+              "texto": "Dos personas comprando la última unidad a la vez",
+              "esCorrecta": true
+            },
+            {
+              "id": "colores",
+              "texto": "Revisar que los colores del sitio combinen",
+              "esCorrecta": false
+            },
+            {
+              "id": "logo",
+              "texto": "Medir el tamaño del logo en el pie de página",
+              "esCorrecta": false
+            }
+          ],
+          "encabezado": "🧪 PLAN DE PRUEBAS",
+          "etiquetaDisponibles": "Pruebas posibles (toca para elegir →)",
+          "etiquetaDestino": "Las que vas a correr"
+        }
+      ]
+    },
+    {
+      "id": "despliegue",
+      "rol": "Deploy",
+      "rotuloPuntaje": "DEPLOY",
+      "titulo": "Despliegue",
+      "intro": "La campaña arrancó y están entrando miles de personas a la vez.",
+      "explicacion": "Desplegar es publicar tu versión para que la usen personas reales. Antes de eso hay que aguantar el pico de tráfico: cuando entra mucha gente al mismo tiempo, el sistema necesita una forma de ordenar el trabajo.",
+      "tiempoSegFase": 240,
+      "estilo": "deploy",
+      "decisiones": [
+        {
+          "id": "dep-1",
+          "tipoInteraccion": "evento-trafico",
+          "pregunta": "¿Cómo procesamos todos esos pedidos sin que el servidor se caiga?",
+          "mensajeClienteDecision": "20,000 personas entrando a la vez. El CPU no aguanta así.",
+          "pista": "Si no puedes atender a todos a la vez, atiéndelos en orden, uno detrás de otro.",
+          "metaMinijuego": {
+            "titulo": "PICO DE TRÁFICO",
+            "descripcion": "20,000 personas ingresan a la tienda al mismo tiempo.",
+            "cpu": [
+              63,
+              77,
+              91,
+              98
+            ]
+          },
+          "opciones": [
+            {
+              "id": "todo-junto",
+              "texto": "Procesar todos los pedidos al mismo tiempo",
+              "puntaje": 0,
+              "feedback": "Es justo lo que está saturando el servidor: más trabajo simultáneo del que puede hacer."
+            },
+            {
+              "id": "cola",
+              "texto": "Crear una cola de pedidos",
+              "puntaje": 70,
+              "esCorrecta": true,
+              "diagrama": [
+                "USUARIOS",
+                "COLA",
+                "SERVIDOR",
+                "PROCESAMIENTO"
+              ],
+              "descubrimiento": "La cola no pierde pedidos: los ordena y los procesa uno por uno.",
+              "feedback": "Correcto. Los pedidos entran a una fila y el servidor los atiende a un ritmo que sí soporta."
+            },
+            {
+              "id": "apagar",
+              "texto": "Apagar la tienda hasta que baje el tráfico",
+              "puntaje": 0,
+              "feedback": "Apagar en plena campaña es perder exactamente las ventas que estábamos esperando."
+            }
+          ]
+        },
+        {
+          "id": "dep-2",
+          "tipoInteraccion": "deploy-secuencia",
+          "pregunta": "Publica la versión corregida en producción.",
+          "mensajeClienteDecision": "Compila, corre las pruebas y publica. Yo miro los monitores.",
+          "metaMinijuego": {
+            "idRespuesta": "deploy-ok",
+            "puntosMax": 80,
+            "versionActual": "Kawsay Market v4.8.1",
+            "versionNueva": "Kawsay Market v4.8.2",
+            "mensajeExito": "La versión corregida está en producción y la campaña sigue corriendo.",
+            "pasos": [
+              {
+                "id": "compilar",
+                "texto": "Compilando..."
+              },
+              {
+                "id": "pruebas",
+                "texto": "Ejecutando pruebas..."
+              },
+              {
+                "id": "servidor",
+                "texto": "Verificando servidor..."
+              },
+              {
+                "id": "publicar",
+                "texto": "Publicando..."
+              }
+            ]
+          },
+          "opciones": [
+            {
+              "id": "deploy-ok",
+              "texto": "Versión publicada",
+              "feedback": "v4.8.2 está en producción."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "epilogos": [
+    {
+      "min": 800,
+      "max": 1000,
+      "clave": "excelente",
+      "titulo": "ARQUITECTO DEL SISTEMA",
+      "texto": "La campaña terminó y producción sobrevivió sin un solo pedido fantasma.",
+      "mensaje": "Buen trabajo. Producción sobrevivió.",
+      "estadoValeria": "feliz",
+      "metricas": [
+        {
+          "etiqueta": "Pedidos procesados",
+          "valor": "18,472",
+          "tono": "ok"
+        },
+        {
+          "etiqueta": "Pedidos duplicados",
+          "valor": "0",
+          "tono": "ok"
+        },
+        {
+          "etiqueta": "Errores críticos",
+          "valor": "0",
+          "tono": "ok"
+        },
+        {
+          "etiqueta": "Inventario",
+          "valor": "Estable",
+          "tono": "ok"
+        }
+      ]
+    },
+    {
+      "min": 400,
+      "max": 799,
+      "clave": "intermedio",
+      "titulo": "FUNCIONA... CASI",
+      "texto": "El duplicado quedó solucionado, pero se colaron otros problemas.",
+      "mensaje": "La misión principal está resuelta, pero todavía tenemos trabajo.",
+      "estadoValeria": "confundido",
+      "metricas": [
+        {
+          "etiqueta": "Pedidos procesados",
+          "valor": "17,940",
+          "tono": "ok"
+        },
+        {
+          "etiqueta": "Pedidos duplicados",
+          "valor": "0",
+          "tono": "ok"
+        },
+        {
+          "etiqueta": "Stock",
+          "valor": "-13",
+          "tono": "error"
+        },
+        {
+          "etiqueta": "Reclamos abiertos",
+          "valor": "86",
+          "tono": "aviso"
+        }
+      ]
+    },
+    {
+      "min": 0,
+      "max": 399,
+      "clave": "rollback",
+      "titulo": "ROLLBACK EJECUTADO",
+      "texto": "La versión falló en producción y el sistema volvió automáticamente a la anterior.",
+      "mensaje": "Hoy aprendiste algo importante. Nunca hagas deploy sin probar.",
+      "estadoValeria": "molesto",
+      "textoBoton": "REINTENTAR",
+      "metricas": [
+        {
+          "etiqueta": "Estado",
+          "valor": "ERROR EN PRODUCCIÓN",
+          "tono": "error"
+        },
+        {
+          "etiqueta": "Acción automática",
+          "valor": "ROLLBACK EJECUTADO",
+          "tono": "error"
+        },
+        {
+          "etiqueta": "Versión activa",
+          "valor": "v4.8.1",
+          "tono": "aviso"
+        }
+      ]
+    }
+  ]
+}

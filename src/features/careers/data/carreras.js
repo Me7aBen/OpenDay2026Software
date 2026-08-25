@@ -1,0 +1,377 @@
+// Datos de carreras.
+//
+// REGLA (§14 y §68 del brief): acá no se inventa información oficial. Nada de
+// salarios, nada de mallas curriculares presentadas como oficiales, nada de
+// "esta universidad enseña exactamente esto". Lo que hay es contenido curado
+// y descriptivo, redactado para un estudiante de secundaria, y cada ficha
+// declara su `fuenteEstado`:
+//
+//   'demo'      — contenido curado por el equipo, sin fuente institucional.
+//                 Es lo que hay hoy en TODAS las carreras y la UI lo dice.
+//   'verificado'— cuando exista fuente real (SUNEDU, MTPE, la universidad),
+//                 se completa `fuenteNombre`, `fuenteUrl` y `verificadoEn`.
+//
+// La capa de normalización (§61) vive en `normalizar.js`: los componentes leen
+// desde ahí, nunca este arreglo crudo.
+
+export const CARRERAS = [
+  {
+    id: 'ingenieria-de-software',
+    slug: 'ingenieria-de-software',
+    nombre: 'Ingeniería de Software',
+    area: 'tecnologia',
+    descripcionCorta:
+      'Construir los programas y sistemas que usan las personas y las empresas todos los días.',
+    deQueTrata:
+      'La ingeniería de software se ocupa de crear programas que funcionen bien cuando muchísima gente los usa al mismo tiempo. No es solo escribir código: es entender qué necesita alguien, decidir cómo debería comportarse el sistema, construirlo, probarlo y mantenerlo funcionando.',
+    problemasQueResuelve: [
+      'Una tienda online genera pedidos duplicados y despacha productos que nadie compró.',
+      'Un hospital necesita que las historias clínicas estén disponibles en segundos, sin errores.',
+      'Una app de transporte tiene que ubicar al conductor más cercano entre miles, al instante.',
+      'Un banco debe procesar pagos sin que se pierda ni se duplique una sola operación.',
+    ],
+    cursosBase: [
+      'Programación',
+      'Matemática y lógica',
+      'Algoritmos y estructuras de datos',
+      'Bases de datos',
+      'Sistemas operativos y redes',
+    ],
+    cursosAvanzados: [
+      'Desarrollo web y móvil',
+      'Arquitectura de software',
+      'Computación en la nube',
+      'Testing y calidad',
+      'Inteligencia artificial',
+      'Ciberseguridad',
+    ],
+    campoLaboral: [
+      'Frontend Developer',
+      'Backend Developer',
+      'QA Engineer',
+      'DevOps',
+      'Data Engineer',
+      'Software Engineer',
+      'Mobile Developer',
+    ],
+    tipoDeActividades: [
+      'Resolver problemas con lógica',
+      'Escribir y leer código',
+      'Trabajar en equipo con otras áreas',
+      'Investigar errores hasta encontrar la causa',
+    ],
+    duracionLabel: '5 años (universidad) · 3 años (instituto)',
+    duracionAnios: 5,
+    simulacionIds: ['pedido-fantasma', 'codigo-cero'],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'ciencia-de-datos',
+    slug: 'ciencia-de-datos',
+    nombre: 'Ciencia de Datos',
+    area: 'tecnologia',
+    descripcionCorta:
+      'Encontrar respuestas dentro de grandes cantidades de información para tomar mejores decisiones.',
+    deQueTrata:
+      'Todo deja datos: las ventas de una tienda, los viajes de un bus, los pacientes de un hospital. La ciencia de datos ordena esa información, la analiza y la convierte en decisiones. Mezcla matemática, programación y mucha curiosidad.',
+    problemasQueResuelve: [
+      'Predecir cuántos productos va a necesitar una tienda el próximo mes.',
+      'Detectar operaciones sospechosas en miles de transacciones.',
+      'Entender por qué los estudiantes de un colegio dejan de asistir.',
+    ],
+    cursosBase: ['Estadística', 'Programación', 'Matemática', 'Bases de datos', 'Probabilidades'],
+    cursosAvanzados: [
+      'Machine learning',
+      'Visualización de datos',
+      'Big data',
+      'Modelos predictivos',
+    ],
+    campoLaboral: [
+      'Data Analyst',
+      'Data Scientist',
+      'Data Engineer',
+      'Analista de negocios',
+    ],
+    tipoDeActividades: [
+      'Analizar información',
+      'Buscar patrones',
+      'Explicar resultados a otras personas',
+    ],
+    duracionLabel: '5 años (universidad)',
+    duracionAnios: 5,
+    simulacionIds: [],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'ingenieria-civil',
+    slug: 'ingenieria-civil',
+    nombre: 'Ingeniería Civil',
+    area: 'ingenierias',
+    descripcionCorta:
+      'Diseñar y construir puentes, edificios, carreteras y sistemas de agua que la gente usa.',
+    deQueTrata:
+      'La ingeniería civil se encarga de la infraestructura: lo que se construye para que una ciudad funcione. Calcula si una estructura va a resistir, con qué materiales, a qué costo y en cuánto tiempo.',
+    problemasQueResuelve: [
+      'Un pueblo necesita agua potable y no tiene red.',
+      'Un puente debe resistir un sismo sin caerse.',
+      'Una carretera se corta cada lluvia y aísla a una comunidad.',
+    ],
+    cursosBase: ['Matemática', 'Física', 'Dibujo técnico', 'Materiales', 'Topografía'],
+    cursosAvanzados: [
+      'Estructuras',
+      'Hidráulica',
+      'Geotecnia',
+      'Gestión de obras',
+    ],
+    campoLaboral: [
+      'Residente de obra',
+      'Proyectista estructural',
+      'Supervisor de obra',
+      'Especialista en hidráulica',
+    ],
+    tipoDeActividades: ['Calcular', 'Trabajar en campo', 'Coordinar equipos grandes'],
+    duracionLabel: '5 años (universidad)',
+    duracionAnios: 5,
+    simulacionIds: ['ccorca-v2'],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'ingenieria-industrial',
+    slug: 'ingenieria-industrial',
+    nombre: 'Ingeniería Industrial',
+    area: 'ingenierias',
+    descripcionCorta:
+      'Hacer que los procesos de una empresa funcionen mejor, más rápido y con menos desperdicio.',
+    deQueTrata:
+      'Mira cómo trabaja una organización completa —personas, máquinas, materiales— y busca dónde se pierde tiempo o dinero. Es la ingeniería más cercana a la gestión.',
+    problemasQueResuelve: [
+      'Una fábrica entrega tarde porque su línea de producción se traba.',
+      'Un almacén pierde productos por mal control de inventario.',
+      'Un servicio tiene colas larguísimas y clientes molestos.',
+    ],
+    cursosBase: ['Matemática', 'Estadística', 'Procesos industriales', 'Costos', 'Logística'],
+    cursosAvanzados: ['Investigación de operaciones', 'Cadena de suministro', 'Calidad', 'Proyectos'],
+    campoLaboral: [
+      'Analista de procesos',
+      'Jefe de operaciones',
+      'Especialista en logística',
+      'Consultor de mejora continua',
+    ],
+    tipoDeActividades: ['Optimizar procesos', 'Medir y comparar', 'Coordinar personas'],
+    duracionLabel: '5 años (universidad)',
+    duracionAnios: 5,
+    simulacionIds: [],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'medicina',
+    slug: 'medicina',
+    nombre: 'Medicina Humana',
+    area: 'salud',
+    descripcionCorta: 'Diagnosticar y tratar enfermedades, y acompañar a las personas a recuperar su salud.',
+    deQueTrata:
+      'Es una carrera larga y exigente. Se estudia cómo funciona el cuerpo humano, qué pasa cuando algo falla y cómo intervenir. Buena parte del aprendizaje ocurre en hospitales, con pacientes reales.',
+    problemasQueResuelve: [
+      'Una persona llega a emergencia y hay que decidir en minutos qué tiene.',
+      'Una comunidad rural sin postas médicas necesita atención primaria.',
+      'Una enfermedad se está propagando y hay que contenerla.',
+    ],
+    cursosBase: ['Anatomía', 'Fisiología', 'Bioquímica', 'Histología', 'Salud pública'],
+    cursosAvanzados: ['Patología', 'Farmacología', 'Cirugía', 'Pediatría', 'Medicina interna'],
+    campoLaboral: [
+      'Médico general',
+      'Médico especialista',
+      'Investigación clínica',
+      'Salud pública',
+    ],
+    tipoDeActividades: ['Atender personas', 'Decidir bajo presión', 'Estudiar toda la vida'],
+    duracionLabel: '7 años + internado y residencia',
+    duracionAnios: 7,
+    simulacionIds: [],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'enfermeria',
+    slug: 'enfermeria',
+    nombre: 'Enfermería',
+    area: 'salud',
+    descripcionCorta: 'Cuidar y acompañar al paciente durante todo el proceso de recuperación.',
+    deQueTrata:
+      'La enfermería está al lado del paciente todo el tiempo: administra tratamientos, vigila su evolución y detecta a tiempo cuando algo empeora. Requiere criterio clínico y trato humano.',
+    problemasQueResuelve: [
+      'Un paciente internado empeora de madrugada y alguien tiene que notarlo.',
+      'Una campaña de vacunación debe llegar a un barrio entero.',
+    ],
+    cursosBase: ['Anatomía', 'Fisiología', 'Enfermería básica', 'Primeros auxilios', 'Nutrición'],
+    cursosAvanzados: ['Cuidados críticos', 'Salud comunitaria', 'Pediatría', 'Gestión de servicios'],
+    campoLaboral: ['Enfermero(a) asistencial', 'Cuidados intensivos', 'Salud comunitaria', 'Docencia'],
+    tipoDeActividades: ['Cuidar personas', 'Trabajar en turnos', 'Observar y registrar'],
+    duracionLabel: '5 años (universidad) · 3 años (instituto)',
+    duracionAnios: 5,
+    simulacionIds: [],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'administracion',
+    slug: 'administracion',
+    nombre: 'Administración de Empresas',
+    area: 'negocios',
+    descripcionCorta: 'Organizar y dirigir una empresa para que cumpla sus objetivos.',
+    deQueTrata:
+      'Se estudia cómo funciona una organización por dentro: sus finanzas, su gente, sus productos y su estrategia. Es una carrera amplia que abre puertas en casi cualquier industria.',
+    problemasQueResuelve: [
+      'Un negocio familiar vende bien pero pierde plata y nadie sabe por qué.',
+      'Una empresa quiere crecer a otra ciudad y no sabe si le conviene.',
+    ],
+    cursosBase: ['Contabilidad', 'Economía', 'Matemática financiera', 'Estadística', 'Marketing'],
+    cursosAvanzados: ['Finanzas corporativas', 'Estrategia', 'Recursos humanos', 'Operaciones'],
+    campoLaboral: [
+      'Analista de negocios',
+      'Jefe comercial',
+      'Analista financiero',
+      'Emprendedor',
+    ],
+    tipoDeActividades: ['Tomar decisiones', 'Analizar números', 'Liderar equipos'],
+    duracionLabel: '5 años (universidad) · 3 años (instituto)',
+    duracionAnios: 5,
+    simulacionIds: [],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'marketing',
+    slug: 'marketing',
+    nombre: 'Marketing',
+    area: 'negocios',
+    descripcionCorta: 'Entender qué quiere la gente y conectar un producto con las personas correctas.',
+    deQueTrata:
+      'El marketing investiga a las personas: qué necesitan, qué las convence y por qué eligen una marca sobre otra. Después diseña cómo comunicar y vender.',
+    problemasQueResuelve: [
+      'Un producto bueno no se vende porque nadie sabe que existe.',
+      'Una marca pierde clientes y no entiende qué cambió.',
+    ],
+    cursosBase: ['Fundamentos de marketing', 'Estadística', 'Comportamiento del consumidor', 'Comunicación'],
+    cursosAvanzados: ['Marketing digital', 'Analítica', 'Branding', 'Investigación de mercados'],
+    campoLaboral: [
+      'Community manager',
+      'Analista de marketing digital',
+      'Brand manager',
+      'Investigador de mercado',
+    ],
+    tipoDeActividades: ['Investigar personas', 'Crear campañas', 'Medir resultados'],
+    duracionLabel: '5 años (universidad) · 3 años (instituto)',
+    duracionAnios: 5,
+    simulacionIds: [],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'arquitectura',
+    slug: 'arquitectura',
+    nombre: 'Arquitectura',
+    area: 'diseno',
+    descripcionCorta: 'Diseñar los espacios donde las personas viven, trabajan y se encuentran.',
+    deQueTrata:
+      'Mezcla arte y técnica. Un arquitecto piensa cómo se va a usar un espacio, cómo entra la luz, cómo circula la gente, y también si la obra es posible y cuánto cuesta.',
+    problemasQueResuelve: [
+      'Un colegio necesita aulas que funcionen con poca luz y mucho calor.',
+      'Un barrio no tiene espacios públicos donde reunirse.',
+    ],
+    cursosBase: ['Dibujo y expresión gráfica', 'Taller de diseño', 'Historia de la arquitectura', 'Geometría'],
+    cursosAvanzados: ['Urbanismo', 'Construcción', 'Diseño sostenible', 'Gestión de proyectos'],
+    campoLaboral: ['Arquitecto proyectista', 'Diseño de interiores', 'Urbanismo', 'Gestión de obra'],
+    tipoDeActividades: ['Dibujar y modelar', 'Imaginar espacios', 'Presentar propuestas'],
+    duracionLabel: '5 a 6 años (universidad)',
+    duracionAnios: 5,
+    simulacionIds: ['ccorca-v2'],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'diseno-grafico',
+    slug: 'diseno-grafico',
+    nombre: 'Diseño Gráfico',
+    area: 'diseno',
+    descripcionCorta: 'Comunicar ideas con imágenes, tipografía, color y composición.',
+    deQueTrata:
+      'El diseño gráfico resuelve problemas de comunicación: que un mensaje se entienda rápido, que una marca se reconozca, que una app sea fácil de usar.',
+    problemasQueResuelve: [
+      'Un cartel de emergencia que nadie entiende a tiempo.',
+      'Una app que la gente abandona porque no encuentra el botón.',
+    ],
+    cursosBase: ['Dibujo', 'Teoría del color', 'Tipografía', 'Composición', 'Software de diseño'],
+    cursosAvanzados: ['Diseño de interfaces (UI/UX)', 'Ilustración', 'Motion graphics', 'Identidad de marca'],
+    campoLaboral: ['Diseñador UI/UX', 'Diseñador editorial', 'Ilustrador', 'Director de arte'],
+    tipoDeActividades: ['Crear piezas visuales', 'Iterar sobre críticas', 'Trabajar con clientes'],
+    duracionLabel: '4 a 5 años (universidad) · 3 años (instituto)',
+    duracionAnios: 4,
+    simulacionIds: [],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'psicologia',
+    slug: 'psicologia',
+    nombre: 'Psicología',
+    area: 'sociales',
+    descripcionCorta: 'Entender cómo pensamos, sentimos y nos comportamos, y acompañar a quien lo necesita.',
+    deQueTrata:
+      'La psicología estudia la conducta y los procesos mentales. Puede aplicarse en consulta clínica, en colegios, en empresas o en investigación.',
+    problemasQueResuelve: [
+      'Un estudiante con ansiedad que dejó de ir a clases.',
+      'Un equipo de trabajo que no logra comunicarse.',
+      'Una comunidad que atraviesa un desastre y necesita contención.',
+    ],
+    cursosBase: ['Psicología general', 'Estadística', 'Neurociencia básica', 'Metodología de investigación'],
+    cursosAvanzados: ['Psicología clínica', 'Psicología educativa', 'Psicología organizacional', 'Evaluación psicológica'],
+    campoLaboral: [
+      'Psicólogo clínico',
+      'Psicólogo educativo',
+      'Psicólogo organizacional',
+      'Investigación',
+    ],
+    tipoDeActividades: ['Escuchar y observar', 'Investigar', 'Acompañar procesos largos'],
+    duracionLabel: '5 años (universidad)',
+    duracionAnios: 5,
+    simulacionIds: [],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'derecho',
+    slug: 'derecho',
+    nombre: 'Derecho',
+    area: 'derecho',
+    descripcionCorta: 'Conocer las reglas que ordenan la sociedad y defender los derechos de las personas.',
+    deQueTrata:
+      'Se estudian las leyes y cómo se aplican a casos reales. Buena parte del trabajo es leer, argumentar y escribir con precisión.',
+    problemasQueResuelve: [
+      'Una familia que puede perder su casa por un contrato mal hecho.',
+      'Un trabajador despedido sin respetar sus derechos.',
+    ],
+    cursosBase: ['Introducción al derecho', 'Derecho civil', 'Derecho constitucional', 'Argumentación jurídica'],
+    cursosAvanzados: ['Derecho penal', 'Derecho laboral', 'Derecho corporativo', 'Litigación oral'],
+    campoLaboral: ['Abogado litigante', 'Asesor legal de empresas', 'Función pública', 'Docencia'],
+    tipoDeActividades: ['Leer mucho', 'Argumentar', 'Redactar con precisión'],
+    duracionLabel: '6 años (universidad)',
+    duracionAnios: 6,
+    simulacionIds: [],
+    fuenteEstado: 'demo',
+  },
+  {
+    id: 'biologia',
+    slug: 'biologia',
+    nombre: 'Biología',
+    area: 'ciencias',
+    descripcionCorta: 'Estudiar a los seres vivos, desde una célula hasta un ecosistema completo.',
+    deQueTrata:
+      'La biología investiga cómo funciona la vida. Mucho trabajo de laboratorio y de campo, y una parte importante de investigación y escritura científica.',
+    problemasQueResuelve: [
+      'Una especie en peligro de extinción en la sierra peruana.',
+      'Un río contaminado que afecta a toda una cuenca.',
+    ],
+    cursosBase: ['Biología celular', 'Química', 'Genética', 'Ecología', 'Estadística'],
+    cursosAvanzados: ['Biotecnología', 'Microbiología', 'Biología molecular', 'Conservación'],
+    campoLaboral: ['Investigador', 'Laboratorio clínico', 'Gestión ambiental', 'Biotecnología'],
+    tipoDeActividades: ['Experimentar', 'Trabajo de campo', 'Escribir informes científicos'],
+    duracionLabel: '5 años (universidad)',
+    duracionAnios: 5,
+    simulacionIds: [],
+    fuenteEstado: 'demo',
+  },
+];

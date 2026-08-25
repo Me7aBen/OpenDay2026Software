@@ -1,0 +1,347 @@
+/* Cierre de una simulación en modo libre. Mobile first. */
+
+.rs {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* --- Final -------------------------------------------------------------- */
+
+.rs-final {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  border: 2px solid var(--green);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(47, 230, 166, 0.08);
+}
+.rs-final.intermedio {
+  border-color: var(--gold);
+  background: rgba(255, 209, 102, 0.08);
+}
+.rs-final.rollback {
+  border-color: var(--red);
+  background: rgba(255, 92, 106, 0.08);
+}
+
+.rs-final-retrato {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rs-final-rotulo {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+}
+.rs-final h1 {
+  font-family: var(--pixel);
+  font-size: clamp(22px, 6.5vw, 34px);
+  letter-spacing: 1.5px;
+  margin: 2px 0 8px;
+  line-height: 1.1;
+}
+.rs-final p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.rs-metricas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.rs-metrica {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--panel);
+  text-align: center;
+}
+.rs-metrica .valor {
+  font-family: var(--pixel);
+  font-size: 20px;
+  line-height: 1.2;
+}
+.rs-metrica .etiqueta {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+.rs-metrica.ok .valor {
+  color: var(--green);
+}
+.rs-metrica.aviso .valor {
+  color: var(--gold);
+}
+.rs-metrica.error .valor {
+  color: var(--red);
+}
+
+.rs-cita {
+  margin: 0;
+  border-left: 3px solid var(--cyan);
+  padding-left: 14px;
+}
+.rs-cita p {
+  margin: 0 0 4px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.rs-cita footer {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* --- Bloques ------------------------------------------------------------ */
+
+.rs-bloque {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  background: var(--panel);
+}
+.rs-bloque h2 {
+  margin: 0 0 12px;
+  font-size: 17px;
+}
+
+.rs-aclaracion {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  border-left: 3px solid var(--gold);
+  padding-left: 12px;
+}
+.rs-nota-max {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* --- Puntaje ------------------------------------------------------------ */
+
+.rs-puntaje {
+  display: grid;
+  gap: 14px;
+}
+.rs-puntaje-total {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.rs-puntaje-total .numero {
+  font-family: var(--pixel);
+  font-size: 46px;
+  color: var(--gold);
+  line-height: 1;
+}
+.rs-puntaje-total .sobre {
+  color: var(--text-dim);
+  font-size: 15px;
+}
+
+.rs-desglose {
+  display: grid;
+  gap: 8px;
+}
+.rs-fila {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 46px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.rs-fila-nombre {
+  font-family: var(--pixel);
+  letter-spacing: 0.6px;
+  color: var(--text-dim);
+}
+.rs-fila-barra {
+  height: 8px;
+  border-radius: 999px;
+  background: #0d1830;
+  overflow: hidden;
+}
+.rs-fila-barra span {
+  display: block;
+  height: 100%;
+  background: var(--cyan);
+}
+.rs-fila-valor {
+  font-family: var(--pixel);
+  text-align: right;
+  color: var(--text);
+}
+.rs-fila-resta .rs-fila-valor {
+  color: var(--red);
+}
+
+/* --- Perfil ------------------------------------------------------------- */
+
+.rs-perfil-rotulo {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+}
+.rs-perfil-nombre {
+  font-family: var(--pixel);
+  font-size: 26px;
+  letter-spacing: 1px;
+  color: var(--pink);
+  margin: 4px 0 8px;
+}
+.rs-perfil p {
+  margin: 0;
+  line-height: 1.55;
+}
+.rs-perfil-nota {
+  margin-top: 8px !important;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* --- Reflexión ---------------------------------------------------------- */
+
+.rs-opiniones {
+  display: grid;
+  gap: 8px;
+}
+.rs-opinion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+  text-align: left;
+}
+.rs-opinion .emoji {
+  font-size: 22px;
+}
+.rs-opinion:hover {
+  border-color: var(--cyan);
+}
+.rs-opinion.on {
+  border-color: var(--green);
+  background: rgba(47, 230, 166, 0.12);
+}
+.rs-opinion-guardada {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--green);
+}
+
+/* --- Conceptos ---------------------------------------------------------- */
+
+.rs-conceptos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.rs-conceptos li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-left: 3px solid var(--cyan);
+  padding-left: 12px;
+}
+.rs-conceptos strong {
+  font-size: 14px;
+}
+.rs-conceptos span {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+
+/* --- Microcurso --------------------------------------------------------- */
+
+.rs-curso-card {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  background: var(--panel-alt);
+}
+.rs-curso-etiqueta {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  color: var(--cyan);
+}
+.rs-curso-titulo {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 2px 0 6px;
+}
+.rs-curso-card p {
+  margin: 0 0 10px;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.rs-curso-datos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.rs-curso-precio {
+  font-family: var(--pixel);
+  font-size: 20px;
+  color: var(--gold);
+}
+.rs-curso-acciones {
+  display: grid;
+  gap: 8px;
+}
+
+/* --- Salidas ------------------------------------------------------------ */
+
+.rs-salidas {
+  display: grid;
+  gap: 10px;
+}
+
+@media (min-width: 700px) {
+  .rs-metricas {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .rs-opiniones {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rs-curso-card {
+    grid-template-columns: minmax(0, 1fr) 220px;
+    align-items: center;
+  }
+  .rs-salidas {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .rs-fila {
+    grid-template-columns: 130px minmax(0, 1fr) 56px;
+    font-size: 13px;
+  }
+}

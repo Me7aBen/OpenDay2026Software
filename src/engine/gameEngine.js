@@ -1,6 +1,8 @@
 // Lógica pura de puntaje y progreso. No conoce narrativa: solo lee la forma
 // del contrato descrito en docs/contrato-escenario.md.
 
+import { puntajeMaximoFase, puntajeObtenidoFase } from '../lib/perfilVocacional.js';
+
 export const TIEMPO_TOTAL_DEFAULT_SEG = 960; // 16 min
 export const BONO_TIEMPO_MAX = 200;
 // La pista ayuda a aprender y no debe destruir el puntaje. El costo es visible
@@ -115,7 +117,14 @@ export function calcularPuntajeFinal(escenario, respuestas, tiempoGlobalRestante
   }
 
   const tiempoTotalSeg = escenario.tiempoTotalSeg ?? TIEMPO_TOTAL_DEFAULT_SEG;
-  const bonoTiempo = calcularBonoTiempo(tiempoGlobalRestanteSeg, tiempoTotalSeg);
+  // Una simulación puede apagar el reloj (`presentacion.temporizador: false`).
+  // Si lo hace, tampoco puede haber bono de tiempo: sería un regalo fijo de 200
+  // puntos que descuadra el techo del escenario. Ver §55 del brief: el tiempo no
+  // debe castigar a quien juega desde el celular.
+  const usaTemporizador = escenario.presentacion?.temporizador !== false;
+  const bonoTiempo = usaTemporizador
+    ? calcularBonoTiempo(tiempoGlobalRestanteSeg, tiempoTotalSeg)
+    : 0;
   const total = puntajeDecisiones + puntajeBonos + bonoTiempo - penalizaciones;
 
   return {
@@ -130,4 +139,29 @@ export function calcularPuntajeFinal(escenario, respuestas, tiempoGlobalRestante
 export function encontrarEpilogo(escenario, puntajeTotal) {
   const bucket = escenario.epilogos.find((e) => puntajeTotal >= e.min && puntajeTotal <= e.max);
   return bucket ?? escenario.epilogos[escenario.epilogos.length - 1];
+}
+
+// --- Techo de puntaje y desglose por fase -----------------------------------
+//
+// El HUD mostraba "/ 800" hardcodeado, que era el techo de Código Cero. Con
+// simulaciones de distinta longitud (El Pedido Fantasma tiene 6 etapas) el
+// número tiene que salir del contenido, no del componente.
+//
+// Vive acá y no en perfilVocacional.js para que el motor no dependa de un
+// módulo cuyo tema es otro; la regla de "cuánto vale como máximo una decisión"
+// sí se reutiliza desde ahí, que es donde ya estaba escrita.
+
+export function puntajeMaximoEscenario(escenario) {
+  return escenario.fases.reduce((total, fase) => total + puntajeMaximoFase(fase), 0);
+}
+
+// Desglose "ANÁLISIS 160 / LÓGICA 230 / ..." de la pantalla de resultado.
+// Una fila por fase, con el nombre que la propia fase declara.
+export function desglosePorFase(escenario, respuestas) {
+  return escenario.fases.map((fase) => ({
+    id: fase.id,
+    etiqueta: fase.rotuloPuntaje ?? fase.rol ?? fase.titulo ?? fase.id,
+    puntaje: puntajeObtenidoFase(fase, respuestas),
+    maximo: puntajeMaximoFase(fase),
+  }));
 }

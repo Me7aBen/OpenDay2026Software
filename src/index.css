@@ -1,1 +1,5 @@
 @import './styles/tokens.css';
+/* El estado de carga del router se ve antes de que cargue cualquier chunk, así
+   que sus estilos tienen que estar en el CSS base y no dentro de un módulo
+   diferido. Es lo único de la simulación que viaja en el bundle inicial. */
+@import './styles/simulacion-shell.css';

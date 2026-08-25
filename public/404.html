@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cargando…</title>
+    <script>
+      // GitHub Pages no sabe de rutas de SPA: al recargar /carreras/x devuelve
+      // este 404. Lo convertimos en una entrada de historial correcta y
+      // devolvemos el control a index.html, que monta la app en esa misma ruta.
+      // Sin esto, las URLs reales solo funcionarían navegando desde la home.
+      (function () {
+        var base = '/OpenDay2026Software';
+        var ruta = window.location.pathname + window.location.search + window.location.hash;
+        sessionStorage.setItem('ruta-pendiente', ruta);
+        window.location.replace(base + '/');
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

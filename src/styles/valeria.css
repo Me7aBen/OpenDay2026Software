@@ -1,0 +1,41 @@
+/* Retrato de Valeria (sprites de src/assets/sprites/valeria/web). */
+
+.valeria-retrato {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.valeria-sprite {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Sin `pixelated`: son ilustraciones con contorno suave y al reducirlas ese
+     modo produce dientes de sierra. Ver comentario en valeriaSprites.js. */
+  image-rendering: auto;
+  display: block;
+}
+
+/* Encuadre de cara, para burbujas pequeñas: la pose está centrada arriba, así
+   que se amplía y se ancla al borde superior. */
+.valeria-retrato.retrato .valeria-sprite {
+  object-fit: cover;
+  object-position: 50% 12%;
+  transform: scale(1.35);
+}
+
+.valeria-retrato.completo .valeria-sprite {
+  object-fit: contain;
+}
+
+/* Busto grande del minijuego: se apoya en el borde inferior del panel. */
+.valeria-busto {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  image-rendering: auto;
+}

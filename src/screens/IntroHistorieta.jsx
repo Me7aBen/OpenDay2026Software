@@ -2,6 +2,7 @@ import { useGame } from '../engine/useGame';
 import TopBar from '../ui/TopBar';
 import HistorietaPixel from '../ui/HistorietaPixel';
 import '../styles/intro-historieta.css';
+import { APP_NAME, APP_TAGLINE } from '../config/marca';
 
 // Historieta de apertura del escenario: lo que pasa ANTES de la primera fase.
 //
@@ -27,8 +28,8 @@ export default function IntroHistorieta() {
         />
       </div>
       <div className="intro-footer">
-        <span>TECSUP · Formación que transforma</span>
-        <span>Diseño y Desarrollo de Software · Centro de Innovación Tecnológica</span>
+        <span>{APP_NAME}</span>
+        <span>{APP_TAGLINE}</span>
       </div>
     </div>
   );

@@ -31,7 +31,10 @@
   --green: #2fe6a6;
   --gold: #ffd166;
   --red: #ff5c6a;
-  --tecsup: #ff5a36;
+  /* Acento naranja del diseño original. Se mantiene el color y se renombra:
+     el nombre venía de la institución del evento anterior y ya no describe
+     nada del producto. Ningún componente lo usa hoy. */
+  --acento-calido: #ff5a36;
 
   --pixel: 'Pixelify Sans', monospace;
   --body: 'Baloo 2', system-ui, sans-serif;

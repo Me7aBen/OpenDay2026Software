@@ -22,10 +22,19 @@ export function puntajeMaximoDecision(decision) {
       const suma = pasos.reduce((acc, p) => acc + (p.puntosMax ?? 0), 0);
       return suma + (meta.bonusArquitecturaCompleta ?? 0);
     }
+    // Mecánicas que declaran su techo en el JSON y mandan el puntaje ya
+    // calculado como `puntajeDirecto`. Las cuatro últimas son de "El Pedido
+    // Fantasma".
     case 'circuito-conexiones':
     case 'detectar-intruso':
     case 'mecanografia-codigo':
     case 'ordenar-pasos':
+    case 'puerta-seguridad':
+    case 'detectar-fantasma':
+    case 'flow-debugger':
+    case 'traza-peticiones':
+    case 'revelar-codigo':
+    case 'deploy-secuencia':
       return meta.puntosMax ?? 0;
     case 'seleccion-cards':
       return Math.max(0, ...(meta.imagenes ?? []).map((i) => i.puntaje ?? 0));

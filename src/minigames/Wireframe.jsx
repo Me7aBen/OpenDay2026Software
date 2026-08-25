@@ -43,19 +43,25 @@ function SeleccionMultiple({ decision, onElegir }) {
       </div>
       <div className="wireframe-columnas">
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {/* Botones reales, no divs con onClick: se recorren con Tab, los
+              anuncia un lector de pantalla y tienen 44px de alto en móvil.
+              El drag sigue existiendo para el mouse, pero no es necesario. */}
           <div className="wireframe-etiqueta">{decision.etiquetaDisponibles ?? 'Opciones disponibles (arrastra o toca →)'}</div>
           {disponibles.filter((opcion) => !confirmado || opcion.esCorrecta).map((opcion) => (
-            <div
+            <button
               key={opcion.id}
+              type="button"
               className={`chip${confirmado && opcion.esCorrecta ? ' solucion' : ''}`}
               draggable={!confirmado}
+              disabled={confirmado}
+              aria-label={`Elegir: ${opcion.texto}`}
               onDragStart={() => setArrastrando(opcion.id)}
               onDragEnd={() => setArrastrando(null)}
               onClick={() => agregar(opcion.id)}
-              style={{ cursor: 'grab', padding: '8px 12px', fontSize: 13 }}
+              style={{ cursor: 'grab', padding: '10px 12px', fontSize: 13, minHeight: 44 }}
             >
               {opcion.texto}{confirmado && opcion.esCorrecta ? ' ← solución' : ''}
-            </div>
+            </button>
           ))}
         </div>
         <div
@@ -69,13 +75,17 @@ function SeleccionMultiple({ decision, onElegir }) {
         >
           <div className="wireframe-etiqueta">{decision.etiquetaDestino ?? 'Tu selección'}</div>
           {puestos.map((opcion) => (
-            <div
+            <button
               key={opcion.id}
+              type="button"
               className={`chip on${confirmado ? (opcion.esCorrecta ? ' acierto' : ' error') : ''}`}
+              disabled={confirmado}
+              aria-label={`Quitar: ${opcion.texto}`}
               onClick={() => quitar(opcion.id)}
+              style={{ minHeight: 44 }}
             >
               {opcion.texto} {confirmado ? (opcion.esCorrecta ? '✔' : '✕') : '✕'}
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -112,7 +122,9 @@ export default function Wireframe({ decision, onElegir, avatar }) {
   if (decision.tipoInteraccion === 'seleccion-multiple') {
     return (
       <div>
-        <div className="label-pixel">📱 WIREFRAME</div>
+        {/* Igual que en Entrevista: el rótulo lo pone el contenido cuando la
+            mecánica se usa para algo que no es diseñar una pantalla. */}
+        <div className="label-pixel">{decision.encabezado ?? '📱 WIREFRAME'}</div>
         <div style={{ marginTop: 10 }}>
           <SeleccionMultiple decision={decision} onElegir={onElegir} />
         </div>
