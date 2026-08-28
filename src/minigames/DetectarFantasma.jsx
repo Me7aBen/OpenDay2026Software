@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { reproducirEfecto } from '../lib/musica';
 import { VALERIA_BUSTO } from '../features/simulations/ui/valeriaSprites';
+import { actualizarBackendRush } from '../features/simulations/backendRush';
+import { useBackendRush } from '../features/simulations/useBackendRush';
 import '../styles/backend-rush.css';
 
 // BACKEND RUSH · NIVEL 1 — "Encuentra al fantasma".
@@ -70,6 +72,7 @@ export default function DetectarFantasma({ decision, onElegir }) {
   const [avisos, setAvisos] = useState([]); // burbujas +20 / -5
   const [pistaAbierta, setPistaAbierta] = useState(false);
 
+  const sistema = useBackendRush();
   const avisoRef = useRef(0);
   const relojRef = useRef(0);
   const ultimoIngresoRef = useRef(0);
@@ -169,9 +172,21 @@ export default function DetectarFantasma({ decision, onElegir }) {
     const bruto = base + rapido - falsosPositivos * castigoFalso - escapados * castigoEscapado;
     const puntos = Math.max(minimo, Math.min(maximo, bruto));
 
+    actualizarBackendRush({
+      nivelActual: 1,
+      pedidosProcesados: (n) => n + validos + cazados,
+      duplicadosDetectados: (n) => n + cazados,
+      duplicadosBloqueados: (n) => n + cazados,
+      errores: (n) => n + escapados,
+      estabilidad: (n) =>
+        n + cazados * (meta.estabilidadPorDuplicado ?? 4)
+          - escapados * (meta.estabilidadPorEscapado ?? 6)
+          - falsosPositivos * (meta.estabilidadPorFalsoPositivo ?? 2),
+    });
+
     reproducirEfecto(cazados >= objetivo ? 'codigoOk' : 'error');
     onElegir([meta.idRespuesta ?? 'fantasma-detectado'], puntos);
-  }, [terminado, cazados, escapados, falsosPositivos, objetivo, meta, onElegir]);
+  }, [terminado, cazados, escapados, falsosPositivos, validos, objetivo, meta, onElegir]);
 
   function mostrarAviso(clave, texto, tono) {
     avisoRef.current += 1;
@@ -208,8 +223,20 @@ export default function DetectarFantasma({ decision, onElegir }) {
     );
   }
 
-  const estabilidad = Math.max(0, 100 - escapados * 18 - falsosPositivos * 4);
+  // Estabilidad EN VIVO: la compartida más lo que va pasando en este nivel.
+  // Se confirma en el estado global al terminar.
+  const estabilidad = Math.max(
+    0,
+    Math.min(
+      100,
+      sistema.estabilidad +
+        cazados * (meta.estabilidadPorDuplicado ?? 4) -
+        escapados * (meta.estabilidadPorEscapado ?? 6) -
+        falsosPositivos * (meta.estabilidadPorFalsoPositivo ?? 2),
+    ),
+  );
   const alerta = escapados > 0 || estabilidad < 80;
+  const pedidosTotales = sistema.pedidosProcesados + validos + cazados;
   const progreso = Math.min(100, (cazados / Math.max(1, objetivo)) * 100);
   const textoValeria = terminado
     ? cazados >= objetivo
@@ -391,7 +418,7 @@ export default function DetectarFantasma({ decision, onElegir }) {
             <div className="br-panel-titulo">📊 ESTADO DEL SISTEMA</div>
             <div className="br-dato">
               <span>Pedidos válidos</span>
-              <strong style={{ color: 'var(--green)' }}>{validos}</strong>
+              <strong style={{ color: 'var(--green)' }}>{pedidosTotales}</strong>
             </div>
             <div className="br-dato">
               <span>Duplicados detectados</span>
@@ -403,7 +430,7 @@ export default function DetectarFantasma({ decision, onElegir }) {
                 {escapados}
               </strong>
             </div>
-            <div className="br-estabilidad-rotulo">ESTABILIDAD</div>
+            <div className="br-estabilidad-rotulo">ESTABILIDAD DEL SISTEMA · {estabilidad}%</div>
             <div className="br-estabilidad">
               <span
                 style={{

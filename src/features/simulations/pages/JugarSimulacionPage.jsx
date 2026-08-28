@@ -5,6 +5,7 @@ import { gameReducer, estadoInicial } from '../../../engine/gameReducer';
 import { aplicarMeta } from '../../../app/seo';
 import { useRuta } from '../../../app/router/useRuta';
 import { simulacionPorSlug, cargarEscenario } from '../catalogo';
+import { reiniciarBackendRush } from '../backendRush';
 import PantallaJuego from '../../../screens/PantallaJuego';
 import PersonalizacionAvatar from '../../../screens/PersonalizacionAvatar';
 import IntroHistorieta from '../../../screens/IntroHistorieta';
@@ -74,6 +75,9 @@ export default function JugarSimulacionPage({ params }) {
 
   const semilla = useMemo(() => {
     if (!escenario) return null;
+    // Los niveles de BACKEND RUSH comparten un estado (estabilidad, contadores)
+    // que vive fuera del motor. Empezar una partida lo devuelve a cero.
+    reiniciarBackendRush();
     return gameReducer(estadoInicial, { type: 'INICIAR_SIMULACION_LIBRE', escenario });
     // `intento` fuerza una semilla nueva al reintentar.
     // eslint-disable-next-line react-hooks/exhaustive-deps

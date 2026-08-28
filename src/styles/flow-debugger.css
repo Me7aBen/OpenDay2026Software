@@ -1,140 +1,325 @@
-/* FLOW DEBUGGER — mobile first (§54).
-   En 360px la columna del tablero es vertical, los botones tienen 48px de alto
-   y NADA produce scroll horizontal. A partir de 900px el tablero y el
-   inventario se ponen lado a lado. */
+/* BACKEND RUSH · NIVEL 2 — "Construye la defensa".
+   Tablero de nodos con bifurcación SÍ/NO, conexiones SVG y pulso de datos.
+
+   MOBILE FIRST: el mismo diagrama sirve en 360px y en 1920px porque las
+   conexiones se dibujan MIDIENDO dónde quedaron los nodos, no con coordenadas
+   fijas. Lo único que cambia por breakpoint es el tamaño de las tarjetas y si
+   el panel lateral va al costado o debajo. */
 
 .fd {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  max-width: 100%;
+  gap: 12px;
 }
 
-.fd-encabezado .fd-rotulo {
-  color: var(--cyan);
-  margin-bottom: 4px;
-}
-.fd-objetivo {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--text);
-}
+/* --- Cabecera ------------------------------------------------------------ */
 
-/* --- Tablero ------------------------------------------------------------ */
-
-.fd-tablero {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.fd-cabecera {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
-  background: linear-gradient(160deg, #101c33, #0c1526);
-}
-
-.fd-celda-item {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.fd-celda {
-  display: flex;
-  align-items: center;
   gap: 10px;
-  width: 100%;
-  min-height: 56px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 2px dashed var(--border);
-  background: rgba(24, 37, 67, 0.5);
-  color: var(--text-dim);
-  font-family: var(--body);
-  text-align: left;
-  cursor: pointer;
-}
-.fd-celda.llena {
-  border-style: solid;
-  border-color: #34507f;
-  background: var(--panel-alt);
-  color: var(--text);
-}
-.fd-celda.activa {
-  border-color: var(--cyan);
-  box-shadow: 0 0 0 2px rgba(74, 217, 255, 0.25);
-}
-.fd-celda.error {
-  border-color: var(--red);
-}
-.fd-celda.ok {
-  border-color: var(--green);
 }
 
-.fd-celda-num {
-  flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  display: grid;
-  place-items: center;
-  background: #0d1830;
+.fd-objetivo {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.fd-estabilidad-caja {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--panel);
+}
+.fd-estabilidad-fila {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.fd-estabilidad-rotulo {
   font-family: var(--pixel);
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  color: var(--text-dim);
+}
+.fd-estabilidad-pct {
+  font-family: var(--pixel);
+  font-size: 18px;
+}
+.fd-estabilidad-barra {
+  height: 10px;
+  border-radius: 999px;
+  background: #0d1830;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.fd-estabilidad-barra span {
+  display: block;
+  height: 100%;
+  transition: width 0.4s ease;
+}
+.fd-metricas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 8px;
   font-size: 12px;
   color: var(--text-dim);
 }
+.fd-metricas strong {
+  font-family: var(--pixel);
+  font-size: 14px;
+  color: var(--text);
+  margin-left: 4px;
+}
 
-.fd-celda-contenido {
+.fd-valeria .valeria-busto {
+  width: 64px;
+  height: 84px;
+}
+
+/* --- Layout -------------------------------------------------------------- */
+
+.fd-cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.fd-tablero-zona {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
   min-width: 0;
-  flex: 1;
 }
 
-.fd-celda-icono {
-  width: 26px;
-  height: 26px;
-  flex: 0 0 auto;
-  color: var(--cyan);
+/* --- Tablero ------------------------------------------------------------- */
+
+.fd-tablero {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 10px;
+  background:
+    radial-gradient(600px 200px at 50% 0%, rgba(74, 217, 255, 0.06), transparent 70%),
+    linear-gradient(160deg, #0f1b30, #0a1220);
+  overflow: hidden;
 }
-.fd-celda-icono svg {
+
+/* Rejilla de fondo: da el aire de "diagrama de arquitectura" sin dibujar nada. */
+.fd-tablero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(74, 217, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 217, 255, 0.045) 1px, transparent 1px);
+  background-size: 26px 26px;
+  pointer-events: none;
+}
+
+.fd-lineas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  /* Sin `overflow: visible` una curva que se salga un pixel del viewBox se
+     recorta y la línea aparece cortada. */
+  overflow: visible;
+}
+
+.fd-grid {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.fd-fila-centro {
+  display: flex;
+  justify-content: center;
+}
+
+.fd-fila-ramas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-items: start;
+}
+
+/* --- Nodos --------------------------------------------------------------- */
+
+.fd-nodo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  max-width: 168px;
+  min-height: 62px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: rgba(16, 28, 51, 0.95);
+  color: var(--text-dim);
+  font-family: var(--body);
+  text-align: center;
+}
+
+button.fd-nodo {
+  cursor: pointer;
+  min-height: 64px;
+}
+button.fd-nodo:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+
+.fd-nodo.vacio {
+  border-style: dashed;
+  background: rgba(24, 37, 67, 0.4);
+}
+.fd-nodo.activo {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(74, 217, 255, 0.22);
+}
+.fd-nodo.error {
+  border-color: var(--red);
+  background: rgba(255, 92, 106, 0.12);
+  animation: fd-sacudir 0.35s ease-in-out;
+}
+@keyframes fd-sacudir {
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.fd-nodo-icono {
+  width: 24px;
+  height: 24px;
+  color: currentColor;
+}
+.fd-nodo-icono svg {
   width: 100%;
   height: 100%;
 }
-
-.fd-celda-textos {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.fd-celda-nombre {
+.fd-nodo-nombre {
   font-family: var(--pixel);
-  font-size: 14px;
+  font-size: 11px;
   letter-spacing: 0.8px;
+  line-height: 1.25;
+  color: var(--text);
 }
-.fd-celda-logica {
-  font-size: 12px;
-  color: var(--gold);
-  line-height: 1.3;
+.fd-nodo-mas {
+  font-size: 22px;
+  line-height: 1;
+  color: #3d5686;
 }
-.fd-celda-vacia {
-  font-size: 13px;
+.fd-nodo-vacio {
+  font-size: 11px;
   font-style: italic;
 }
 
-.fd-flecha {
-  align-self: center;
-  color: #3d5686;
-  font-size: 16px;
-  line-height: 1;
-  padding: 3px 0;
+/* Colores por tipo de módulo. */
+.fd-nodo.lleno.tono-cyan { border-color: var(--cyan); color: var(--cyan); background: rgba(74,217,255,0.10); }
+.fd-nodo.lleno.tono-rojo { border-color: var(--red); color: #ff9aa3; background: rgba(255,92,106,0.10); }
+.fd-nodo.lleno.tono-verde { border-color: var(--green); color: var(--green); background: rgba(47,230,166,0.10); }
+.fd-nodo.lleno.tono-ambar { border-color: var(--gold); color: var(--gold); background: rgba(255,209,102,0.10); }
+.fd-nodo.fijo { border-color: #34507f; color: var(--cyan); }
+
+.fd-nodo.validado.lleno {
+  box-shadow: 0 0 12px rgba(47, 230, 166, 0.25);
 }
 
-/* --- Barra de acción ---------------------------------------------------- */
+/* Rombo de decisión */
+.fd-decision {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 132px;
+  height: 74px;
+  border: 2px solid var(--cyan);
+  background: rgba(74, 217, 255, 0.1);
+  color: var(--cyan);
+  /* Rombo sin rotar el texto: así se lee derecho y no hay que compensar. */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+.fd-decision-texto {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  text-align: center;
+  padding: 0 12px;
+}
+
+.fd-rama-etiqueta {
+  display: block;
+  justify-self: center;
+  font-family: var(--pixel);
+  font-size: 12px;
+  letter-spacing: 1.4px;
+  padding: 2px 12px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.fd-rama-etiqueta.si { color: var(--red); }
+.fd-rama-etiqueta.no { color: var(--green); }
+
+.fd-rama-fin {
+  align-self: center;
+  justify-self: center;
+  font-size: 10px;
+  font-style: italic;
+  color: #3d5686;
+  text-align: center;
+}
+
+/* --- Aristas y pulso ----------------------------------------------------- */
+
+.fd-arista {
+  fill: none;
+  stroke: #24365c;
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+}
+
+.fd-arista-activa {
+  fill: none;
+  stroke-width: 2.5;
+  opacity: 0.55;
+}
+
+/* El pulso: un segmento corto que recorre el camino. `pathLength="100"`
+   normaliza la longitud, así todas las aristas tardan lo mismo sin importar
+   cuánto midan en pantalla. */
+.fd-arista-pulso {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 10 100;
+  animation: fd-pulso 0.62s linear infinite;
+}
+@keyframes fd-pulso {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: -10; }
+}
+
+.tono-cyan { stroke: var(--cyan); }
+.tono-rojo { stroke: var(--red); }
+.tono-verde { stroke: var(--green); }
+.tono-ambar { stroke: var(--gold); }
+.fd-arista.tono-cyan,
+.fd-arista.tono-rojo,
+.fd-arista.tono-verde,
+.fd-arista.tono-ambar { stroke: #24365c; }
+
+/* --- Barra de acciones --------------------------------------------------- */
 
 .fd-barra {
   display: flex;
@@ -145,32 +330,29 @@
   padding: 10px 12px;
   background: var(--panel);
 }
-
 .fd-seleccionado {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  min-height: 22px;
+  flex-direction: column;
+  gap: 2px;
 }
 .fd-seleccionado .etiqueta {
   font-family: var(--pixel);
-  font-size: 11px;
-  letter-spacing: 1px;
+  font-size: 10px;
+  letter-spacing: 1.1px;
   color: var(--text-dim);
 }
 .fd-seleccionado strong {
   font-family: var(--pixel);
-  font-size: 14px;
+  font-size: 15px;
   color: var(--cyan);
   letter-spacing: 0.8px;
 }
 
 .fd-botones {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
-
 .fd-boton {
   min-height: 46px;
   border-radius: 8px;
@@ -178,7 +360,7 @@
   background: var(--panel-alt);
   color: var(--text);
   font-family: var(--pixel);
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.8px;
   cursor: pointer;
 }
@@ -187,33 +369,113 @@
   color: var(--cyan);
 }
 .fd-boton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.fd-probar {
+  min-height: 56px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #2fa8e6, #1d78bb);
+  color: #04202b;
+  font-family: var(--pixel);
+  font-size: 17px;
+  letter-spacing: 1.4px;
+  cursor: pointer;
+}
+.fd-probar:disabled {
   opacity: 0.45;
   cursor: default;
 }
 
-/* --- Inventario --------------------------------------------------------- */
-
-.fd-inventario {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.fd-pistas {
+  display: grid;
+  gap: 6px;
 }
+
+.fd-diagnostico {
+  border: 2px solid var(--red);
+  background: rgba(255, 92, 106, 0.1);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.fd-diagnostico-titulo {
+  font-family: var(--pixel);
+  font-size: 15px;
+  letter-spacing: 1.2px;
+  color: var(--red);
+  margin-bottom: 4px;
+}
+.fd-diagnostico p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* --- Panel lateral ------------------------------------------------------- */
+
+.fd-panel {
+  display: grid;
+  gap: 10px;
+}
+.fd-panel-bloque {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--panel);
+}
+.fd-panel-titulo {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+.fd-acordeon {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+.fd-como-lista {
+  margin: 0;
+  padding-left: 20px;
+  display: none;
+  gap: 4px;
+}
+.fd-como.abierto .fd-como-lista {
+  display: grid;
+}
+.fd-como-lista li {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-dim);
+}
+
+/* --- Inventario ---------------------------------------------------------- */
 
 .fd-piezas {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
 }
-
 .fd-pieza {
+  position: relative;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 52px;
-  padding: 8px 10px;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 58px;
+  padding: 9px 11px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: var(--panel);
+  background: var(--panel-alt);
   color: var(--text);
   cursor: grab;
   text-align: left;
@@ -223,142 +485,295 @@
 }
 .fd-pieza.activa {
   border-color: var(--cyan);
-  background: rgba(74, 217, 255, 0.12);
+  background: rgba(74, 217, 255, 0.14);
+  box-shadow: 0 0 0 2px rgba(74, 217, 255, 0.25);
 }
 .fd-pieza.usada {
-  opacity: 0.35;
+  opacity: 0.3;
   cursor: default;
+}
+.fd-pieza.bloqueada {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 .fd-pieza-icono {
   width: 22px;
   height: 22px;
   flex: 0 0 auto;
-  color: var(--green);
+  margin-top: 2px;
 }
 .fd-pieza-icono svg {
   width: 100%;
   height: 100%;
 }
-.fd-pieza-nombre {
-  font-family: var(--pixel);
-  font-size: 12px;
-  letter-spacing: 0.6px;
-  line-height: 1.2;
-}
-
-/* --- Probar y consola --------------------------------------------------- */
-
-.fd-probar {
-  min-height: 56px;
-  width: 100%;
-  border: none;
-  border-radius: 10px;
-  background: var(--green);
-  color: #06251c;
-  font-family: var(--pixel);
-  font-size: 18px;
-  letter-spacing: 1.5px;
-  cursor: pointer;
-}
-.fd-probar:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
-.fd-consola {
-  background: #060d19;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 13px;
-  line-height: 1.7;
-  max-height: 240px;
-  overflow-y: auto;
-  overflow-x: auto;
-}
-.fd-linea {
-  white-space: pre-wrap;
-  animation: fd-entrar 0.2s ease-out;
-}
-.fd-linea.ok {
-  color: var(--green);
-}
-.fd-linea.error {
-  color: var(--red);
-}
-.fd-linea.aviso {
-  color: var(--gold);
-}
-.fd-linea.info {
-  color: var(--text-dim);
-}
-
-@keyframes fd-entrar {
-  from {
-    opacity: 0;
-    transform: translateX(-4px);
-  }
-}
-
-.fd-resultado {
-  border: 2px solid var(--green);
-  background: rgba(47, 230, 166, 0.1);
-  border-radius: 10px;
-  padding: 14px;
-}
-.fd-resultado-titulo {
-  font-family: var(--pixel);
-  font-size: 20px;
-  letter-spacing: 1.5px;
-  color: var(--green);
-  margin-bottom: 4px;
-}
-.fd-resultado p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* --- Pantallas grandes -------------------------------------------------- */
-
-@media (min-width: 900px) {
-  .fd-piezas {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  .fd-barra {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .fd-botones {
-    grid-template-columns: repeat(3, 120px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fd-linea {
-    animation: none;
-  }
-}
-
-/* La pieza muestra nombre + qué hace. Antes la descripción vivía en un `title`,
-   invisible en móvil, y el puzzle se volvía adivinanza. */
+.fd-pieza.tono-cyan .fd-pieza-icono { color: var(--cyan); }
+.fd-pieza.tono-rojo .fd-pieza-icono { color: var(--red); }
+.fd-pieza.tono-verde .fd-pieza-icono { color: var(--green); }
+.fd-pieza.tono-ambar .fd-pieza-icono { color: var(--gold); }
 .fd-pieza-textos {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
+.fd-pieza-nombre {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 0.6px;
+}
 .fd-pieza-desc {
   font-size: 11px;
   line-height: 1.3;
   color: var(--text-dim);
 }
-.fd-pieza {
-  align-items: flex-start;
-  min-height: 62px;
+.fd-pieza-candado {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-family: var(--pixel);
+  font-size: 8px;
+  letter-spacing: 0.6px;
+  color: var(--gold);
 }
-.fd-pieza-icono {
-  margin-top: 2px;
+.fd-inventario-nota {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* --- Consola ------------------------------------------------------------- */
+
+.fd-consola-caja {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #060d19;
+  overflow: hidden;
+}
+.fd-consola-toggle {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 12px;
+  background: var(--panel);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--cyan);
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.1px;
+  cursor: pointer;
+}
+.fd-consola {
+  display: none;
+  padding: 10px 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  line-height: 1.7;
+  max-height: 190px;
+  overflow-y: auto;
+}
+.fd-consola-caja.abierta .fd-consola {
+  display: block;
+}
+.fd-linea {
+  white-space: pre-wrap;
+  animation: fd-entrar 0.2s ease-out;
+}
+.fd-linea.ok { color: var(--green); }
+.fd-linea.error { color: var(--red); }
+.fd-linea.aviso { color: var(--gold); }
+.fd-linea.info { color: var(--text-dim); }
+@keyframes fd-entrar {
+  from { opacity: 0; transform: translateX(-4px); }
+}
+
+/* --- Éxito --------------------------------------------------------------- */
+
+.fd-exito {
+  display: grid;
+  gap: 12px;
+  border: 2px solid var(--green);
+  background: rgba(47, 230, 166, 0.08);
+  border-radius: 12px;
+  padding: 14px;
+}
+.fd-exito-titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--pixel);
+  font-size: 19px;
+  letter-spacing: 1.4px;
+  color: var(--green);
+}
+.fd-combo {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.fd-exito-datos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text);
+}
+.fd-exito-datos li::before {
+  content: '✓ ';
+  color: var(--green);
+}
+.fd-mini-titulo {
+  font-family: var(--pixel);
+  font-size: 11px;
+  letter-spacing: 1.1px;
+  color: var(--cyan);
+  margin-bottom: 5px;
+}
+.fd-buena-practica,
+.fd-concepto,
+.fd-codigo-bloque {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: rgba(8, 16, 31, 0.55);
+}
+.fd-buena-practica p,
+.fd-concepto p,
+.fd-codigo-nota {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+.fd-concepto-nombre {
+  font-family: var(--pixel);
+  font-size: 22px;
+  letter-spacing: 1.4px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.fd-concepto-formula {
+  margin: 10px 0 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--green);
+  white-space: pre-wrap;
+}
+.fd-codigo {
+  margin: 0 0 8px;
+  background: #060d19;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: #cfe0ff;
+  white-space: pre;
+}
+.fd-transicion {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  border-left: 3px solid var(--cyan);
+  padding-left: 12px;
+}
+
+/* --- Tablet -------------------------------------------------------------- */
+
+@media (min-width: 640px) {
+  .fd-botones {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .fd-nodo {
+    max-width: 200px;
+    min-height: 70px;
+  }
+  .fd-nodo-nombre {
+    font-size: 12px;
+  }
+  .fd-piezas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .fd-seleccionado {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+  }
+}
+
+/* --- Desktop ------------------------------------------------------------- */
+
+@media (min-width: 1040px) {
+  .fd-cabecera {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .fd-estabilidad-caja {
+    flex: 0 0 320px;
+  }
+  .fd-cuerpo {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    align-items: start;
+  }
+  .fd-piezas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fd-grid {
+    gap: 34px;
+  }
+  .fd-tablero {
+    padding: 20px 16px;
+  }
+  /* En desktop el "¿cómo funciona?" está siempre abierto: hay sitio. */
+  .fd-como-lista {
+    display: grid;
+  }
+  .fd-acordeon {
+    cursor: default;
+    pointer-events: none;
+  }
+  .solo-movil {
+    display: none;
+  }
+  /* La consola cabe abierta al lado del tablero. */
+  .fd-consola {
+    display: block;
+  }
+  .fd-consola-toggle {
+    pointer-events: none;
+  }
+  .fd-consola-toggle span:last-child {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fd-arista-pulso {
+    animation: none;
+    stroke-dasharray: none;
+    opacity: 0.9;
+  }
+  .fd-linea,
+  .fd-nodo.error {
+    animation: none;
+  }
+  .fd-estabilidad-barra span {
+    transition: none;
+  }
 }

@@ -353,198 +353,351 @@
         {
           "id": "flujo-1",
           "tipoInteraccion": "flow-debugger",
-          "pregunta": "Construye un flujo estable que evite pedidos duplicados.",
-          "mensajeClienteDecision": "Toca un componente y después la casilla donde va. Si una pieza puede decidir, usa ROTAR.",
-          "pista": "REINTENTO no es un paso del flujo: es lo que hace la app cuando se cae la conexión. Y VERIFICAR ID debe bloquear cuando el pedido YA existe.",
+          "pregunta": "Construye la defensa: evita que los reintentos creen pedidos duplicados.",
+          "mensajeClienteDecision": "Toca un componente y despues la casilla donde va.",
           "metaMinijuego": {
-            "idRespuesta": "flujo-estable",
-            "objetivo": "Arma el camino que sigue una compra dentro del sistema. Siete pasos, en el orden correcto.",
+            "idRespuesta": "defensa-construida",
             "puntosMax": 185,
             "puntosMin": 65,
             "penalizacionPorIntento": 40,
-            "mensajeExito": "Cada compra genera un solo pedido, aunque la conexión se caiga diez veces.",
-            "mensajeOrdenMal": "Ese orden deja pasar la compra sin control.",
-            "mensajeLogicaMal": "El orden está bien, pero la verificación decide al revés: si el pedido YA existe, hay que bloquearlo.",
-            "flujoCorrecto": [
-              "carrito",
-              "validar-stock",
-              "pago",
-              "verificar-id",
-              "crear-pedido",
-              "actualizar-stock",
-              "enviar"
-            ],
-            "orientacionesCorrectas": {
-              "verificar-id": "bloquear"
+            "penalizacionPorPista": 15,
+            "estabilidadAlResolver": 8,
+            "textos": {
+              "rotuloNivel": "NIVEL 2 · CONSTRUYE LA DEFENSA",
+              "objetivo": "Evita que los reintentos creen pedidos duplicados.",
+              "decision": "¿YA EXISTE?",
+              "slotVacio": "Coloca aquí",
+              "notaInventario": "Arrastra o toca para colocar.",
+              "consolaVacia": "> esperando a que pruebes el flujo…",
+              "valeriaInicio": "Ahora construye el flujo correcto. Antes de crear un pedido necesitamos verificar si ese ID ya fue procesado: si existe lo bloqueamos, si no existe podemos continuar.",
+              "valeriaExito": "Perfecto. El mismo pedido ya no puede entrar dos veces.",
+              "comoFunciona": [
+                "El pedido llega desde PAGO.",
+                "Verificamos si el ID ya existe.",
+                "Si existe → lo bloqueamos.",
+                "Si no existe → lo creamos.",
+                "Actualizamos stock y enviamos."
+              ],
+              "tituloExito": "DEFENSA CONSTRUIDA",
+              "resumenExito": [
+                "Pedido nuevo: creado",
+                "Reintento: detectado",
+                "Duplicado: bloqueado",
+                "Stock: actualizado una sola vez"
+              ],
+              "buenaPractica": "Siempre verifica el identificador antes de crear una operación que no debe duplicarse. Los reintentos son normales: tu sistema tiene que estar preparado para ellos.",
+              "conceptoNombre": "IDEMPOTENCIA",
+              "conceptoTexto": "Una operación idempotente puede repetirse sin crear resultados duplicados.",
+              "conceptoFormula": "mismo pedido + mismo ID + varios reintentos = un solo pedido",
+              "tituloCodigo": "EN CÓDIGO SE ESCRIBE ASÍ",
+              "codigo": "if (!pedidoExiste(id)) {\n  crearPedido(id);\n  actualizarStock();\n  enviarAlmacen();\n}",
+              "valeriaCodigo": "El flujo que acabas de construir visualmente puede escribirse de esta manera. Primero entendiste la lógica. Después viste el código.",
+              "transicion": "Parece que el sistema está estable…"
             },
+            "pistas": [
+              "Antes de crear un pedido necesitas saber si ya existe.",
+              "La decisión \"¿Ya existe?\" debe llevar a dos lugares distintos.",
+              "Si existe → bloquear. Si no existe → crear, descontar stock y enviar."
+            ],
             "piezas": [
-              {
-                "id": "carrito",
-                "nombre": "CARRITO",
-                "icono": "carrito",
-                "descripcion": "Lo que el cliente eligió comprar."
-              },
-              {
-                "id": "validar-stock",
-                "nombre": "VALIDAR STOCK",
-                "icono": "stock",
-                "descripcion": "Revisa que haya unidades disponibles."
-              },
-              {
-                "id": "pago",
-                "nombre": "PAGO",
-                "icono": "pago",
-                "descripcion": "Cobra una sola vez."
-              },
               {
                 "id": "verificar-id",
                 "nombre": "VERIFICAR ID",
                 "icono": "id",
-                "descripcion": "Pregunta si ese pedido ya existe.",
-                "orientaciones": [
-                  {
-                    "id": "crear",
-                    "resumen": "¿Ya existe? SÍ → crear pedido",
-                    "detalle": "Crea otro pedido aunque ya exista."
-                  },
-                  {
-                    "id": "bloquear",
-                    "resumen": "¿Ya existe? SÍ → bloquear duplicado",
-                    "detalle": "Si ya existe, no lo vuelve a crear."
-                  }
-                ]
+                "tono": "cyan",
+                "descripcion": "¿Este pedido ya existe?"
               },
               {
-                "id": "crear-pedido",
+                "id": "bloquear",
+                "nombre": "BLOQUEAR DUPLICADO",
+                "icono": "bloquear",
+                "tono": "rojo",
+                "descripcion": "Detiene un pedido ya procesado."
+              },
+              {
+                "id": "crear",
                 "nombre": "CREAR PEDIDO",
-                "icono": "pedido",
-                "descripcion": "Registra el pedido con su ID único."
+                "icono": "crear",
+                "tono": "verde",
+                "descripcion": "Registra un pedido nuevo."
               },
               {
                 "id": "actualizar-stock",
                 "nombre": "ACTUALIZAR STOCK",
                 "icono": "stock",
-                "descripcion": "Descuenta las unidades vendidas."
+                "tono": "ambar",
+                "descripcion": "Descuenta el inventario."
               },
               {
                 "id": "enviar",
                 "nombre": "ENVIAR",
                 "icono": "enviar",
+                "tono": "cyan",
                 "descripcion": "Manda la orden al almacén."
               },
               {
                 "id": "reintento",
                 "nombre": "REINTENTO",
                 "icono": "reintento",
-                "descripcion": "Lo que hace la app cuando se cae la conexión. No es un paso del backend."
+                "tono": "cyan",
+                "descripcion": "Lo hace la app, no el backend.",
+                "bloqueada": true
+              },
+              {
+                "id": "rate-limit",
+                "nombre": "RATE LIMIT",
+                "icono": "limite",
+                "tono": "cyan",
+                "descripcion": "Limita la velocidad de entrada.",
+                "bloqueada": true
+              },
+              {
+                "id": "cola",
+                "nombre": "COLA (QUEUE)",
+                "icono": "cola",
+                "tono": "cyan",
+                "descripcion": "Pone pedidos en espera.",
+                "bloqueada": true
               }
             ],
-            "consolaExito": [
+            "simulacionNuevo": [
               {
-                "texto": "> compra recibida",
+                "texto": "> Pedido recibido: KM-84921",
+                "tono": "info",
+                "arista": "e-pago"
+              },
+              {
+                "texto": "> Verificando ID...",
+                "tono": "info",
+                "arista": "e-verificar"
+              },
+              {
+                "texto": "> ID KM-84921 no existe.",
+                "tono": "ok",
+                "arista": "e-no"
+              },
+              {
+                "texto": "> Creando pedido...",
                 "tono": "info"
               },
               {
-                "texto": "> ID: KM-84921",
-                "tono": "info"
-              },
-              {
-                "texto": "> stock disponible ✓",
+                "texto": "> Pedido KM-84921 creado ✓",
                 "tono": "ok"
               },
               {
-                "texto": "> pago confirmado ✓",
+                "texto": "> Actualizando stock...",
+                "tono": "info",
+                "arista": "e-stock"
+              },
+              {
+                "texto": "> Stock actualizado ✓",
                 "tono": "ok"
               },
               {
-                "texto": "> verificando pedido...",
-                "tono": "info"
-              },
+                "texto": "> Pedido enviado al almacén ✓",
+                "tono": "ok",
+                "arista": "e-enviar"
+              }
+            ],
+            "simulacionReintento": [
               {
-                "texto": "> pedido no encontrado",
-                "tono": "info"
-              },
-              {
-                "texto": "> creando pedido...",
-                "tono": "info"
-              },
-              {
-                "texto": "> pedido KM-84921 creado ✓",
-                "tono": "ok"
-              },
-              {
-                "texto": "> conexión interrumpida ⚠",
+                "texto": "> Conexión interrumpida ⚠",
                 "tono": "aviso"
               },
               {
-                "texto": "> reintentando...",
+                "texto": "> Reintentando...",
                 "tono": "aviso"
               },
               {
-                "texto": "> ID: KM-84921",
-                "tono": "info"
+                "texto": "> Pedido recibido: KM-84921",
+                "tono": "info",
+                "arista": "e-pago"
               },
               {
-                "texto": "> verificando...",
-                "tono": "info"
+                "texto": "> Verificando ID...",
+                "tono": "info",
+                "arista": "e-verificar"
               },
               {
-                "texto": "> pedido existente ✓",
-                "tono": "ok"
+                "texto": "> ID KM-84921 ya existe.",
+                "tono": "aviso",
+                "arista": "e-si"
               },
               {
                 "texto": "> DUPLICADO BLOQUEADO ✓",
                 "tono": "ok"
               }
             ],
-            "consolaOrdenMal": [
-              {
-                "texto": "> compra recibida",
-                "tono": "info"
+            "fallos": {
+              "verificar-tarde": {
+                "titulo": "PEDIDO DUPLICADO CREADO",
+                "mensaje": "El pedido se creó antes de comprobar si ya existía, así que el duplicado quedó registrado igual.",
+                "valeria": "Estás verificando el ID después de crear el pedido. Para evitar el duplicado, verifica antes de crear.",
+                "consola": [
+                  {
+                    "texto": "> Pedido recibido: KM-84921",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> Creando pedido...",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> Pedido creado.",
+                    "tono": "aviso"
+                  },
+                  {
+                    "texto": "> Verificando ID demasiado tarde.",
+                    "tono": "error"
+                  },
+                  {
+                    "texto": "> ERROR: el duplicado ya fue registrado.",
+                    "tono": "error"
+                  }
+                ]
               },
-              {
-                "texto": "> ejecutando flujo propuesto...",
-                "tono": "info"
+              "ambas-crean": {
+                "titulo": "ERROR DE LÓGICA",
+                "mensaje": "Los pedidos que YA existen también están entrando por CREAR PEDIDO. La rama SÍ tiene que detenerlos.",
+                "valeria": "Las dos ramas hacen lo mismo. Si el pedido ya existe, no puede terminar creándose otra vez.",
+                "consola": [
+                  {
+                    "texto": "> Pedido recibido: KM-84921",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> Verificando ID...",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> ID KM-84921 ya existe.",
+                    "tono": "aviso"
+                  },
+                  {
+                    "texto": "> ERROR: la rama SÍ también crea el pedido.",
+                    "tono": "error"
+                  }
+                ]
               },
-              {
-                "texto": "> paso fuera de orden ✕",
-                "tono": "error"
+              "si-crea": {
+                "titulo": "ERROR DE LÓGICA",
+                "mensaje": "La rama SÍ significa \"este pedido ya existe\". Ahí no se puede crear nada.",
+                "valeria": "Si el pedido ya existe, la rama SÍ debe bloquearlo, no crearlo de nuevo.",
+                "consola": [
+                  {
+                    "texto": "> Pedido recibido: KM-84921",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> Verificando ID...",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> ID KM-84921 ya existe.",
+                    "tono": "aviso"
+                  },
+                  {
+                    "texto": "> Creando pedido ✕ DUPLICADO",
+                    "tono": "error"
+                  }
+                ]
               },
-              {
-                "texto": "> flujo detenido",
-                "tono": "error"
+              "falta-verificar": {
+                "titulo": "SIN VERIFICACIÓN NO HAY DEFENSA",
+                "mensaje": "El primer paso después del pago tiene que comprobar si el pedido ya existe. Sin eso, la decisión no tiene qué decidir.",
+                "valeria": "Nadie está comprobando el ID. Pon VERIFICAR ID justo después de PAGO.",
+                "consola": [
+                  {
+                    "texto": "> Pedido recibido: KM-84921",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> ERROR: nadie comprobó si el pedido existía.",
+                    "tono": "error"
+                  }
+                ]
+              },
+              "si-mal": {
+                "titulo": "LA RAMA SÍ NO DETIENE NADA",
+                "mensaje": "Cuando el pedido ya existe hay que bloquearlo. Ahí va BLOQUEAR DUPLICADO.",
+                "valeria": "Si el pedido ya existe, ¿qué debería pasar? Detenerlo.",
+                "consola": [
+                  {
+                    "texto": "> Pedido recibido: KM-84921",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> Verificando ID...",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> ID KM-84921 ya existe.",
+                    "tono": "aviso"
+                  },
+                  {
+                    "texto": "> ERROR: el duplicado siguió avanzando.",
+                    "tono": "error"
+                  }
+                ]
+              },
+              "no-mal": {
+                "titulo": "LOS PEDIDOS NUEVOS NO SE REGISTRAN",
+                "mensaje": "Cuando el pedido NO existe hay que crearlo. Sin eso, ninguna compra llega al almacén.",
+                "valeria": "Si el pedido es nuevo, hay que crearlo. Esa es la rama NO.",
+                "consola": [
+                  {
+                    "texto": "> Pedido recibido: KM-84921",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> Verificando ID...",
+                    "tono": "info"
+                  },
+                  {
+                    "texto": "> ID KM-84921 no existe.",
+                    "tono": "ok"
+                  },
+                  {
+                    "texto": "> ERROR: el pedido nunca se registró.",
+                    "tono": "error"
+                  }
+                ]
+              },
+              "falta-stock": {
+                "titulo": "EL INVENTARIO QUEDÓ SIN TOCAR",
+                "mensaje": "El duplicado ya no entra, pero nadie descuenta lo vendido: el stock va a mostrar más unidades de las que hay.",
+                "valeria": "Bien la defensa. Falta descontar el inventario después de crear el pedido.",
+                "consola": [
+                  {
+                    "texto": "> Pedido KM-84921 creado ✓",
+                    "tono": "ok"
+                  },
+                  {
+                    "texto": "> ERROR: el stock no se actualizó.",
+                    "tono": "error"
+                  }
+                ]
+              },
+              "falta-enviar": {
+                "titulo": "EL PEDIDO NUNCA LLEGA AL ALMACÉN",
+                "mensaje": "Se creó y se descontó el stock, pero nadie avisó al almacén: el cliente pagó y no recibe nada.",
+                "valeria": "Falta el último paso: enviar la orden al almacén.",
+                "consola": [
+                  {
+                    "texto": "> Pedido KM-84921 creado ✓",
+                    "tono": "ok"
+                  },
+                  {
+                    "texto": "> Stock actualizado ✓",
+                    "tono": "ok"
+                  },
+                  {
+                    "texto": "> ERROR: nadie envió la orden al almacén.",
+                    "tono": "error"
+                  }
+                ]
               }
-            ],
-            "consolaLogicaMal": [
-              {
-                "texto": "> compra recibida",
-                "tono": "info"
-              },
-              {
-                "texto": "> pago confirmado ✓",
-                "tono": "ok"
-              },
-              {
-                "texto": "> pedido KM-84921 creado ✓",
-                "tono": "ok"
-              },
-              {
-                "texto": "> conexión interrumpida ⚠",
-                "tono": "aviso"
-              },
-              {
-                "texto": "> reintentando...",
-                "tono": "aviso"
-              },
-              {
-                "texto": "> verificando... pedido existente",
-                "tono": "info"
-              },
-              {
-                "texto": "> creando pedido ✕ DUPLICADO",
-                "tono": "error"
-              }
-            ]
+            }
           },
           "opciones": [
             {
@@ -552,8 +705,7 @@
               "texto": "Flujo estable",
               "feedback": "El flujo aguanta los reintentos sin duplicar."
             }
-          ],
-          "pistaGratis": true
+          ]
         },
         {
           "id": "flujo-2",
